@@ -1,0 +1,400 @@
+/* ===== Header File Css ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow-x: clip;
+}
+.header-wrapper {
+  width: 100%;
+  background-color: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  font-family: "Poppins", sans-serif;
+}
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 25px;
+  background-color: #f9f9f9;
+}
+.logo-top-left h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #007bff;
+}
+.search-iconn-right {
+  font-size: 1.5rem;
+  color: #333;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+.search-iconn-right:hover {
+  color: #007bff;
+}
+.header-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 25px;
+  background-color: #ffffff;
+  border-top: 1px solid #eee;
+}
+.menu-bottom-left {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+.menu-bottom-left a {
+  text-decoration: none;
+  color: #333;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  position: relative;
+}
+.menu-bottom-left a::after {
+  content: "";
+  position: absolute;
+  width: 0%;
+  height: 2px;
+  bottom: -4px;
+  left: 0;
+  background-color: #007bff;
+  transition: width 0.3s ease;
+}
+.menu-bottom-left a:hover {
+  color: #007bff;
+}
+.menu-bottom-left a:hover::after {
+  width: 100%;
+}
+.profile-bottom-right {
+  font-size: 1.6rem;
+  color: #333;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+.profile-bottom-right:hover {
+  color: #007bff;
+}
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+  gap: 5px;
+}
+.menu-toggle span {
+  height: 3px;
+  width: 25px;
+  background-color: #333;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+.menu-bottom-left button {
+  padding: 7px 16px;
+  background: linear-gradient(135deg, #6e8efb, #a777e3);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+.menu-bottom-left button:hover {
+  background: linear-gradient(135deg, #5b7bf8, #9669e0);
+  box-shadow: 0 4px 12px rgba(110, 142, 251, 0.4);
+}
+@media (max-width: 768px) {
+  .header-top {
+    justify-content: space-between;
+  }
+  .header-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+  }
+  .menu-toggle {
+    display: flex;
+    position: absolute;
+    top: 20px;
+    left: 25px;
+  }
+  .menu-bottom-left {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    background-color: #f9f9f9;
+    position: absolute;
+    top: 55px;
+    left: 0;
+    padding: 15px 25px;
+    border-top: 1px solid #ddd;
+    display: none;
+  }
+  .menu-bottom-left.active {
+    display: flex;
+    animation: slideDown 0.3s ease forwards;
+  }
+  .profile-bottom-right {
+    margin-top: 10px;
+    align-self: flex-end;
+  }
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+@media (max-width: 480px) {
+  .logo-top-left h1 {
+    font-size: 1.4rem;
+  }
+  .menu-bottom-left a {
+    font-size: 0.95rem;
+  }
+  .search-iconn-right {
+    font-size: 1.2rem;
+  }
+}
+
+/* ====== Login Form Css ====== */
+.login-wrapper {
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(135deg, #6e8efb, #a777e3);
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.login-form {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.login {
+  background-color: #ffffff;
+  width: 380px;
+  padding: 40px 35px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  animation: fadeIn 0.8s ease;
+}
+.login h1 {
+  font-size: 2rem;
+  color: #6a1b9a;
+  margin-bottom: 25px;
+  font-weight: 700;
+}
+.login-field {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+.login-field label {
+  font-weight: 500;
+  color: #555;
+  margin-bottom: 6px;
+  margin-top: 15px;
+  font-size: 0.95rem;
+}
+.login-field input {
+  padding: 12px 14px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  outline: none;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+.login-field input:focus {
+  border-color: #6e8efb;
+  box-shadow: 0 0 6px rgba(110, 142, 251, 0.4);
+}
+.login-frm-btn {
+  margin-top: 25px;
+  padding: 12px;
+  background: linear-gradient(135deg, #6e8efb, #a777e3);
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.login-frm-btn:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #5b7bf8, #9669e0);
+  box-shadow: 0 4px 12px rgba(110, 142, 251, 0.4);
+}
+.login-form p {
+  font-size: 14px;
+  color: #333;
+  margin-top: 15px;
+}
+.login-form a {
+  color: #7b2ff7;
+  text-decoration: none;
+  font-weight: 600;
+}
+.login-form a:hover {
+  text-decoration: underline;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (max-width: 480px) {
+  .login {
+    width: 90%;
+    padding: 30px 20px;
+  }
+  .login h1 {
+    font-size: 1.7rem;
+  }
+  .login-field input {
+    font-size: 0.95rem;
+  }
+  .login-frm-btn {
+    font-size: 0.95rem;
+  }
+}
+
+/* === Registration Form Css === */
+.register-wrapper {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #6e8efb, #a777e3);
+  font-family: "Poppins", sans-serif;
+  padding: 20px;
+}
+.register-frm {
+  background: #fff;
+  padding: 40px 35px;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+.register-frm:hover {
+  transform: translateY(-5px);
+}
+.register-frm h1 {
+  font-size: 28px;
+  color: #6a1b9a;
+  margin-bottom: 25px;
+  letter-spacing: 1px;
+}
+.register-frm label {
+  display: block;
+  text-align: left;
+  font-weight: 600;
+  color: #444;
+  margin-bottom: 8px;
+  font-size: 15px;
+}
+.register-frm input {
+  width: 100%;
+  padding: 12px 14px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  font-size: 15px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.register-frm input:focus {
+  border-color: #6e8efb;
+  box-shadow: 0 0 6px rgba(110, 142, 251, 0.4);
+}
+.register-frm-btn {
+  width: 100%;
+  padding: 12px 0;
+  background: linear-gradient(135deg, #6e8efb, #a777e3);
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.register-frm-btn:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #5b7bf8, #9669e0);
+  box-shadow: 0 4px 12px rgba(110, 142, 251, 0.4);
+}
+.register-frm p {
+  font-size: 14px;
+  color: #333;
+  margin-top: 15px;
+}
+.register-frm a {
+  color: #7b2ff7;
+  text-decoration: none;
+  font-weight: 600;
+}
+.register-frm a:hover {
+  text-decoration: underline;
+}
+.register-frm select {
+  width: 100%;
+  padding: 12px 14px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  font-size: 15px;
+  color: #333;
+  background-color: #fff;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath fill='black' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 12px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.register-frm select:focus {
+  border-color: #6e8efb;
+  box-shadow: 0 0 6px rgba(110, 142, 251, 0.4);
+}
+.register-frm option {
+  color: #333;
+  background-color: #fff;
+}
+@media (max-width: 600px) {
+  .register-frm {
+    padding: 30px 25px;
+  }
+  .register-frm h1 {
+    font-size: 24px;
+  }
+  .register-frm input {
+    font-size: 14px;
+  }
+  .register-frm-btn {
+    font-size: 15px;
+  }
+}
