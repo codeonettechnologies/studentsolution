@@ -1,38 +1,46 @@
 import React, { useState } from "react";
-import { FiSearch } from "react-icons/fi";
+import { Link, useLocation } from "react-router-dom";
+import { FiMenu, FiX } from "react-icons/fi";
 import { IoPerson } from "react-icons/io5";
 
-export default function Header() {
-    const[menuOpen , setMenuOpen] = useState(false);
+const Header = () => {
+  const location = useLocation();
+  const isDashboard = location.pathname === "/dashboard";
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+
   return (
-    <>
-      <div className="header-wrapper">
-        <div className="header-top">
-          <div className="logo-top-left">
-            <h1>Logo</h1>
-          </div>
-          <div className="search-iconn-right">
-            <FiSearch />
-          </div>
+    <header className="header">
+      <div className="header-left">
+        <Link to="/" className="logo">
+          <img src="/logo.png" alt="Logo" className="logo-img" />
+          <span className="logo-name">Studentsolution</span>
+        </Link>
+      </div>
+
+      <div className="header-right">
+        <div className="hamburger" onClick={toggleMenu}>
+          {menuOpen ? <FiX size={25} /> : <FiMenu size={25} />}
         </div>
 
-        <div className="header-bottom">
-        <div className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)}>
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
-          <div className={`menu-bottom-left ${menuOpen ? "active" : ""}`}>
-            <a href="home">Home</a>
-            <a href="#">About-Us</a>
-            <a href="#">Contact</a>
-            <button>Registration</button>
+        <nav className={`nav-menu ${menuOpen ? "open" : ""}`}>
+          <Link to="/" onClick={() => setMenuOpen(false)}>Home</Link>
+          <Link to="/about" onClick={() => setMenuOpen(false)}>About</Link>
+          <Link to="/contact" onClick={() => setMenuOpen(false)}>Contact</Link>
+          <Link to="/privacy" onClick={() => setMenuOpen(false)}>Privacy Policy</Link>
+        </nav>
+
+        {isDashboard && (
+          <div className="header-dashboard">
+            <IoPerson className="profile-icon" />
           </div>
-          <div className="profile-bottom-right">
-            <IoPerson />
-          </div>
-        </div>
+        )}
       </div>
-    </>
+    </header>
   );
-}
+};
+
+export default Header;
