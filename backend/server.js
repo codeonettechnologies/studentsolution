@@ -6,9 +6,10 @@ const path = require("path");
 const connectDB = require("./config/database");
 
 // Routes
-// const jobRoutes = require("./job/routes/jobRoute");          // Job routes
+// const jobRoutes = require("./job/routes/jobRoute");        
 const jobPostRoutes = require("./job/routes/jobRoute"); 
 const authRoutes = require("./authController/authRoutes");
+const coachingRoutes = require("./coaching/routes/coachingRoutes");
 
 dotenv.config();
 
@@ -21,8 +22,9 @@ connectDB();
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 
-app.use("/api/auth", authRoutes);
-app.use("/api/job-posts", jobPostRoutes);
+app.use("/auth", authRoutes);
+app.use("/coaching-posts",coachingRoutes);
+app.use("/job-posts", jobPostRoutes);
         
 app.use((req, res, next) => {
   req.db = connectDB;
