@@ -135,6 +135,111 @@ exports.delete_job_post = (req, res) => {
   }
 };
 
+<<<<<<< Updated upstream
+=======
+//------------------------------------------------------------------------------------
+
+// exports.add_like = (req, res) => {
+//   try {
+//     const { user_id, job_post_id } = req.body;
+
+//     if (!user_id || !job_post_id) {
+//       return res
+//         .status(400)
+//         .json({ message: "user_id and job_post_id are required" });
+//     }
+
+//     const sql =
+//       "INSERT INTO job_post_likes (job_post_id, user_id) VALUES (?, ?)";
+
+//     db.query(sql, [job_post_id, user_id], (err, result) => {
+//       if (err) {
+//         if (err.code === "ER_DUP_ENTRY") {
+//           return res
+//             .status(400)
+//             .json({ message: "You already liked this post" });
+//         }
+//         console.error("Database error:", err);
+//         return res
+//           .status(500)
+//           .json({ message: "Database error", error: err.message });
+//       }
+
+//       res.status(201).json({ message: "Post liked successfully" });
+//     });
+//   } catch (error) {
+//     res
+//       .status(500)
+//       .json({ message: "Internal server error", error: error.message });
+//   }
+// };
+
+// exports.remove_like = (req, res) => {
+//   try {
+//     const { user_id, job_post_id } = req.body;
+
+//     if (!user_id || !job_post_id) {
+//       return res
+//         .status(400)
+//         .json({ message: "user_id and job_post_id are required" });
+//     }
+
+//     const sql =
+//       "DELETE FROM job_post_likes WHERE job_post_id = ? AND user_id = ?";
+
+//     db.query(sql, [job_post_id, user_id], (err, result) => {
+//       if (err) {
+//         console.error("Database error:", err);
+//         return res
+//           .status(500)
+//           .json({ message: "Database error", error: err.message });
+//       }
+
+//       if (result.affectedRows === 0) {
+//         return res.status(404).json({ message: "Like not found" });
+//       }
+
+//       res.status(200).json({ message: "Like removed successfully" });
+//     });
+//   } catch (error) {
+//     res
+//       .status(500)
+//       .json({ message: "Internal server error", error: error.message });
+//   }
+// };
+
+// //---------------------------------------------------------
+
+// exports.get_likes = (req, res) => {
+//   try {
+//     const { id } = req.params;
+
+//     const sql = `
+//       SELECT COUNT(*) AS like_count, GROUP_CONCAT(user_id) AS users
+//       FROM job_post_likes
+//       WHERE job_post_id = ?
+//     `;
+
+//     db.query(sql, [id], (err, results) => {
+//       if (err) {
+//         console.error("Database error:", err);
+//         return res
+//           .status(500)
+//           .json({ message: "Database error", error: err.message });
+//       }
+
+//       res.status(200).json({
+//         message: "Likes fetched successfully",
+//         data: results[0],
+//       });
+//     });
+//   } catch (error) {
+//     res
+//       .status(500)
+//       .json({ message: "Internal server error", error: error.message });
+//   }
+// };
+>>>>>>> Stashed changes
 
 //------------------------comment_text---------------------------------------
 
@@ -235,8 +340,16 @@ exports.delete_comment = (req, res) => {
 
 
 
+<<<<<<< Updated upstream
 //------------like----------------------------
 const database = connectDB().promise();
+=======
+
+const util = require("util");
+
+// Promisify db.query for async/await
+const query = util.promisify(db.query).bind(db);
+>>>>>>> Stashed changes
 
 exports.toggle_like = async (req, res) => {
   try {
@@ -246,8 +359,14 @@ exports.toggle_like = async (req, res) => {
       return res.status(400).json({ message: "user_id and job_post_id are required" });
     }
 
+<<<<<<< Updated upstream
     const [existing] = await database.query(
       "SELECT `like` FROM job_post_likes WHERE job_post_id = ? AND user_id = ?",
+=======
+    // Check if user already liked
+    const existing = await query(
+      "SELECT * FROM job_post_likes WHERE job_post_id = ? AND user_id = ?",
+>>>>>>> Stashed changes
       [job_post_id, user_id]
     );
 
@@ -255,6 +374,7 @@ exports.toggle_like = async (req, res) => {
     let liked = false;
 
     if (existing.length > 0) {
+<<<<<<< Updated upstream
     
       const newLikeValue = existing[0].like ? 0 : 1;
 
@@ -272,10 +392,26 @@ exports.toggle_like = async (req, res) => {
         [job_post_id, user_id]
       );
 
+=======
+      // Unlike
+      await query(
+        "DELETE FROM job_post_likes WHERE job_post_id = ? AND user_id = ?",
+        [job_post_id, user_id]
+      );
+      message = "Post unliked successfully";
+      liked = false;
+    } else {
+      // Like
+      await query(
+        "INSERT INTO job_post_likes (job_post_id, user_id) VALUES (?, ?)",
+        [job_post_id, user_id]
+      );
+>>>>>>> Stashed changes
       message = "Post liked successfully";
       liked = true;
     }
 
+<<<<<<< Updated upstream
 
     const [result] = await database.query(
       "SELECT COUNT(*) AS total_likes FROM job_post_likes WHERE job_post_id = ? AND `like` = 1",
@@ -286,6 +422,18 @@ exports.toggle_like = async (req, res) => {
       message,
       liked,
       total_likes: result[0].total_likes,
+=======
+    // Get updated like count
+    const result = await query(
+      "SELECT COUNT(*) AS total_likes FROM job_post_likes WHERE job_post_id = ?",
+      [job_post_id]
+    );
+
+    res.status(liked ? 201 : 200).json({
+      message,
+      liked,
+      total_likes: result[0].total_likes
+>>>>>>> Stashed changes
     });
 
   } catch (error) {
@@ -293,6 +441,7 @@ exports.toggle_like = async (req, res) => {
     res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
+<<<<<<< Updated upstream
 
 
 
@@ -330,3 +479,5 @@ exports.get_like_status = async (req, res) => {
     res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
+=======
+>>>>>>> Stashed changes

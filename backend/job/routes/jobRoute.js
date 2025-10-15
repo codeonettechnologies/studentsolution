@@ -4,6 +4,14 @@ const { job_post ,
     get_all_job_posts ,
      get_job_post_by_id , 
      delete_job_post ,
+<<<<<<< Updated upstream
+=======
+    //  add_like,
+    //  remove_like,
+    //  get_likes,
+    toggle_like,
+    // get_likes,
+>>>>>>> Stashed changes
      add_comment,
      get_comments,
      delete_comment,
@@ -23,6 +31,16 @@ router.delete("/post/:id", delete_job_post);
 router.post("/like/unlike", toggle_like);
 router.get("/getlike", get_like_status);
 
+<<<<<<< Updated upstream
+=======
+//-------------------like post ------------------------------
+// router.post("/like", add_like);
+// router.delete("/unlike", remove_like);
+// router.get("/job_post/:id/likes", get_likes);
+
+router.post("/toggle", toggle_like);
+// router.get("get/:id", get_likes);
+>>>>>>> Stashed changes
 
 //-------------------comments route -----------------
 

@@ -17,12 +17,57 @@ exports.register = async (req, res) => {
       profession,
     } = req.body;
 
+<<<<<<< Updated upstream
     const profile_image = req.file ? req.file.filename : null;
     if (!name || !email || !mobile_number || !password) {
       return res.status(400).json({
         success: false,
         message: "All required fields must be filled",
       });
+=======
+exports.register = (req, res) => {
+  const {
+    name,
+    email,
+    mobile_number,
+    password,
+    college,
+    city,
+    field,
+    college_year,
+    type
+  } = req.body;
+  console.log(req.body);
+  
+
+  const profile_image = req.file ? req.file.filename : null;
+
+  if (!name || !email || !mobile_number || !password) {
+    return res.status(400).json({
+         message: "All required fields must be filled"
+         });
+  }
+
+
+  const hashedPassword = bcrypt.hashSync(password, 10);
+
+  const sql = `INSERT INTO users (name, email, mobile_number, password, college, city, field, college_year, type, profile_image)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+  db.query(
+    sql,
+    [name, email, mobile_number, hashedPassword, college, city, field, college_year, type, profile_image],
+    (err, result) => {
+      if (err) {
+        console.error(" Error inserting user:", err);
+        return res.status(500).json({
+             message: "Database error", error: err
+             });
+      }
+      res.status(201).json({
+         message: "User registered successfully!"
+         });
+>>>>>>> Stashed changes
     }
 
     const [existingUser] = await new Promise((resolve, reject) => {
