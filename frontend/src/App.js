@@ -5,9 +5,9 @@ import Header from "./Components/Header";
 import Login from "./Components/Login";
 import Register from "./Components/Registration";
 import Dashboard from "./Components/Dashboard";
-import JobContent from "./Components/Common"; 
-import Coaching from "./Components/Coching";
+import CommonContent from "./Components/Common";
 import Job from "./Components/Job";
+import Coaching from "./Components/Coching";
 
 function App() {
   return (
@@ -18,9 +18,9 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard/*" element={<Dashboard />}>
-            <Route path="common" element={<JobContent />} /> 
+            <Route path="common" element={<CommonContent />} /> 
             <Route path="job" element={<Job />} />
-            <Route path="coching" element={<Coaching />} />
+            <Route path="coaching" element={<Coaching />} />
           </Route>
         </Routes>
       </Router>

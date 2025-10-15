@@ -16,7 +16,7 @@ const Header = () => {
     <header className="header">
       <div className="header-left">
         <Link to="/" className="logo">
-          <img src="/logo.png" alt="Logo" className="logo-img" />
+          <img src="https://elitestudentsolution.com/wp-content/uploads/2017/03/logo.png" alt="Logo" className="logo-img" />
           <span className="logo-name">Studentsolution</span>
         </Link>
       </div>

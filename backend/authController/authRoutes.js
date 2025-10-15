@@ -4,7 +4,6 @@ const { register , login } = require("./auth");
 
 const router = express.Router();
 
-
 const storage = multer.diskStorage({
   destination: "./uploads/",
   filename: (req, file, cb) => {

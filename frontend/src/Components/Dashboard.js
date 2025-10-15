@@ -23,29 +23,70 @@ export default function Dashboard() {
           <div className="dash-sidebar-top">
             <div className="profile-info">
               <div className="navbar-links">
-                <NavLink to="/dashboard" end onClick={() => setSidebarOpen(false)}>
-                  <MdSpaceDashboard />
+                <NavLink
+                  to="/dashboard/general"
+                  onClick={() => {
+                    localStorage.setItem("currentSection", "general");
+                    setSidebarOpen(false);
+                  }}
+                >
+                  <FaBriefcase />
                   <span>General</span>
                 </NavLink>
-                <NavLink to="/dashboard/job" onClick={() => setSidebarOpen(false)}>
+
+                <NavLink
+                  to="/dashboard/job"
+                  onClick={() => {
+                    localStorage.setItem("currentSection", "job");
+                    setSidebarOpen(false);
+                  }}
+                >
                   <FaBriefcase />
                   <span>Job</span>
                 </NavLink>
-                <NavLink to="/dashboard/coching" onClick={() => setSidebarOpen(false)}>
+
+                <NavLink
+                  to="/dashboard/coaching"
+                  onClick={() => {
+                    localStorage.setItem("currentSection", "coaching");
+                    setSidebarOpen(false);
+                  }}
+                >
                   <PiChalkboardTeacherFill />
                   <span>Coaching</span>
                 </NavLink>
-                <NavLink to="/dashboard/entertainment" onClick={() => setSidebarOpen(false)}>
+
+                <NavLink
+                  to="/dashboard/education"
+                  onClick={() => {
+                    localStorage.setItem("currentSection", "education");
+                    setSidebarOpen(false);
+                  }}
+                >
+                  <MdCastForEducation />
+                  <span>Education</span>
+                </NavLink>
+
+                <NavLink
+                  to="/dashboard/entertainment"
+                  onClick={() => {
+                    localStorage.setItem("currentSection", "entertainment");
+                    setSidebarOpen(false);
+                  }}
+                >
                   <MdLiveTv />
                   <span>Entertainment</span>
                 </NavLink>
-                <NavLink to="/dashboard/notes" onClick={() => setSidebarOpen(false)}>
+
+                <NavLink
+                  to="/dashboard/notes"
+                  onClick={() => {
+                    localStorage.setItem("currentSection", "notes");
+                    setSidebarOpen(false);
+                  }}
+                >
                   <IoBookSharp />
-                  <span>Notes/Books</span>
-                </NavLink>
-                <NavLink to="/dashboard/education" onClick={() => setSidebarOpen(false)}>
-                  <MdCastForEducation />
-                  <span>Education</span>
+                  <span>Notes</span>
                 </NavLink>
               </div>
             </div>
