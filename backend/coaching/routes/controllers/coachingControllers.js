@@ -3,23 +3,25 @@ const connectDB = require("../../../config/database");
 const db = connectDB();
 const util = require("util");
 
-// Promisify db.query for async/await
 const query = util.promisify(db.query).bind(db);
 
 // -------------------- Coaching Posts --------------------
 
-// Create post
 exports.createPost = async (req, res) => {
   try {
     const { content, user_id } = req.body;
-    const image_url = req.file ? `/uploads/coaching_posts/${req.file.filename}` : null;
 
-    if (!content) return res.status(400).json({ message: "Content is required" });
+    const image_url = req.file ? req.file.filename : null;
+
+    if (!content)
+      return res.status(400).json({ message: "Content is required" });
 
     const sql = `INSERT INTO coaching_post (content, user_id, image_url) VALUES (?, ?, ?)`;
     const result = await query(sql, [content, user_id, image_url]);
 
-    res.status(201).json({ message: "Coaching post created", postId: result.insertId });
+    res
+      .status(201)
+      .json({ message: "Coaching post created", postId: result.insertId });
   } catch (err) {
     console.error("Create Post Error:", err);
     res.status(500).json({ message: "Database error", error: err });
@@ -27,28 +29,81 @@ exports.createPost = async (req, res) => {
 };
 
 // Get all posts
-exports.getPost = async (req, res) => {
+exports.getPost = (req, res) => {
   try {
-    const results = await query(`SELECT * FROM coaching_post ORDER BY created_at DESC`);
-    res.status(200).json(results);
-  } catch (err) {
-    console.error("Get Posts Error:", err);
-    res.status(500).json({ message: "Database error", error: err });
+    const sql = `
+      SELECT 
+        cp.*, 
+        u.name AS user_name, 
+        u.profile_image AS profile_image,
+        u.college AS user_college, 
+        u.college_year AS user_year
+      FROM coaching_post cp
+      JOIN users u ON cp.user_id = u.id
+      ORDER BY cp.id DESC
+    `;
+
+    db.query(sql, (err, results) => {
+      if (err) {
+        console.error("Database error:", err);
+        return res.status(500).json({
+          message: "Database error",
+          error: err.message,
+        });
+      }
+
+      res.status(200).json({
+        message: "All coaching posts fetched",
+        data: results,
+      });
+    });
+  } catch (error) {
+    console.error("Internal server error:", error);
+    res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+    });
   }
 };
 
 // Get posts by user
-exports.getPostsByUserId = async (req, res) => {
+exports.getPostsByUserId = (req, res) => {
   try {
-    const userId = req.params.userId;
-    const results = await query(
-      `SELECT * FROM coaching_post WHERE user_id = ? ORDER BY created_at DESC`,
-      [userId]
-    );
-    res.status(200).json(results);
-  } catch (err) {
-    console.error("Get Posts by User Error:", err);
-    res.status(500).json({ message: "Database error", error: err });
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+
+    const sql =
+      "SELECT * FROM coaching_post WHERE user_id = ? ORDER BY created_at DESC";
+
+    db.query(sql, [id], (err, results) => {
+      if (err) {
+        console.error("Database error:", err);
+        return res.status(500).json({
+          message: "Database error",
+          error: err.message,
+        });
+      }
+
+      if (results.length === 0) {
+        return res
+          .status(404)
+          .json({ message: "No posts found for this user" });
+      }
+
+      res.status(200).json({
+        message: "User posts fetched successfully",
+        data: results,
+      });
+    });
+  } catch (error) {
+    console.error("Internal server error:", error);
+    res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+    });
   }
 };
 
@@ -56,9 +111,12 @@ exports.getPostsByUserId = async (req, res) => {
 exports.deletePost = async (req, res) => {
   try {
     const postId = req.params.id;
-    const result = await query(`DELETE FROM coaching_post WHERE id = ?`, [postId]);
+    const result = await query(`DELETE FROM coaching_post WHERE id = ?`, [
+      postId,
+    ]);
 
-    if (result.affectedRows === 0) return res.status(404).json({ message: "Post not found" });
+    if (result.affectedRows === 0)
+      return res.status(404).json({ message: "Post not found" });
 
     res.status(200).json({ message: "Coaching post deleted" });
   } catch (err) {
@@ -67,174 +125,71 @@ exports.deletePost = async (req, res) => {
   }
 };
 
-// -------------------- Likes --------------------
-
-// // Add Like
-// exports.addLike = async (req, res) => {
-//   try {
-//     const { user_id, coaching_post_id } = req.body;
-//     if (!user_id || !coaching_post_id)
-//       return res.status(400).json({ message: "user_id and coaching_post_id are required" });
-
-//     const existing = await query(
-//       `SELECT * FROM coaching_post_like WHERE user_id = ? AND coaching_post_id = ?`,
-//       [user_id, coaching_post_id]
-//     );
-//     if (existing.length > 0)
-//       return res.status(400).json({ message: "Post already liked by this user" });
-
-//     const result = await query(
-//       `INSERT INTO coaching_post_like (user_id, coaching_post_id) VALUES (?, ?)`,
-//       [user_id, coaching_post_id]
-//     );
-
-//     res.status(201).json({ message: "Post liked successfully", likeId: result.insertId });
-//   } catch (err) {
-//     console.error("Add Like Error:", err);
-//     res.status(500).json({ message: "Database error", error: err });
-//   }
-// };
-
-// // Get Likes
-// exports.getLike = async (req, res) => {
-//   try {
-//     const { coaching_post_id } = req.query;
-//     let sql = "SELECT * FROM coaching_post_like";
-//     const values = [];
-
-//     if (coaching_post_id) {
-//       sql += " WHERE coaching_post_id = ?";
-//       values.push(coaching_post_id);
-//     }
-
-//     const results = await query(sql, values);
-//     res.status(200).json(results);
-//   } catch (err) {
-//     console.error("Get Likes Error:", err);
-//     res.status(500).json({ message: "Database error", error: err });
-//   }
-// };
-
-// // Remove Like
-// exports.removeLike = async (req, res) => {
-//   try {
-//     const { user_id, coaching_post_id } = req.body;
-//     if (!user_id || !coaching_post_id)
-//       return res.status(400).json({ message: "user_id and coaching_post_id are required" });
-
-//     const result = await query(
-//       `DELETE FROM coaching_post_like WHERE user_id = ? AND coaching_post_id = ?`,
-//       [user_id, coaching_post_id]
-//     );
-
-//     if (result.affectedRows === 0) return res.status(404).json({ message: "Like not found" });
-
-//     res.status(200).json({ message: "Like removed successfully" });
-//   } catch (err) {
-//     console.error("Remove Like Error:", err);
-//     res.status(500).json({ message: "Database error", error: err });
-//   }
-// };
-
-
-
-exports.toggle_like = async (req, res) => {
-  try {
-    const { user_id, coaching_post_id } = req.body;
- 
-    if (!user_id || !coaching_post_id) {
-      return res.status(400).json({ message: "user_id and coaching_post_id are required" });
-    }
- 
-    // Check if user already liked
-    const existing = await query(
-      "SELECT * FROM coaching_post_like WHERE coaching_post_id = ? AND user_id = ?",
-      [coaching_post_id, user_id]
-    );
- 
-    let message = "";
-    let liked = false;
- 
-    if (existing.length > 0) {
-      // Unlike
-      await query(
-        "DELETE FROM coaching_post_like WHERE coaching_post_id = ? AND user_id = ?",
-        [coaching_post_id, user_id]
-      );
-      message = "Post unliked successfully";
-      liked = false;
-    } else {
-
-      // Like
-      await query(
-        "INSERT INTO coaching_post_like (coaching_post_id, user_id) VALUES (?, ?)",
-        [coaching_post_id, user_id]
-      );
-      message = "Post liked successfully";
-      liked = true;
-    }
- 
-    // Get updated like count
-    const result = await query(
-      "SELECT COUNT(*) AS total_likes FROM coaching_post_like WHERE coaching_post_id = ?",
-      [coaching_post_id]
-    );
- 
-    res.status(liked ? 201 : 200).json({
-      message,
-      liked,
-      total_likes: result[0].total_likes
-    });
- 
-  } catch (error) {
-    console.error("Toggle like error:", error);
-    res.status(500).json({ message: "Internal server error", error: error.message });
-  }
-};
- 
- 
-
-
-
-
 // -------------------- Comments --------------------
 
-// Create Comment
 exports.addComment = async (req, res) => {
   try {
-    const { content, coaching_post_id, user_id } = req.body;
-    if (!content || !coaching_post_id)
-      return res.status(400).json({ message: "Content and coaching_post_id are required" });
+    const { user_id, coaching_post_id, comment_text } = req.body;
 
-    const result = await query(
-      `INSERT INTO coaching_post_comment (content, coaching_post_id, user_id) VALUES (?, ?, ?)`,
-      [content, coaching_post_id, user_id || null]
-    );
+    if (!user_id || !coaching_post_id || !comment_text) {
+      return res.status(400).json({
+        message: "user_id, coaching_post_id, and comment_text are required",
+      });
+    }
 
-    res.status(201).json({ message: "Comment added successfully", commentId: result.insertId });
+    const sql = `
+      INSERT INTO coaching_post_comment (user_id, coaching_post_id, comment_text)
+      VALUES (?, ?, ?)
+    `;
+
+    const result = await query(sql, [user_id, coaching_post_id, comment_text]);
+
+    res.status(201).json({
+      message: "Comment added successfully",
+      commentId: result.insertId,
+    });
   } catch (err) {
     console.error("Create Comment Error:", err);
-    res.status(500).json({ message: "Database error", error: err });
+    res.status(500).json({
+      message: "Database error",
+      error: err.message,
+    });
   }
 };
 
-// Get all comments
 exports.getComment = async (req, res) => {
   try {
-    const { coaching_post_id } = req.query;
-    let sql = "SELECT * FROM coaching_post_comment";
-    const values = [];
+    const { id } = req.params;
 
-    if (coaching_post_id) {
-      sql += " WHERE coaching_post_id = ?";
-      values.push(coaching_post_id);
+    if (!id) {
+      return res.status(400).json({ message: "id is required" });
     }
 
-    const results = await query(sql, values);
-    res.status(200).json(results);
+    const sql = `
+      SELECT c.id, c.comment_text, c.created_at, u.id AS user_id, u.name AS user_name
+      FROM coaching_post_comment c
+      JOIN users u ON c.user_id = u.id
+      WHERE c.coaching_post_id = ?
+      ORDER BY c.created_at ASC
+    `;
+
+    const results = await query(sql, [id]);
+
+    const formattedResults = results.map((c) => ({
+      id: c.id,
+      comment_text: c.comment_text,
+      created_at: c.created_at,
+      user_id: c.user_id,
+      user_name: c.user_name,
+    }));
+
+    res.status(200).json({
+      message: "Comments fetched successfully",
+      data: formattedResults,
+    });
   } catch (err) {
     console.error("Get Comments Error:", err);
-    res.status(500).json({ message: "Database error", error: err });
+    res.status(500).json({ message: "Database error", error: err.message });
   }
 };
 
@@ -242,13 +197,115 @@ exports.getComment = async (req, res) => {
 exports.deleteComment = async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await query(`DELETE FROM coaching_post_comment WHERE id = ?`, [id]);
+    const result = await query(
+      `DELETE FROM coaching_post_comment WHERE id = ?`,
+      [id]
+    );
 
-    if (result.affectedRows === 0) return res.status(404).json({ message: "Comment not found" });
+    if (result.affectedRows === 0)
+      return res.status(404).json({ message: "Comment not found" });
 
     res.status(200).json({ message: "Comment deleted successfully" });
   } catch (err) {
     console.error("Delete Comment Error:", err);
     res.status(500).json({ message: "Database error", error: err });
+  }
+};
+
+// like-------------------------------------------------------------------------------------------------------------------------------
+const database = connectDB().promise();
+
+exports.toggle_like = async (req, res) => {
+  try {
+    const { user_id, coaching_post_id } = req.body;
+
+    if (!user_id || !coaching_post_id) {
+      return res
+        .status(400)
+        .json({ message: "user_id and coaching_post_id are required" });
+    }
+
+    const [existing] = await database.query(
+      "SELECT `like` FROM coaching_post_likes WHERE coaching_post_id = ? AND user_id = ?",
+      [coaching_post_id, user_id]
+    );
+
+    let message = "";
+    let liked = false;
+
+    if (existing.length > 0) {
+      const newLikeValue = existing[0].like ? 0 : 1;
+
+      await database.query(
+        "UPDATE coaching_post_likes SET `like` = ?, updated_at = NOW() WHERE coaching_post_id = ? AND user_id = ?",
+        [newLikeValue, coaching_post_id, user_id]
+      );
+
+      message = newLikeValue
+        ? "Post liked successfully"
+        : "Post unliked successfully";
+      liked = !!newLikeValue;
+    } else {
+      await database.query(
+        "INSERT INTO coaching_post_likes (coaching_post_id, user_id, `like`) VALUES (?, ?, 1)",
+        [coaching_post_id, user_id]
+      );
+
+      message = "Post liked successfully";
+      liked = true;
+    }
+
+    const [result] = await database.query(
+      "SELECT COUNT(*) AS total_likes FROM coaching_post_likes WHERE coaching_post_id = ? AND `like` = 1",
+      [coaching_post_id]
+    );
+
+    res.status(200).json({
+      message,
+      liked,
+      total_likes: result[0].total_likes,
+    });
+  } catch (error) {
+    console.error("Toggle like error:", error);
+    res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+
+exports.get_like_status = async (req, res) => {
+  try {
+    const { coaching_post_id, user_id } = req.query;
+
+    if (!coaching_post_id) {
+      return res.status(400).json({ message: "coaching_post_id is required" });
+    }
+
+    const [likeCount] = await database.query(
+      "SELECT COUNT(*) AS total_likes FROM coaching_post_likes WHERE coaching_post_id = ? AND `like` = 1",
+      [coaching_post_id]
+    );
+
+    let liked = false;
+    if (user_id) {
+      const [userLike] = await database.query(
+        "SELECT `like` FROM coaching_post_likes WHERE coaching_post_id = ? AND user_id = ?",
+        [coaching_post_id, user_id]
+      );
+      liked = userLike.length > 0 && userLike[0].like === 1;
+    }
+
+    res.status(200).json({
+      coaching_post_id,
+      liked,
+      total_likes: likeCount[0].total_likes,
+    });
+  } catch (error) {
+    console.error("Get coaching like status error:", error);
+    res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+    });
   }
 };

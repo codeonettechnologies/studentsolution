@@ -1,35 +1,36 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const {createPost,getPost,getPostsByUserId,deletePost, addLike, addComment,getComment,deleteComment} = require('./controllers/coachingControllers');
+const {
+  createPost,
+  getPost,
+  getPostsByUserId,
+  deletePost,
+  toggle_like,
+  addComment,
+  getComment,
+  deleteComment,
+  get_like_status,
+} = require("./controllers/coachingControllers");
 
-const upload = require('../../middlewares/upload');
+const upload = require("../../middlewares/upload");
 
 // -------------------- Coaching Posts --------------------
 
 // POST - Create coaching post
-router.post('/create', upload.single('image_url'),createPost);
-
-// GET - Get all posts
-router.get('/get',getPost);
-
-// GET - Get posts by user ID
-router.get('/get/user/:userId',getPostsByUserId);
-
-// DELETE - Delete post
-router.delete('/:id',deletePost);
+router.post("/post/create", upload.single("image"), createPost);
+router.get("/post/get", getPost);
+router.get("/post/:id", getPostsByUserId);
+router.delete("/post/:id", deletePost);
 
 // -------------------- Likes --------------------
 
-router.post('/like',addLike);
+router.post("/like/unlike", toggle_like);
+router.get("/getlike", get_like_status);
 // -------------------- Comments --------------------
 
 // Add new comment
-router.post('/comment',addComment);
-
-// Get all comments (or by coaching_id via query param ?coaching_id=...)
-router.get('/comment', getComment);
-
-// Delete comment by ID
-router.delete('/comment/:id',deleteComment);
+router.post("/comment", addComment);
+router.get("/:id/comments", getComment);
+router.delete("/comment/:id", deleteComment);
 
 module.exports = router;

@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaPen } from "react-icons/fa";
 import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
@@ -7,8 +7,25 @@ import "cropperjs/dist/cropper.css";
 export default function Register() {
   const [image, setImage] = useState(null);
   const [cropData, setCropData] = useState(null);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    mobile_number: "",
+    password: "",
+    college: "RGPV",
+    city: "Indore",
+    college_year: "1st Year",
+    role: "Student",
+    profession: "Engineer",
+  });
+
   const cropperRef = useRef(null);
-  const fileInputRef = useRef(null); 
+  const fileInputRef = useRef(null);
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -49,11 +66,49 @@ export default function Register() {
 
   const handleReupload = () => setCropData(null);
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!formData.name || !formData.email || !formData.password) {
+      alert("Please fill all required fields!");
+      return;
+    }
+
+    try {
+      const formToSend = new FormData();
+
+      for (const key in formData) {
+        formToSend.append(key, formData[key]);
+      }
+      if (cropData) {
+        const blob = await (await fetch(cropData)).blob();
+        formToSend.append("profile_image", blob, "profile.png");
+      }
+
+      const response = await fetch("http://localhost:5000/api/auth/register", {
+        method: "POST",
+        body: formToSend,
+      });
+
+      const data = await response.json();
+      console.log("Register Response:", data);
+
+      if (data.success) {
+        alert("✅ Registration Successful!");
+       navigate("/");
+      } else {
+        alert(data.message || "Registration failed.");
+      }
+    } catch (err) {
+      console.error("Error:", err);
+      alert("Something went wrong. Check console.");
+    }
+  };
+
   return (
     <div className="register-wrapper">
       <div className="register-frm">
         <h1>Create Account</h1>
-
         <div className="upload-circle">
           {cropData ? (
             <div className="circle-preview">
@@ -67,7 +122,7 @@ export default function Register() {
               <Cropper
                 ref={cropperRef}
                 src={image}
-                aspectRatio={NaN} 
+                aspectRatio={NaN}
                 viewMode={1}
                 background={false}
                 guides={true}
@@ -105,48 +160,107 @@ export default function Register() {
             </>
           )}
         </div>
+        <form onSubmit={handleSubmit}>
+          <label>Name:</label>
+          <input
+            type="text"
+            name="name"
+            placeholder="Type your name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+          />
 
-        <label>Name:</label>
-        <input type="text" placeholder="Type your name" required />
-        <label>Email:</label>
-        <input type="email" placeholder="Type your email" required />
-        <label>Mobile Number</label>
-        <input type="number" placeholder="Type your mobile number" required />
-        <label>Password:</label>
-        <input type="password" placeholder="Type your password" required />
-        <label>College:</label>
-        <input type="text" placeholder="Type your college" required />
-        <label>City:</label>
-        <select>
-          <option value="indore">Indore</option>
-          <option value="bhopal">Bhopal</option>
-          <option value="dewas">Dewas</option>
-          <option value="jabalpur">Jabalpur</option>
-        </select>
-        <label>Field:</label>
-        <select>
-          <option value="engineer">Engineer</option>
-          <option value="doctor">Doctor</option>
-          <option value="lawyer">Lawyer</option>
-          <option value="banker">Banker</option>
-          <option value="pharmacist">Pharmacist</option>
-        </select>
-        <label>Year:</label>
-        <select>
-          <option value="1st">1 year</option>
-          <option value="2nd">2 year</option>
-          <option value="3rd">3 year</option>
-          <option value="4th">4 year</option>
-        </select>
-        <label>Type:</label>
-        <select>
-          <option value="Student">Student</option>
-          <option value="HR">HR</option>
-        </select>
+          <label>Email:</label>
+          <input
+            type="email"
+            name="email"
+            placeholder="Type your email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
 
-        <button className="register-frm-btn">Submit</button>
+          <label>Mobile Number:</label>
+          <input
+            type="number"
+            name="mobile_number"
+            placeholder="Type your mobile number"
+            value={formData.mobile_number}
+            onChange={handleChange}
+            required
+          />
+
+          <label>Password:</label>
+          <input
+            type="password"
+            name="password"
+            placeholder="Type your password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+
+          <label>College:</label>
+          <select
+            name="college"
+            value={formData.college}
+            onChange={handleChange}
+          >
+            <option value="RGPV">Acropolish College</option>
+            <option value="DAVV">Chameli Devi College</option>
+            <option value="IPS">IPS College</option>
+            <option value="LNCT">LNCT College</option>
+            <option value="MIT">MIT College</option>
+          </select>
+
+          <label>City:</label>
+          <select name="city" value={formData.city} onChange={handleChange}>
+            <option value="Indore">Indore</option>
+            <option value="Bhopal">Bhopal</option>
+            <option value="Ujjain">Ujjain</option>
+            <option value="Gwalior">Gwalior</option>
+          </select>
+
+          <label>Year:</label>
+          <select
+            name="college_year"
+            value={formData.college_year}
+            onChange={handleChange}
+          >
+            <option value="1st Year">1st Year</option>
+            <option value="2nd Year">2nd Year</option>
+            <option value="3rd Year">3rd Year</option>
+            <option value="4th Year">4th Year</option>
+          </select>
+
+          <label>Profession:</label>
+          <select
+            name="profession"
+            value={formData.profession}
+            onChange={handleChange}
+          >
+            <option value="Engineer">Engineer</option>
+            <option value="Doctor">Doctor</option>
+            <option value="Banker">Banker</option>
+            <option value="Pharmacist">Pharmacist</option>
+            <option value="Lawyer">Lawyer</option>
+          </select>
+
+          <label>Role:</label>
+          <select name="role" value={formData.role} onChange={handleChange}>
+            <option value="Student">Student</option>
+            <option value="HR">HR</option>
+            <option value="Admin">Admin</option>
+          </select>
+
+          <button type="submit" className="register-frm-btn">
+            Submit
+          </button>
+        </form>
+
         <p>
-          If you already have an account? <Link to="/login">Login Here</Link>
+          Already have an account? <Link to="/login">Login Here</Link>
         </p>
       </div>
     </div>

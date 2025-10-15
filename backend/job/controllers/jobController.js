@@ -5,7 +5,7 @@ exports.job_post = (req, res) => {
   try {
     const { user_id, content } = req.body;
     const image_url = req.file ? req.file.filename : null;
-
+  
     if (!user_id) {
       return res.status(400).json({ message: "user_id is required" });
     }
@@ -36,7 +36,17 @@ exports.job_post = (req, res) => {
 // get all post
 exports.get_all_job_posts = (req, res) => {
   try {
-    const sql = "SELECT * FROM job_post ORDER BY id DESC"; // latest posts first
+    const sql = `
+      SELECT 
+        jp.*, 
+        u.name AS user_name, 
+        u.profile_image AS profile_image,
+        u.college AS user_college, 
+        u.college_year AS user_year
+      FROM job_post jp
+      JOIN users u ON jp.user_id = u.id
+      ORDER BY jp.id DESC
+    `;
 
     db.query(sql, (err, results) => {
       if (err) {
@@ -52,22 +62,21 @@ exports.get_all_job_posts = (req, res) => {
       });
     });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Internal server error", error: error.message });
+    res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
+
 
 // by id
 
 exports.get_job_post_by_id = (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.params; // here id = user_id
     if (!id) {
-      return res.status(400).json({ message: "Job post id is required" });
+      return res.status(400).json({ message: "User id is required" });
     }
 
-    const sql = "SELECT * FROM job_post WHERE id = ?";
+    const sql = "SELECT * FROM job_post WHERE user_id = ? ORDER BY created_at DESC";
 
     db.query(sql, [id], (err, results) => {
       if (err) {
@@ -78,24 +87,26 @@ exports.get_job_post_by_id = (req, res) => {
       }
 
       if (results.length === 0) {
-        return res.status(404).json({ message: "Job post not found" });
+        return res.status(404).json({ message: "No job posts found for this user" });
       }
 
       res.status(200).json({
-        message: "Job post fetched",
-        data: results[0],
+        message: "User job posts fetched",
+        data: results,
       });
     });
   } catch (error) {
+    console.error("Internal server error:", error);
     res
       .status(500)
       .json({ message: "Internal server error", error: error.message });
   }
 };
 
+
 exports.delete_job_post = (req, res) => {
   try {
-    const { id } = req.params; // get id from URL
+    const { id } = req.params; 
 
     if (!id) {
       return res.status(400).json({ message: "Job post id is required" });
@@ -124,114 +135,14 @@ exports.delete_job_post = (req, res) => {
   }
 };
 
-//------------------------------------------------------------------------------------
-
-exports.add_like = (req, res) => {
-  try {
-    const { user_id, job_post_id } = req.body;
-
-    if (!user_id || !job_post_id) {
-      return res
-        .status(400)
-        .json({ message: "user_id and job_post_id are required" });
-    }
-
-    const sql =
-      "INSERT INTO job_post_likes (job_post_id, user_id) VALUES (?, ?)";
-
-    db.query(sql, [job_post_id, user_id], (err, result) => {
-      if (err) {
-        if (err.code === "ER_DUP_ENTRY") {
-          return res
-            .status(400)
-            .json({ message: "You already liked this post" });
-        }
-        console.error("Database error:", err);
-        return res
-          .status(500)
-          .json({ message: "Database error", error: err.message });
-      }
-
-      res.status(201).json({ message: "Post liked successfully" });
-    });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Internal server error", error: error.message });
-  }
-};
-
-exports.remove_like = (req, res) => {
-  try {
-    const { user_id, job_post_id } = req.body;
-
-    if (!user_id || !job_post_id) {
-      return res
-        .status(400)
-        .json({ message: "user_id and job_post_id are required" });
-    }
-
-    const sql =
-      "DELETE FROM job_post_likes WHERE job_post_id = ? AND user_id = ?";
-
-    db.query(sql, [job_post_id, user_id], (err, result) => {
-      if (err) {
-        console.error("Database error:", err);
-        return res
-          .status(500)
-          .json({ message: "Database error", error: err.message });
-      }
-
-      if (result.affectedRows === 0) {
-        return res.status(404).json({ message: "Like not found" });
-      }
-
-      res.status(200).json({ message: "Like removed successfully" });
-    });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Internal server error", error: error.message });
-  }
-};
-
-//---------------------------------------------------------
-
-exports.get_likes = (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const sql = `
-      SELECT COUNT(*) AS like_count, GROUP_CONCAT(user_id) AS users
-      FROM job_post_likes
-      WHERE job_post_id = ?
-    `;
-
-    db.query(sql, [id], (err, results) => {
-      if (err) {
-        console.error("Database error:", err);
-        return res
-          .status(500)
-          .json({ message: "Database error", error: err.message });
-      }
-
-      res.status(200).json({
-        message: "Likes fetched successfully",
-        data: results[0],
-      });
-    });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Internal server error", error: error.message });
-  }
-};
 
 //------------------------comment_text---------------------------------------
 
 exports.add_comment = (req, res) => {
   try {
     const { user_id, job_post_id, comment_text } = req.body;
+
+    
 
     if (!user_id || !job_post_id || !comment_text) {
       return res.status(400).json({
@@ -283,7 +194,10 @@ exports.get_comments = (req, res) => {
 
       res
         .status(200)
-        .json({ message: "Comments fetched successfully", data: results });
+        .json({ 
+          message: "Comments fetched successfully",
+           data: results 
+          });
     });
   } catch (error) {
     res
@@ -316,5 +230,103 @@ exports.delete_comment = (req, res) => {
     res
       .status(500)
       .json({ message: "Internal server error", error: error.message });
+  }
+};
+
+
+
+//------------like----------------------------
+const database = connectDB().promise();
+
+exports.toggle_like = async (req, res) => {
+  try {
+    const { user_id, job_post_id } = req.body;
+
+    if (!user_id || !job_post_id) {
+      return res.status(400).json({ message: "user_id and job_post_id are required" });
+    }
+
+    const [existing] = await database.query(
+      "SELECT `like` FROM job_post_likes WHERE job_post_id = ? AND user_id = ?",
+      [job_post_id, user_id]
+    );
+
+    let message = "";
+    let liked = false;
+
+    if (existing.length > 0) {
+    
+      const newLikeValue = existing[0].like ? 0 : 1;
+
+      await database.query(
+        "UPDATE job_post_likes SET `like` = ?, updated_at = NOW() WHERE job_post_id = ? AND user_id = ?",
+        [newLikeValue, job_post_id, user_id]
+      );
+
+      message = newLikeValue ? "Post liked successfully" : "Post unliked successfully";
+      liked = !!newLikeValue;
+    } else {
+    
+      await database.query(
+        "INSERT INTO job_post_likes (job_post_id, user_id, `like`) VALUES (?, ?, 1)",
+        [job_post_id, user_id]
+      );
+
+      message = "Post liked successfully";
+      liked = true;
+    }
+
+
+    const [result] = await database.query(
+      "SELECT COUNT(*) AS total_likes FROM job_post_likes WHERE job_post_id = ? AND `like` = 1",
+      [job_post_id]
+    );
+
+    res.status(200).json({
+      message,
+      liked,
+      total_likes: result[0].total_likes,
+    });
+
+  } catch (error) {
+    console.error("Toggle like error:", error);
+    res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+};
+
+
+
+exports.get_like_status = async (req, res) => {
+  try {
+    const { job_post_id, user_id } = req.query;
+
+    if (!job_post_id) {
+      return res.status(400).json({ message: "job_post_id is required" });
+    }
+
+    const [likeCount] = await database.query(
+      "SELECT COUNT(*) AS total_likes FROM job_post_likes WHERE job_post_id = ? AND `like` = 1",
+      [job_post_id]
+    );
+
+
+    let liked = false;
+    if (user_id) {
+      const [userLike] = await database.query(
+        "SELECT * FROM job_post_likes WHERE job_post_id = ? AND user_id = ? AND `like` = 1",
+        [job_post_id, user_id]
+      );
+      liked = userLike.length > 0;
+    }
+
+    res.status(200).json({
+      job_post_id,
+      liked,
+      total_likes: likeCount[0].total_likes
+    });
+
+  } catch (error) {
+    console.error("Get like status error:", error);
+    res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
