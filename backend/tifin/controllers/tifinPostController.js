@@ -2,17 +2,18 @@ const connectDB = require("../../config/database");
 const db = connectDB();
 const database = connectDB().promise();
 
-exports.tifin_post = (req, res) => {
+exports.tiffin_post = (req, res) => {
   try {
     const { user_id, content } = req.body;
     const image_url = req.file ? req.file.filename : null;
-
+ console.log(image_url);
+ 
     if (!user_id) {
       return res.status(400).json({ message: "user_id is required" });
     }
 
     const sql =
-      "INSERT INTO tifin_post (user_id, image_url , content) VALUES (?, ? , ?)";
+      "INSERT INTO tiffin_post (user_id, image_url , content) VALUES (?, ? , ?)";
 
     db.query(sql, [user_id, image_url, content], (err, result) => {
       if (err) {
@@ -23,7 +24,7 @@ exports.tifin_post = (req, res) => {
       }
 
       res.status(201).json({
-        message: "tifin post created",
+        message: "tiffin post created",
         id: result.insertId,
       });
     });
@@ -34,7 +35,7 @@ exports.tifin_post = (req, res) => {
   }
 };
 
-exports.get_all_tifin_posts = (req, res) => {
+exports.get_all_tiffin_posts = (req, res) => {
   try {
     const sql = `
       SELECT
@@ -43,7 +44,7 @@ exports.get_all_tifin_posts = (req, res) => {
         u.profile_image AS profile_image,
         u.college AS user_college,
         u.college_year AS user_year
-      FROM tifin_post tp
+      FROM tiffin_post tp
       JOIN users u ON tp.user_id = u.id
       ORDER BY tp.id DESC
     `;
@@ -57,7 +58,7 @@ exports.get_all_tifin_posts = (req, res) => {
       }
 
       res.status(200).json({
-        message: "All tifin posts fetched",
+        message: "All tiffin posts fetched",
         data: results,
       });
     });
@@ -68,7 +69,7 @@ exports.get_all_tifin_posts = (req, res) => {
   }
 };
 
-exports.getTifinPostsByUserId = async (req, res) => {
+exports.getTiffinPostsByUserId = async (req, res) => {
   const { userId } = req.params;
 
   // Manual validation
@@ -81,7 +82,7 @@ exports.getTifinPostsByUserId = async (req, res) => {
 
   try {
     const [rows] = await database.execute(
-      "SELECT * FROM tifin_post WHERE user_id = ?",
+      "SELECT * FROM tiffin_post WHERE user_id = ?",
       [userId]
     );
 
@@ -90,7 +91,7 @@ exports.getTifinPostsByUserId = async (req, res) => {
       data: rows,
     });
   } catch (error) {
-    console.error("Error fetching tifin posts:", error);
+    console.error("Error fetching tiffin posts:", error);
     res.status(500).json({
       success: false,
       message: "Server error",
@@ -98,15 +99,15 @@ exports.getTifinPostsByUserId = async (req, res) => {
   }
 };
 
-exports.delete_tifin_post = (req, res) => {
+exports.delete_tiffin_post = (req, res) => {
   try {
     const { id } = req.params;
 
     if (!id) {
-      return res.status(400).json({ message: "tifin post id is required" });
+      return res.status(400).json({ message: "tiffin post id is required" });
     }
 
-    const sql = "DELETE FROM tifin_post WHERE id = ?";
+    const sql = "DELETE FROM tiffin_post WHERE id = ?";
 
     db.query(sql, [id], (err, result) => {
       if (err) {
@@ -117,10 +118,10 @@ exports.delete_tifin_post = (req, res) => {
       }
 
       if (result.affectedRows === 0) {
-        return res.status(404).json({ message: "tifin post not found" });
+        return res.status(404).json({ message: "tiffin post not found" });
       }
 
-      res.status(200).json({ message: "tifin post deleted successfully" });
+      res.status(200).json({ message: "tiffin post deleted successfully" });
     });
   } catch (error) {
     res
@@ -137,18 +138,18 @@ exports.delete_tifin_post = (req, res) => {
  
 exports.post_comment = (req, res) => {
   try {
-    const { user_id, tifin_post_id, comment_text } = req.body;
+    const { user_id, tiffin_post_id, comment_text } = req.body;
  
-    if (!user_id || !tifin_post_id || !comment_text) {
+    if (!user_id || !tiffin_post_id || !comment_text) {
       return res.status(400).json({
-        message: "user_id, tifin_post_id and comment_text are required",
+        message: "user_id, tiffin_post_id and comment_text are required",
       });
     }
  
     const sql =
-      "INSERT INTO tifin_post_comment (tifin_post_id, user_id, comment_text) VALUES (?, ?, ?)";
+      "INSERT INTO tiffin_post_comment (tiffin_post_id, user_id, comment_text) VALUES (?, ?, ?)";
  
-    db.query(sql, [tifin_post_id, user_id, comment_text], (err, result) => {
+    db.query(sql, [tiffin_post_id, user_id, comment_text], (err, result) => {
       if (err) {
         console.error("Database error:", err);
         return res
@@ -173,9 +174,9 @@ exports.get_comments = (req, res) => {
  
     const sql = `
       SELECT c.id, c.comment_text, c.created_at, u.id AS user_id, u.name AS user_name
-      FROM tifin_post_comment c
+      FROM tiffin_post_comment c
       JOIN users u ON c.user_id = u.id
-      WHERE c.tifin_post_id = ?
+      WHERE c.tiffin_post_id = ?
       ORDER BY c.created_at ASC
     `;
  
@@ -205,7 +206,7 @@ exports.delete_comment = (req, res) => {
   try {
     const { id } = req.params;
  
-    const sql = "DELETE FROM tifin_post_comment WHERE id = ?";
+    const sql = "DELETE FROM tiffin_post_comment WHERE id = ?";
  
     db.query(sql, [id], (err, result) => {
       if (err) {
@@ -233,15 +234,15 @@ exports.delete_comment = (req, res) => {
 
 exports.toggle_like = async (req, res) => {
   try {
-    const { user_id, tifin_post_id } = req.body;
+    const { user_id, tiffin_post_id } = req.body;
  
-    if (!user_id || !tifin_post_id) {
-      return res.status(400).json({ message: "user_id and tifin_post_id are required" });
+    if (!user_id || !tiffin_post_id) {
+      return res.status(400).json({ message: "user_id and tiffin_post_id are required" });
     }
  
     const [existing] = await database.query(
-      "SELECT `like` FROM tifin_post_likes WHERE tifin_post_id = ? AND user_id = ?",
-      [tifin_post_id, user_id]
+      "SELECT `like` FROM tiffin_post_likes WHERE tiffin_post_id = ? AND user_id = ?",
+      [tiffin_post_id, user_id]
     );
  
     let message = "";
@@ -252,8 +253,8 @@ exports.toggle_like = async (req, res) => {
       const newLikeValue = existing[0].like ? 0 : 1;
  
       await database.query(
-        "UPDATE tifin_post_likes SET `like` = ?, updated_at = NOW() WHERE tifin_post_id = ? AND user_id = ?",
-        [newLikeValue, tifin_post_id, user_id]
+        "UPDATE tiffin_post_likes SET `like` = ?, updated_at = NOW() WHERE tiffin_post_id = ? AND user_id = ?",
+        [newLikeValue, tiffin_post_id, user_id]
       );
  
       message = newLikeValue ? "Post liked successfully" : "Post unliked successfully";
@@ -261,8 +262,8 @@ exports.toggle_like = async (req, res) => {
     } else {
    
       await database.query(
-        "INSERT INTO tifin_post_likes (tifin_post_id, user_id, `like`) VALUES (?, ?, 1)",
-        [tifin_post_id, user_id]
+        "INSERT INTO tiffin_post_likes (tiffin_post_id, user_id, `like`) VALUES (?, ?, 1)",
+        [tiffin_post_id, user_id]
       );
  
       message = "Post liked successfully";
@@ -271,8 +272,8 @@ exports.toggle_like = async (req, res) => {
  
  
     const [result] = await database.query(
-      "SELECT COUNT(*) AS total_likes FROM tifin_post_likes WHERE tifin_post_id = ? AND `like` = 1",
-      [tifin_post_id]
+      "SELECT COUNT(*) AS total_likes FROM tiffin_post_likes WHERE tiffin_post_id = ? AND `like` = 1",
+      [tiffin_post_id]
     );
  
     res.status(200).json({
@@ -290,16 +291,16 @@ exports.toggle_like = async (req, res) => {
  
  exports.get_like_status = async (req, res) => {
   try {
-    const { tifin_post_id, user_id } = req.query;
+    const { tiffin_post_id, user_id } = req.query;
 
-    if (!tifin_post_id) {
-      return res.status(400).json({ message: "tifin_post_id is required" });
+    if (!tiffin_post_id) {
+      return res.status(400).json({ message: "tiffin_post_id is required" });
     }
 
 
     const [likeCount] = await database.query(
-      "SELECT COUNT(*) AS total_likes FROM tifin_post_likes WHERE tifin_post_id = ? AND `like` = 1",
-      [tifin_post_id]
+      "SELECT COUNT(*) AS total_likes FROM tiffin_post_likes WHERE tiffin_post_id = ? AND `like` = 1",
+      [tiffin_post_id]
     );
 
     let liked = false;
@@ -308,8 +309,8 @@ exports.toggle_like = async (req, res) => {
 
     if (user_id) {
       const [userLike] = await database.query(
-        "SELECT * FROM tifin_post_likes WHERE tifin_post_id = ? AND user_id = ? AND `like` = 1",
-        [tifin_post_id, user_id]
+        "SELECT * FROM tiffin_post_likes WHERE tiffin_post_id = ? AND user_id = ? AND `like` = 1",
+        [tiffin_post_id, user_id]
       );
       liked = userLike.length > 0;
 
@@ -324,7 +325,7 @@ exports.toggle_like = async (req, res) => {
     }
 
     res.status(200).json({
-      tifin_post_id,
+      tiffin_post_id,
       liked,
       total_likes: likeCount[0].total_likes,
       user: userInfo, // 🟩 user details included here

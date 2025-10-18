@@ -59,7 +59,7 @@ exports.getRepliesByAskId = async (req, res) => {
         tr.updated_at,
         u.name,
         u.profile_image,
-        u.type,
+        u.role,
         u.college
       FROM tiffin_reply tr
       JOIN users u ON tr.user_id = u.id
