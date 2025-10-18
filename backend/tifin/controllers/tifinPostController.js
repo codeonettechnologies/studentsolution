@@ -296,7 +296,7 @@ exports.toggle_like = async (req, res) => {
       return res.status(400).json({ message: "tifin_post_id is required" });
     }
 
-    // 🟩 Total likes
+
     const [likeCount] = await database.query(
       "SELECT COUNT(*) AS total_likes FROM tifin_post_likes WHERE tifin_post_id = ? AND `like` = 1",
       [tifin_post_id]
@@ -305,7 +305,7 @@ exports.toggle_like = async (req, res) => {
     let liked = false;
     let userInfo = null;
 
-    // 🟩 If user_id provided, get like status + user details
+
     if (user_id) {
       const [userLike] = await database.query(
         "SELECT * FROM tifin_post_likes WHERE tifin_post_id = ? AND user_id = ? AND `like` = 1",
@@ -313,7 +313,6 @@ exports.toggle_like = async (req, res) => {
       );
       liked = userLike.length > 0;
 
-      // 🟩 Fetch user details
       const [userDetails] = await database.query(
         "SELECT name, profile_image, college FROM users WHERE id = ?",
         [user_id]
