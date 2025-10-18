@@ -7,9 +7,8 @@ export default function PostForm({ onCancel, onPostCreated }) {
   const [loading, setLoading] = useState(false);
   const user = JSON.parse(localStorage.getItem("user"));
   const userId = user?.id;
-  console.log(user);
-
-  console.log(userId);
+  // console.log(user);
+  // console.log(userId);
 
   useEffect(() => {
     if (!file) return setPreview(null);
@@ -19,6 +18,7 @@ export default function PostForm({ onCancel, onPostCreated }) {
   }, [file]);
 
   const currentSection = localStorage.getItem("currentSection");
+console.log(currentSection);
 
   const handleSubmit = async () => {
     if (!content.trim() && !file) {
@@ -70,7 +70,7 @@ export default function PostForm({ onCancel, onPostCreated }) {
       <h4 className="post-form-title">Create New Post</h4>
 
       <div className="post-input-header">
-        <img
+        {/* <img
           src={
             user?.profile_image
               ? `http://localhost:5000/uploads/${user.profile_image}`
@@ -78,7 +78,7 @@ export default function PostForm({ onCancel, onPostCreated }) {
           }
           alt={user?.name || "user"}
           className="current-user-profile-logo"
-        />
+        /> */}
 
         <textarea
           placeholder="What's on your mind?"

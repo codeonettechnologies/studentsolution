@@ -1,10 +1,11 @@
-const connectDB = require("../../config/database");
-const db = connectDB();
+const connectDB = require("../../../config/database");
 
-exports.createTiffinAsk = async (req, res) => {
+const db = connectDB();
+exports.createCoachingAsk = async (req, res) => {
   try {
     const { content, user_id } = req.body;
-
+  console.log(req.body);
+  
     if (!content || !user_id) {
       return res.status(400).json({ message: "Content and user_id are required" });
     }
@@ -18,12 +19,12 @@ exports.createTiffinAsk = async (req, res) => {
       }
 
       // Insert question
-      const sql = "INSERT INTO tiffin_ask (user_id, content) VALUES (?, ?)";
+      const sql = "INSERT INTO coaching_ask (user_id, content) VALUES (?, ?)";
       db.query(sql, [user_id, content], (err, result) => {
         if (err) throw err;
         res.status(201).json({ 
-          message: "tiffin ask created successfully", 
-          tiffin_ask_id: result.insertId 
+          message: "Coaching ask created successfully", 
+          coaching_ask_id: result.insertId 
         });
       });
     });
@@ -35,25 +36,25 @@ exports.createTiffinAsk = async (req, res) => {
 };
 
 
-exports.getAllTiffinAsks = async (req, res) => {
+exports.getAllCoachingAsks = async (req, res) => {
   try {
     const sql = `
       SELECT 
-        ta.id,
-        ta.content,
-        ta.created_at,
-        ta.updated_at,
+        ca.id,
+        ca.content,
+        ca.created_at,
+        ca.updated_at,
         u.name,
         u.profile_image,
         u.role,
         u.college
-      FROM tiffin_ask ta
-      JOIN users u ON ta.user_id = u.id
-      ORDER BY ta.created_at DESC
+      FROM coaching_ask ca
+      JOIN users u ON ca.user_id = u.id
+      ORDER BY ca.created_at DESC
     `;
 
     db.query(sql, (err, results) => {
-      if (err) throw err;  // will be caught in catch
+      if (err) throw err;  
       res.json(results);
     });
   } catch (error) {

@@ -1,4 +1,4 @@
-const connectDB = require("../../config/database");
+const connectDB = require("../../../config/database");
 const db = connectDB();
 
 exports.createReply = async (req, res) => {
@@ -17,14 +17,14 @@ exports.createReply = async (req, res) => {
       }
 
       // Optional: check if question exists
-      db.query("SELECT * FROM job_ask WHERE id = ?", [ask_reply_id], (err, askResult) => {
+      db.query("SELECT * FROM coaching_ask WHERE id = ?", [ask_reply_id], (err, askResult) => {
         if (err) throw err;
         if (askResult.length === 0) {
           return res.status(400).json({ message: "Question does not exist" });
         }
 
         // Insert reply
-        const sql = "INSERT INTO job_reply (user_id, ask_reply_id, content) VALUES (?, ?, ?)";
+        const sql = "INSERT INTO coaching_reply (user_id, ask_reply_id, content) VALUES (?, ?, ?)";
         db.query(sql, [user_id, ask_reply_id, content], (err, result) => {
           if (err) throw err;
           res.status(201).json({ 
@@ -53,18 +53,18 @@ exports.getRepliesByAskId = async (req, res) => {
 
     const sql = `
       SELECT 
-        jr.id,
-        jr.content,
-        jr.created_at,
-        jr.updated_at,
+        cr.id,
+        cr.content,
+        cr.created_at,
+        cr.updated_at,
         u.name,
         u.profile_image,
         u.role,
         u.college
-      FROM job_reply jr
-      JOIN users u ON jr.user_id = u.id
-      WHERE jr.ask_reply_id = ?
-      ORDER BY jr.created_at ASC
+      FROM coaching_reply cr
+      JOIN users u ON cr.user_id = u.id
+      WHERE cr.ask_reply_id = ?
+      ORDER BY cr.created_at ASC
     `;
 
     db.query(sql, [ask_reply_id], (err, results) => {

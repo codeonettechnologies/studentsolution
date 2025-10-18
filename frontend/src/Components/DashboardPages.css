@@ -3,7 +3,7 @@
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f0f2f5;
   width: 100%;
-  max-width: 780px;
+  max-width: 800px;
   padding: 20px;
   box-sizing: border-box;
   justify-self: center;
@@ -129,31 +129,81 @@
   padding: 20px;
 }
 .profile-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 15px;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 10px !important;
+  width: fit-content;
 }
+
+
+
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.post-options {
+  position: relative;
+}
+
+.three-dots-button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 25px;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  z-index: 10;
+  padding: 5px;
+  border-radius: 4px;
+}
+
+.delete-button {
+  background: none;
+  border: none;
+  color: red;
+  cursor: pointer;
+}
+
+
+
+
+
 .profile-logo {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-right: 15px;
-  border: 2px solid #e0e0e0;
+  width: 55px !important;
+  height: 55px !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+  flex-shrink: 0 !important;
 }
 .profile-info {
-  display: flex;
-  flex-direction: column;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  line-height: 1.3 !important;
 }
 .profile-name {
-  margin: 0;
-  font-size: 1.1em;
-  color: #212529;
+  margin: 0 !important;
+  margin-top: 15px !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
 }
 .college-name {
-  font-size: 0.9em;
-  color: #6c757d;
+  margin: 2px 0 0 !important;
+  font-size: 14px !important;
+  color: #777 !important;
 }
+
 .inner-content {
   margin-bottom: 15px;
 }
@@ -165,12 +215,17 @@
   white-space: pre-wrap;
   word-wrap: break-word;
 }
-.post-image {
-  max-width: 100%;
-  height: auto;
-  border-radius: 6px;
+.image-container {
+  width: 100%;
+  max-width: 1200px;
   margin-top: 10px;
-  display: block;
+}
+.image-container img {
+  width: 100%;
+  height: 350px;
+  object-fit: cover;
+  border-radius: 10px;
+  /* object-fit: contain; */
 }
 .post-actions {
   display: flex;
@@ -196,27 +251,80 @@
   color: #007bff;
   background-color: #f8f9fa;
 }
-.comments-section {
-  padding-top: 10px;
-  border-top: 1px solid #e9ecef;
-  margin-top: 10px;
+.mmodal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
 }
-.comment-text {
-  margin: 5px 0;
-  padding: 5px 10px;
-  background-color: #f7f7f7;
-  border-radius: 4px;
-  font-size: 0.9em;
-  line-height: 1.4;
-  color: #343a40;
+.mmodal-content {
+  background: #fff;
+  width: 90%;
+  max-width: 450px;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
+  position: relative;
+  animation: fadeIn 0.3s ease;
 }
-.comment-text strong {
-  color: #212529;
-  margin-right: 5px;
+.mmodal-content h3 {
+  margin-bottom: 10px;
+  text-align: center;
+  color: #333;
 }
+.comment-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+.comment-input-field {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+.comment-submit-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.comments-list {
+  max-height: 250px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+.comments-list p {
+  background: #f9f9f9;
+  padding: 8px;
+  border-radius: 6px;
+  margin-bottom: 5px;
+}
+.close-button {
+  position: absolute;
+  right: 12px;
+  top: 10px;
+  border: none;
+  background: transparent;
+  font-size: 18px;
+  cursor: pointer;
+  color: #666;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
 @media (max-width: 768px) {
   .main-content-area {
     padding: 15px;
+    margin-left: 0;
   }
   .tab-button {
     padding: 12px 15px;
@@ -258,6 +366,7 @@
 @media (max-width: 480px) {
   .main-content-area {
     padding: 10px;
+    margin-left: 0;
   }
   .profile-logo,
   .current-user-profile-logo {
@@ -317,6 +426,7 @@
   border: none;
   cursor: pointer;
   display: flex;
+  margin-right: 25px;
   align-items: center;
   justify-content: center;
   transition: background-color 0.2s, transform 0.2s;
@@ -324,38 +434,11 @@
 }
 .create-post-button:hover {
   background-color: #0056b3;
-  transform: rotate(90deg);
 }
 .plus-icon {
   font-size: 24px;
   font-weight: 300;
   line-height: 1;
-}
-.create-post-form-section {
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
-  padding: 20px;
-  margin-bottom: 20px;
-  border: 1px solid #e0e0e0;
-}
-.post-form-title {
-  margin-top: 0;
-  margin-bottom: 15px;
-  color: #333;
-  font-weight: 600;
-}
-.cancel-button {
-  background-color: #6c757d !important;
-}
-.cancel-button:hover {
-  background-color: #5a6268 !important;
-}
-.file-status {
-  font-size: 0.9em;
-  color: #28a745;
-  margin-right: auto;
-  padding-left: 10px;
 }
 @media (max-width: 768px) {
   .feed-header-bar {
@@ -370,6 +453,26 @@
     width: 36px;
     height: 36px;
   }
+}
+.create-post-form-section {
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid #e0e0e0;
+}
+.post-form-title {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #333;
+  font-weight: 600;
+  align-items: center;
+  justify-self: center;
+}
+.cancel-button {
+  background-color: #6c757d !important;
+}
+.cancel-button:hover {
+  background-color: #5a6268 !important;
 }
 .modal-overlay {
   position: fixed;
@@ -394,8 +497,8 @@
 }
 .modal-close-button {
   position: absolute;
-  top: 10px;
-  right: 15px;
+  top: 25px;
+  right: 35px;
   background: none;
   border: none;
   font-size: 28px;
@@ -530,7 +633,6 @@
   border-radius: 8px;
   overflow: hidden;
 }
-
 .post-image-preview {
   max-width: 100%;
   height: auto;

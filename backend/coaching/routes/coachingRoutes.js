@@ -17,4 +17,18 @@ router.post("/comment", addComment);
 router.get("/:id/comments", getComment);
 router.delete("/comment/:id", deleteComment);
 
+
+
+//-----------------------------coaching aks --------------------------
+const {createCoachingAsk ,getAllCoachingAsks} = require("./controllers/coachingAskController")
+router.post("/coachingAsk", createCoachingAsk);
+router.get("/coachingAskGet", getAllCoachingAsks);
+
+
+//------------------------coaching reply------------------------
+//-----------------------------coaching aks --------------------------
+const {createReply ,getRepliesByAskId} = require("./controllers/coachingReplyController")
+router.post("/coachingReply", createReply);
+router.get("/:ask_reply_id", getRepliesByAskId);
+
 module.exports = router;

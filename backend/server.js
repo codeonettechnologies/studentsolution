@@ -35,7 +35,7 @@ app.use("/coaching", coachingRoutes);
 
 // job
 app.use("/job", jobPostRoutes);
-app.use("/tifin", tifnRoutes);
+app.use("/tiffin", tifnRoutes);
 
 app.use((req, res, next) => {
   req.db = connectDB;

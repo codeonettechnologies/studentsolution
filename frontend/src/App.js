@@ -8,6 +8,8 @@ import Dashboard from "./Components/Dashboard";
 import CommonContent from "./Components/Common";
 import Job from "./Components/Job";
 import Coaching from "./Components/Coching";
+import Tiffin from "./Components/Tiffin";
+import Mypostask from "./Components/Mypostask";
 
 function App() {
   return (
@@ -21,6 +23,8 @@ function App() {
             <Route path="common" element={<CommonContent />} /> 
             <Route path="job" element={<Job />} />
             <Route path="coaching" element={<Coaching />} />
+            <Route path="tiffin" element={<Tiffin />} />
+            <Route path="mypostask" element={<Mypostask />} />
           </Route>
         </Routes>
       </Router>

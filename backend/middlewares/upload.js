@@ -58,14 +58,14 @@ const storage = multer.diskStorage({
       folder = "uploads/job_posts";
     } else if (req.baseUrl.includes("/coaching")) {
       folder = "uploads/coaching_posts";
-    } else if (req.baseUrl.includes("/tifin")) {
-      folder = "uploads/tifin_posts";
+    } else if (req.baseUrl.includes("/tiffin")) {
+      folder = "uploads/tiffin_posts";
     } else if (req.body.section === "job") {
       folder = "uploads/job_posts";
     } else if (req.body.section === "coaching") {
       folder = "uploads/coaching_posts";
-    } else if (req.body.section === "tifin") {
-      folder = "uploads/tifin_posts";
+    } else if (req.body.section === "tiffin") {
+      folder = "uploads/Tiffin_posts";
     }
 
     if (!fs.existsSync(folder)) {
