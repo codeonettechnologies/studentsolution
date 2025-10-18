@@ -10,7 +10,8 @@ const authRoutes = require("./authController/authRoutes");
 const jobPostRoutes = require("./job/routes/jobRoute");
 // coaching route
 const coachingRoutes = require("./coaching/routes/coachingRoutes");
-
+// tifin route 
+const tifnRoutes = require("./tifin/routes/tifinRoute")
 dotenv.config();
 const app = express();
 app.use(
@@ -34,6 +35,7 @@ app.use("/coaching", coachingRoutes);
 
 // job
 app.use("/job", jobPostRoutes);
+app.use("/tifin", tifnRoutes);
 
 app.use((req, res, next) => {
   req.db = connectDB;
