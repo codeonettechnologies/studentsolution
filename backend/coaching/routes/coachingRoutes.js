@@ -1,17 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const {
-  createPost,
-  getPost,
-  getPostsByUserId,
-  deletePost,
-  toggle_like,
-  addComment,
-  getComment,
-  deleteComment,
-  get_like_status,
-} = require("./controllers/coachingControllers");
-
 const upload = require("../../middlewares/upload");
 
 // -------------------- Coaching Posts --------------------
@@ -22,10 +10,6 @@ router.get("/post/get", getPost);
 router.get("/post/:id", getPostsByUserId);
 router.delete("/post/:id", deletePost);
 
-// -------------------- Likes --------------------
-
-router.post("/like/unlike", toggle_like);
-router.get("/getlike", get_like_status);
 // -------------------- Comments --------------------
 
 // Add new comment
