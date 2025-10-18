@@ -30,4 +30,13 @@ router.delete("/comment/:id", delete_comment);
 router.post("/like/unlike", toggle_like);
 router.get("/getlike", get_like_status);
 
+//------------------job ask routes ------------------------------------- 
+const {createTiffinAsk ,getAllTiffinAsks} = require("../controllers/tiffinAskController")
+router.post("/tiffinAks", createTiffinAsk);
+router.get("/tiffinAskGet", getAllTiffinAsks);
+
+const {createReply ,getRepliesByAskId} = require("../controllers/tiffinReplyController")
+router.post("/tiffinReply" , createReply)
+router.get("/:ask_reply_id", getRepliesByAskId);
+
 module.exports = router;
