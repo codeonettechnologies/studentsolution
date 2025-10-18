@@ -3,10 +3,10 @@ const router = express.Router();
 const upload = require("../../middlewares/upload");
 
 const {
-  tifin_post,
-  get_all_tifin_posts,
-  getTifinPostsByUserId,
-  delete_tifin_post,
+  tiffin_post,
+  get_all_tiffin_posts,
+  getTiffinPostsByUserId,
+  delete_tiffin_post,
   post_comment,
   get_comments,
   delete_comment,
@@ -14,11 +14,11 @@ const {
   get_like_status
 } = require("../../tifin/controllers/tifinPostController");
 
-//-----------------Tifin router-------------------------------------------------
-router.post("/post/create", upload.single("image"), tifin_post);
-router.get("/post/get", get_all_tifin_posts);
-router.get("/postGet/:userId", getTifinPostsByUserId);
-router.delete("/post/:id", delete_tifin_post);
+//-----------------tiffin router-------------------------------------------------
+router.post("/post/create", upload.single("image"), tiffin_post);
+router.get("/post/get", get_all_tiffin_posts);
+router.get("/postGet/:userId", getTiffinPostsByUserId);
+router.delete("/post/:id", delete_tiffin_post);
 
 //-------------------comments route -----------------
  
@@ -32,7 +32,7 @@ router.get("/getlike", get_like_status);
 
 //------------------job ask routes ------------------------------------- 
 const {createTiffinAsk ,getAllTiffinAsks} = require("../controllers/tiffinAskController")
-router.post("/tiffinAks", createTiffinAsk);
+router.post("/tiffinAsk", createTiffinAsk);
 router.get("/tiffinAskGet", getAllTiffinAsks);
 
 const {createReply ,getRepliesByAskId} = require("../controllers/tiffinReplyController")

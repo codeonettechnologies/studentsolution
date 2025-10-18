@@ -1,46 +1,105 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
-function AnswerItem({ user, text, likes }) {
-  const [count, setCount] = useState(likes);
-  const [liked, setLiked] = useState(false);
-
+function AnswerItem({ name, profile_image, content, college }) {
   return (
     <div className="answer-item">
       <div className="answer-user-info">
-        <img src="default-profile.png" alt="profile" className="profile-logo small-logo" />
-        <strong>{user}</strong>
+        <div>
+          <strong>{name}</strong>
+        </div>
       </div>
-      <p className="answer-text">{text}</p>
-      <button className="answer-like-button" onClick={() => { if (!liked) { setCount(count + 1); setLiked(true); } }} disabled={liked}>
-        👍 Like ({count})
-      </button>
+      <p className="answer-text">{content}</p>
     </div>
   );
 }
 
-function QuestionItem({ name, college, question, answers }) {
+function QuestionItem({ q }) {
   const [reply, setReply] = useState("");
-  const [allAnswers, setAllAnswers] = useState(answers);
+  const [allAnswers, setAllAnswers] = useState([]);
+  const [loadingReply, setLoadingReply] = useState(false);
 
-  const handleReply = (e) => {
+  const currentSection = localStorage.getItem("currentSection");
+  const userData = JSON.parse(localStorage.getItem("user")) || {};
+
+  //Step 1: Fetch Replies for this Question
+  useEffect(() => {
+    const fetchReplies = async () => {
+      try {
+        const res = await fetch(`http://localhost:5000/${currentSection}/${q.id}`);
+        if (res.ok) {
+          const data = await res.json();
+          setAllAnswers(Array.isArray(data) ? data : []);
+        } else {
+          console.error("Failed to fetch replies:", res.statusText);
+        }
+      } catch (error) {
+        console.error("Error fetching replies:", error);
+      }
+    };
+    fetchReplies();
+  }, [q.id, currentSection]);
+
+  // Step 2: Submit Reply
+  const handleReply = async (e) => {
     e.preventDefault();
     if (!reply.trim()) return;
-    setAllAnswers([...allAnswers, { user: "Current User", text: reply, likes: 0 }]);
-    setReply("");
+    if (!userData?.id) {
+      alert("Please login to reply.");
+      return;
+    }
+
+    setLoadingReply(true);
+    try {
+      const apiUrl = `http://localhost:5000/${currentSection}/${currentSection}Reply`;
+
+      const res = await fetch(apiUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: userData.id,
+          ask_reply_id: q.id,
+          content: reply,
+        }),
+      });
+
+      if (res.ok) {
+        setAllAnswers((prev) => [
+          ...prev,
+          {
+            name: userData.name || "You",
+            content: reply,
+            profile_image: userData.profile_image || "default-profile.png",
+            college: userData.college || "",
+          },
+        ]);
+        setReply("");
+      } else {
+        console.error("Error submitting reply:", res.statusText);
+      }
+    } catch (error) {
+      console.error("Network error:", error);
+    } finally {
+      setLoadingReply(false);
+    }
   };
 
   return (
     <div className="question-item profile-item">
       <div className="profile-header">
-        <img src="default-profile.png" alt="profile" className="profile-logo" />
+        <img
+          src={`http://localhost:5000/uploads/${q.profile_image}`}
+          alt="profile"
+          className="profile-logo"
+        />
         <div className="profile-info">
-          <h3 className="profile-name">{name}</h3>
-          <span className="college-name">{college}</span>
+          <h3 className="profile-name">{q.name}</h3>
+          <span className="college-name">{q.college}</span>
         </div>
       </div>
 
       <div className="question-content inner-content">
-        <p className="message-post">{question}</p>
+        <p className="message-post">{q.content}</p>
       </div>
 
       <form className="reply-input-area comment-input-area" onSubmit={handleReply}>
@@ -51,15 +110,25 @@ function QuestionItem({ name, college, question, answers }) {
           onChange={(e) => setReply(e.target.value)}
           className="comment-input-field"
         />
-        <button type="submit" className="comment-submit-button" disabled={!reply.trim()}>
-          Reply
+        <button
+          type="submit"
+          className="comment-submit-button"
+          disabled={!reply.trim() || loadingReply}
+        >
+          {loadingReply ? "Sending..." : "Reply"}
         </button>
       </form>
 
       <div className="answers-section">
         <h5 className="answers-heading">Answers ({allAnswers.length})</h5>
         {allAnswers.map((a, i) => (
-          <AnswerItem key={i} user={a.user} text={a.text} likes={a.likes || 0} />
+          <AnswerItem
+            key={i}
+            name={a.name}
+            content={a.content}
+            profile_image={a.profile_image}
+            college={a.college}
+          />
         ))}
       </div>
     </div>
@@ -67,31 +136,53 @@ function QuestionItem({ name, college, question, answers }) {
 }
 
 export default function Ask() {
-  const questions = [
-    {
-      id: 1,
-      name: "Deepika Patel",
-      college: "CULM",
-      question: "What are the best free online courses to learn ReactJS in 2024?",
-      answers: [
-        { user: "Ravi Varma", text: "FreeCodeCamp course is great with projects.", likes: 15 },
-        { user: "Pooja Singh", text: "Codecademy basics are helpful.", likes: 5 }
-      ]
-    },
-    {
-      id: 2,
-      name: "Rahul Sharma",
-      college: "IIT Delhi",
-      question: "How should I prepare for DSA interviews?",
-      answers: []
-    }
-  ];
+  const [questions, setQuestions] = useState([]);
+  const currentSection = localStorage.getItem("currentSection");
+  const user = JSON.parse(localStorage.getItem("user"));
+  const userId = user?.id;
+  const location = useLocation();
+
+  // detect whether user is on MyPostAsk page
+  const isMyPostsPage = location.pathname.includes("mypostask");
+
+  //Step 3: Fetch all Asks (or self asks)
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        let apiUrl = `http://localhost:5000/${currentSection}/${currentSection}AskGet`;
+        if (isMyPostsPage && userId) {
+          apiUrl = `http://localhost:5000/${currentSection}/askGet/${userId}`;
+        }
+
+        const res = await fetch(apiUrl);
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data)) {
+            setQuestions(data);
+          } else if (Array.isArray(data.data)) {
+            setQuestions(data.data);
+          } else {
+            console.error("Unexpected response format:", data);
+            setQuestions([]);
+          }
+        } else {
+          console.error("Failed to fetch questions:", res.statusText);
+        }
+      } catch (error) {
+        console.error("Error fetching questions:", error);
+        setQuestions([]);
+      }
+    };
+    fetchQuestions();
+  }, [currentSection, userId, isMyPostsPage]);
 
   return (
     <div className="ask-feed">
-      {questions.map((q) => (
-        <QuestionItem key={q.id} name={q.name} college={q.college} question={q.question} answers={q.answers} />
-      ))}
+      {Array.isArray(questions) && questions.length > 0 ? (
+        questions.map((q) => <QuestionItem key={q.id} q={q} />)
+      ) : (
+        <p>No questions found.</p>
+      )}
     </div>
   );
 }

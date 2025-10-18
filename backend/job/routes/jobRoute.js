@@ -2,7 +2,8 @@ const express = require("express");
 const router = express.Router();
 const { job_post ,
     get_all_job_posts ,
-     get_job_post_by_id ,
+    //  get_job_post_by_id ,
+    getJobPostsByUserId,
      delete_job_post ,
      add_comment,
      get_comments,
@@ -16,7 +17,8 @@ const upload = require("../../middlewares/upload")
 //---------------post route --------------------------------
 router.post('/post/create', upload.single('image'), job_post);
 router.get('/post/get', get_all_job_posts);
-router.get("/post/:id", get_job_post_by_id);
+// router.get("/post/:id", get_job_post_by_id);
+router.get('/postGet/:userId', getJobPostsByUserId);
 router.delete("/post/:id", delete_job_post);
  
 //-------------like route----------------------------
@@ -31,9 +33,10 @@ router.get("/:id/comments", get_comments);
 router.delete("/comment/:id", delete_comment);
  
 //------------------job ask routes ------------------------------------- 
-const {createJobAsk ,getAllJobAsks} = require("../controllers/jobAskController")
-router.post("/jobAks", createJobAsk);
+const {createJobAsk ,getAllJobAsks , getJobAsktsByUserId} = require("../controllers/jobAskController")
+router.post("/jobAsk", createJobAsk);
 router.get("/jobAskGet", getAllJobAsks);
+router.get('/askGet/:userId', getJobAsktsByUserId);
 
 //------------- job reply route-----------------------------------------------------
 const {createReply ,getRepliesByAskId} = require("../controllers/jobReplyController")

@@ -4,6 +4,7 @@ import PostForm from "./PostForm";
 import Ask from "./Ask";
 import AskForm from "./AskForm";
 import Modal from "./PopupModal";
+import { TiPlus } from "react-icons/ti";
 
 export default function CommonContent() {
   const [tab, setTab] = useState("post");
@@ -43,7 +44,7 @@ export default function CommonContent() {
           className="create-post-button"
           onClick={() => setOpenModal(true)}
         >
-          +
+         <TiPlus />
         </button>
       </div>
 
@@ -68,3 +69,5 @@ export default function CommonContent() {
     </div>
   );
 }
+
+

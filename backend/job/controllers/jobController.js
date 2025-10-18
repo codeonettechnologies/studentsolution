@@ -1,5 +1,6 @@
 const connectDB = require("../../config/database");
 const db = connectDB();
+const database = connectDB().promise();
  
 exports.job_post = (req, res) => {
   try {
@@ -67,41 +68,74 @@ exports.get_all_job_posts = (req, res) => {
 };
  
  
-// by id
- 
-exports.get_job_post_by_id = (req, res) => {
+exports.getJobPostsByUserId = async (req, res) => {
+  const { userId } = req.params;
+
+  // Manual validation
+  if (!userId || isNaN(userId) || parseInt(userId) <= 0) {
+    return res.status(400).json({
+      success: false,
+      message: 'Invalid user ID. It must be a positive number.',
+    });
+  }
+
   try {
-    const { id } = req.params; // here id = user_id
-    if (!id) {
-      return res.status(400).json({ message: "User id is required" });
-    }
- 
-    const sql = "SELECT * FROM job_post WHERE user_id = ? ORDER BY created_at DESC";
- 
-    db.query(sql, [id], (err, results) => {
-      if (err) {
-        console.error("Database error:", err);
-        return res
-          .status(500)
-          .json({ message: "Database error", error: err.message });
-      }
- 
-      if (results.length === 0) {
-        return res.status(404).json({ message: "No job posts found for this user" });
-      }
- 
-      res.status(200).json({
-        message: "User job posts fetched",
-        data: results,
-      });
+    const [rows] = await database.execute(
+      `SELECT 
+         jp.*, 
+         u.name AS user_name, 
+         u.profile_image, 
+         u.college
+       FROM job_post jp
+       JOIN users u ON jp.user_id = u.id
+       WHERE jp.user_id = ?`,
+      [userId]
+    );
+
+    res.status(200).json({
+      success: true,
+      data: rows,
     });
   } catch (error) {
-    console.error("Internal server error:", error);
-    res
-      .status(500)
-      .json({ message: "Internal server error", error: error.message });
+    console.error('Error fetching job posts:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
+    });
   }
 };
+
+
+// exports.getJobPostsByUserId = async (req, res) => {
+//   const {userId} = req.params;
+
+//   // Manual validation
+//   if (!userId || isNaN(userId) || parseInt(userId) <= 0) {
+//     return res.status(400).json({
+//       success: false,
+//       message: 'Invalid user ID. It must be a positive number.',
+//     });
+//   }
+
+//   try {
+//     const [rows] = await database.execute(
+//       'SELECT * FROM job_post WHERE user_id = ?',
+//       [userId]
+//     );
+
+//     res.status(200).json({
+//       success: true,
+//       data: rows,
+//     });
+//   } catch (error) {
+//     console.error('Error fetching job posts:', error);
+//     res.status(500).json({
+//       success: false,
+//       message: 'Server error',
+//     });
+//   }
+// };
+
  
  
 exports.delete_job_post = (req, res) => {
@@ -236,7 +270,7 @@ exports.delete_comment = (req, res) => {
  
  
 //------------like----------------------------
-const database = connectDB().promise();
+
  
 exports.toggle_like = async (req, res) => {
   try {
@@ -295,8 +329,7 @@ exports.toggle_like = async (req, res) => {
 };
  
  
- 
-exports.get_like_status = async (req, res) => {
+ exports.get_like_status = async (req, res) => {
   try {
     const { job_post_id, user_id } = req.query;
  
@@ -304,25 +337,40 @@ exports.get_like_status = async (req, res) => {
       return res.status(400).json({ message: "job_post_id is required" });
     }
  
+    // Total likes count
     const [likeCount] = await database.query(
       "SELECT COUNT(*) AS total_likes FROM job_post_likes WHERE job_post_id = ? AND `like` = 1",
       [job_post_id]
     );
  
- 
     let liked = false;
+    let userName = null;
+ 
+    // If user_id is provided, check like status and fetch user name
     if (user_id) {
       const [userLike] = await database.query(
         "SELECT * FROM job_post_likes WHERE job_post_id = ? AND user_id = ? AND `like` = 1",
         [job_post_id, user_id]
       );
+ 
       liked = userLike.length > 0;
+ 
+      // Fetch user name
+      const [userData] = await database.query(
+        "SELECT name FROM users WHERE id = ?",
+        [user_id]
+      );
+ 
+      if (userData.length > 0) {
+        userName = userData[0].name;
+      }
     }
  
     res.status(200).json({
       job_post_id,
       liked,
-      total_likes: likeCount[0].total_likes
+      total_likes: likeCount[0].total_likes,
+      user_name: userName || "Guest"
     });
  
   } catch (error) {
@@ -330,3 +378,5 @@ exports.get_like_status = async (req, res) => {
     res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
+ 
+ 
