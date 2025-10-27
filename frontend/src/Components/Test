@@ -29,8 +29,7 @@ export default function PostItem() {
 
         const res = await fetch(apiUrl);
         const data = await res.json();
-  
-       
+
         if (data.data) {
           const postsWithData = await Promise.all(
             data.data.map(async (p) => {
@@ -47,25 +46,24 @@ export default function PostItem() {
 
               // Fetch likes
               const postIdParam = `${currentSection}_post_id`;
+
               let likesCount = 0;
               let likedByUser = false;
               try {
                 const likeRes = await fetch(
-                  `http://localhost:5000/${currentSection}/getlike?${postIdParam}=${p.id}`
+                  `http://localhost:5000/${currentSection}/getlike?${postIdParam}=${p.id}&user_id=${userId}`
                 );
                 const likeData = await likeRes.json();
                 likesCount = likeData.total_likes || 0;
-                likedByUser = likeData.liked_users?.some(
-                  (u) => u.user_id === userId
-                );
+                likedByUser = likeData.liked || false;
               } catch (error) {
                 console.warn("Like fetch failed for post:", p.id, error);
               }
 
               return {
                 id: p.id,
-                name: p.user_name||"Unknown User",
-                college: p.college ||p.user_college || "",
+                name: p.user_name || "Unknown User",
+                college: p.user_college || "",
                 message: p.content,
                 image: p.image_url
                   ? `http://localhost:5000/uploads/${currentSection}_posts/${p.image_url}`
@@ -76,11 +74,7 @@ export default function PostItem() {
                 likes: likesCount,
                 liked: likedByUser,
                 comments: postComments,
-                created_at: new Date(p.created_at).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                }),
+                created_at: new Date(p.created_at).toLocaleString(),
               };
             })
           );
@@ -116,22 +110,13 @@ export default function PostItem() {
 
       if (res.ok) {
         const likeRes = await fetch(
-          `http://localhost:5000/${currentSection}/getlike?${postIdParam}=${id}`
+          `http://localhost:5000/${currentSection}/getlike?${postIdParam}=${id}&user_id=${userId}`
         );
         const likeData = await likeRes.json();
-
-        const isLikedByUser = likeData.liked_users?.some(
-          (u) => u.user_id === userId
-        );
-
         setPosts((prev) =>
           prev.map((p) =>
             p.id === id
-              ? {
-                  ...p,
-                  liked: isLikedByUser,
-                  likes: likeData.total_likes || 0,
-                }
+              ? { ...p, liked: likeData.liked, likes: likeData.total_likes }
               : p
           )
         );
@@ -191,6 +176,7 @@ export default function PostItem() {
       );
       const data = await res.json();
       if (res.ok && data.message.includes("Comment deleted")) {
+        // Remove deleted comment from UI
         setPosts((prev) =>
           prev.map((p) =>
             p.id === postId
@@ -211,39 +197,14 @@ export default function PostItem() {
 
   // -------------------- Fetch Likes List --------------------
   const fetchLikesList = async (id) => {
-    try {
-      const postIdParam = `${currentSection}_post_id`;
-      const res = await fetch(
-        `http://localhost:5000/${currentSection}/getlike?${postIdParam}=${id}`
-      );
-      const data = await res.json();
-
-      if (res.ok && data.liked_users) {
-        setLikesUsers(data.liked_users);
-
-        const isLikedByUser = data.liked_users.some(
-          (u) => u.user_id === userId
-        );
-
-        setPosts((prev) =>
-          prev.map((p) =>
-            p.id === id
-              ? {
-                  ...p,
-                  likes: data.total_likes || 0,
-                  liked: isLikedByUser,
-                }
-              : p
-          )
-        );
-
-        setActiveLikesPost({ id });
-      } else {
-        setLikesUsers([]);
-      }
-    } catch (error) {
-      console.error("Error fetching likes:", error);
-    }
+    const postIdParam = `${currentSection}_post_id`;
+    const res = await fetch(
+      `http://localhost:5000/${currentSection}/getlikeusers?${postIdParam}=${id}`
+    );
+    const data = await res.json();
+    console.log(data);
+    
+    setLikesUsers(data.users || []);
   };
 
   // -------------------- Delete Posts --------------------
@@ -338,7 +299,13 @@ export default function PostItem() {
                 {p.liked ? "❤️" : "🤍"}
               </button>
 
-              <span className="like-count" onClick={() => fetchLikesList(p.id)}>
+              <span
+                className="like-count"
+                onClick={() => {
+                  fetchLikesList(p.id);
+                  setActiveLikesPost(p);
+                }}
+              >
                 Likes ({p.likes})
               </span>
             </div>
@@ -349,7 +316,6 @@ export default function PostItem() {
             >
               💬 Comments ({p.comments.length})
             </button>
-            <button className="share-btn">Share</button>
           </div>
         </div>
       ))}

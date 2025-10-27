@@ -1,32 +1,31 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
-function AnswerItem({ name, profile_image, content, college }) {
+function AnswerItem({ name, content }) {
   return (
     <div className="answer-item">
-      <div className="answer-user-info">
-        <div>
-          <strong>{name}</strong>
-        </div>
-      </div>
-      <p className="answer-text">{content}</p>
+      <p className="answer-text">
+        <strong>{name}:</strong> {content}
+      </p>
     </div>
   );
 }
-
 function QuestionItem({ q }) {
   const [reply, setReply] = useState("");
   const [allAnswers, setAllAnswers] = useState([]);
   const [loadingReply, setLoadingReply] = useState(false);
+  const [showAll, setShowAll] = useState(false); // for ...more/less toggle
 
   const currentSection = localStorage.getItem("currentSection");
   const userData = JSON.parse(localStorage.getItem("user")) || {};
 
-  //Step 1: Fetch Replies for this Question
+  // Fetch Replies
   useEffect(() => {
     const fetchReplies = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/${currentSection}/${q.id}`);
+        const res = await fetch(
+          `http://localhost:5000/${currentSection}/${q.id}`
+        );
         if (res.ok) {
           const data = await res.json();
           setAllAnswers(Array.isArray(data) ? data : []);
@@ -40,7 +39,7 @@ function QuestionItem({ q }) {
     fetchReplies();
   }, [q.id, currentSection]);
 
-  // Step 2: Submit Reply
+  // Submit Reply
   const handleReply = async (e) => {
     e.preventDefault();
     if (!reply.trim()) return;
@@ -52,7 +51,6 @@ function QuestionItem({ q }) {
     setLoadingReply(true);
     try {
       const apiUrl = `http://localhost:5000/${currentSection}/${currentSection}Reply`;
-
       const res = await fetch(apiUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -66,12 +64,7 @@ function QuestionItem({ q }) {
       if (res.ok) {
         setAllAnswers((prev) => [
           ...prev,
-          {
-            name: userData.name || "You",
-            content: reply,
-            profile_image: userData.profile_image || "default-profile.png",
-            college: userData.college || "",
-          },
+          { name: userData.name || "You", content: reply },
         ]);
         setReply("");
       } else {
@@ -84,8 +77,12 @@ function QuestionItem({ q }) {
     }
   };
 
+  // Visible Replies
+  const visibleReplies = showAll ? allAnswers : allAnswers.slice(0, 1);
+
   return (
     <div className="question-item profile-item">
+      {/* Question Header */}
       <div className="profile-header">
         <img
           src={`http://localhost:5000/uploads/${q.profile_image}`}
@@ -93,16 +90,32 @@ function QuestionItem({ q }) {
           className="profile-logo"
         />
         <div className="profile-info">
-          <h3 className="profile-name">{q.name}</h3>
-          <span className="college-name">{q.college}</span>
+          <div className="profile-details">
+            <h3 className="profile-name">{q.name ||q.user_name}</h3>
+            <span className="divider">|</span>
+            <span className="coll-name">{q.college}</span>
+            <span className="divider">|</span>
+            <span className="created-date">
+              {new Date(q.created_at).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </span>
+          </div>
         </div>
       </div>
 
+      {/* Question Content */}
       <div className="question-content inner-content">
         <p className="message-post">{q.content}</p>
       </div>
 
-      <form className="reply-input-area comment-input-area" onSubmit={handleReply}>
+      {/* Reply Input */}
+      <form
+        className="reply-input-area comment-input-area"
+        onSubmit={handleReply}
+      >
         <input
           type="text"
           placeholder="Reply to this question..."
@@ -119,17 +132,23 @@ function QuestionItem({ q }) {
         </button>
       </form>
 
+      {/* Replies Section */}
       <div className="answers-section">
-        <h5 className="answers-heading">Answers ({allAnswers.length})</h5>
-        {allAnswers.map((a, i) => (
-          <AnswerItem
-            key={i}
-            name={a.name}
-            content={a.content}
-            profile_image={a.profile_image}
-            college={a.college}
-          />
+        <h5 className="answers-heading">Replies ({allAnswers.length})</h5>
+
+        {visibleReplies.map((a, i) => (
+          <AnswerItem key={i} name={a.name} content={a.content} />
         ))}
+
+        {/* ...more / ...less toggle */}
+        {allAnswers.length > 1 && (
+          <button
+            className="toggle-answers-btn"
+            onClick={() => setShowAll(!showAll)}
+          >
+            {showAll ? "...less" : "...more"}
+          </button>
+        )}
       </div>
     </div>
   );
@@ -142,10 +161,9 @@ export default function Ask() {
   const userId = user?.id;
   const location = useLocation();
 
-  // detect whether user is on MyPostAsk page
   const isMyPostsPage = location.pathname.includes("mypostask");
 
-  //Step 3: Fetch all Asks (or self asks)
+  // Fetch Questions
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
@@ -157,14 +175,11 @@ export default function Ask() {
         const res = await fetch(apiUrl);
         if (res.ok) {
           const data = await res.json();
-          if (Array.isArray(data)) {
-            setQuestions(data);
-          } else if (Array.isArray(data.data)) {
-            setQuestions(data.data);
-          } else {
-            console.error("Unexpected response format:", data);
-            setQuestions([]);
-          }
+          
+          
+          if (Array.isArray(data)) setQuestions(data);
+          else if (Array.isArray(data.data)) setQuestions(data.data);
+          else setQuestions([]);
         } else {
           console.error("Failed to fetch questions:", res.statusText);
         }

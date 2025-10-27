@@ -109,7 +109,7 @@ const Header = () => {
                   to="/dashboard/mypostask"
                   onClick={() => setDropdownOpen(false)}
                 >
-                  MyPost/MyAsk
+                  Post / Ask
                 </Link>
                 <button onClick={handleLogout}>Logout</button>
               </div>

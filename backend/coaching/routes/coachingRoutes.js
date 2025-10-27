@@ -3,7 +3,7 @@ const router = express.Router();
 const {
   createPost,
   getPost,
-  getPostsByUserId,
+  getCoachingPostsByUserId,
   deletePost,
   toggle_like,
   addComment,
@@ -19,7 +19,7 @@ const upload = require("../../middlewares/upload");
 // POST - Create coaching post
 router.post("/post/create", upload.single("image"), createPost);
 router.get("/post/get", getPost);
-router.get("/post/:id", getPostsByUserId);
+router.get('/postGet/:userId', getCoachingPostsByUserId);
 router.delete("/post/:id", deletePost);
 
 // -------------------- Likes --------------------
@@ -36,13 +36,14 @@ router.delete("/comment/:id", deleteComment);
 
 
 //-----------------------------coaching aks --------------------------
-const {createCoachingAsk ,getAllCoachingAsks} = require("./controllers/coachingAskController")
+const {createCoachingAsk ,getAllCoachingAsks, getCoachingAsktsByUserId} = require("./controllers/coachingAskController")
 router.post("/coachingAsk", createCoachingAsk);
 router.get("/coachingAskGet", getAllCoachingAsks);
+router.get('/askGet/:userId', getCoachingAsktsByUserId);
 
 
 //------------------------coaching reply------------------------
-//-----------------------------coaching aks --------------------------
+
 const {createReply ,getRepliesByAskId} = require("./controllers/coachingReplyController")
 router.post("/coachingReply", createReply);
 router.get("/:ask_reply_id", getRepliesByAskId);

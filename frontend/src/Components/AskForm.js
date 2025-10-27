@@ -84,7 +84,7 @@ export default function AskForm({ onCancel, onAskCreated }) {
         ></textarea>
       </div>
 
-      <div className="post-options">
+      <div className="postForm-options">
         <button className="post-submit-button cancel-button" onClick={onCancel}>
           Cancel
         </button>

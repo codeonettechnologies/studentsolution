@@ -9,6 +9,7 @@ import CommonContent from "./Components/Common";
 import Job from "./Components/Job";
 import Coaching from "./Components/Coching";
 import Tiffin from "./Components/Tiffin";
+import Entertainment from "./Components/Entertainment";
 import Mypostask from "./Components/Mypostask";
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
             <Route path="coaching" element={<Coaching />} />
             <Route path="tiffin" element={<Tiffin />} />
             <Route path="mypostask" element={<Mypostask />} />
+            <Route path="entertainment" element={<Entertainment />} />
           </Route>
         </Routes>
       </Router>
