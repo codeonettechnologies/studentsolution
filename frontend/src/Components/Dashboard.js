@@ -4,6 +4,9 @@ import { FaBriefcase } from "react-icons/fa";
 import { MdSpaceDashboard, MdCastForEducation, MdLiveTv } from "react-icons/md";
 import { PiChalkboardTeacherFill } from "react-icons/pi";
 import { IoBookSharp } from "react-icons/io5";
+import { GiFamilyHouse } from "react-icons/gi";
+import { TfiShoppingCart } from "react-icons/tfi";
+import { FaRecycle } from "react-icons/fa";
 import { FiMenu } from "react-icons/fi";
 import { GiMeal } from "react-icons/gi";
 import Ads from "./Ads";
@@ -35,11 +38,13 @@ export default function Dashboard() {
                 {[
                   { to: "/dashboard/general", label: "General", icon: <MdSpaceDashboard />, section: "general" },
                   { to: "/dashboard/job", label: "Job", icon: <FaBriefcase />, section: "job" },
-                  { to: "/dashboard/coaching", label: "Coaching", icon: <PiChalkboardTeacherFill />, section: "coaching" },
-                  {to: "/dashboard/tiffin", label: "Tiffin", icon: <GiMeal />, section: "tiffin"},
-                  { to: "/dashboard/education", label: "Education", icon: <MdCastForEducation />, section: "education" },
+                  { to: "/dashboard/coaching", label: "Institute", icon: <PiChalkboardTeacherFill />, section: "coaching" },
+                  {to: "/dashboard/tiffin", label: "Food", icon: <GiMeal />, section: "tiffin"},
                   { to: "/dashboard/entertainment", label: "Entertainment", icon: <MdLiveTv />, section: "entertainment" },
-                  { to: "/dashboard/notes", label: "Notes", icon: <IoBookSharp />, section: "notes" },
+                  { to: "/dashboard/notes", label: "Education / Notes", icon: <IoBookSharp />, section: "notes" },
+                   { to: "/dashboard/accomodation", label: "Accommodation", icon: <GiFamilyHouse />, section: "accomodation" },
+                    { to: "/dashboard/shoping", label: "Shoping", icon: <TfiShoppingCart />, section: "shoping" },
+                     { to: "/dashboard/useditem", label: "Used-Item", icon: <FaRecycle />, section: "useditem" },
                 ].map((item, index) => (
                   <NavLink
                     key={index}

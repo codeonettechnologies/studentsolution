@@ -70,16 +70,6 @@ console.log(currentSection);
       <h4 className="post-form-title">Create New Post</h4>
 
       <div className="post-input-header">
-        {/* <img
-          src={
-            user?.profile_image
-              ? `http://localhost:5000/uploads/${user.profile_image}`
-              : "default-profile.png"
-          }
-          alt={user?.name || "user"}
-          className="current-user-profile-logo"
-        /> */}
-
         <textarea
           placeholder="What's on your mind?"
           value={content}
@@ -105,7 +95,7 @@ console.log(currentSection);
         onChange={(e) => setFile(e.target.files[0])}
       />
 
-      <div className="post-options">
+      <div className="postForm-options">
         {!file && (
           <label
             htmlFor="file-upload"

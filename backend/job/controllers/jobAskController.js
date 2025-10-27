@@ -99,3 +99,41 @@ exports.getJobAsktsByUserId = async (req, res) => {
     });
   }
 };
+
+
+
+exports.searchAskJobs = async (req, res) => {
+  try {
+    const { query } = req.query;
+ 
+    if (!query) {
+      return res.status(400).json({
+        message: "Search query is required",
+      });
+    }
+ 
+    const sql = `
+      SELECT ja.*, u.name
+      FROM Job_ask ja
+      JOIN users u ON ja.user_id = u.id
+      WHERE u.name LIKE ? OR ja.content LIKE ?
+    `;
+ 
+    const searchValue = `%${query}%`;
+ 
+    db.query(sql, [searchValue, searchValue], (err, results) => {
+      if (err) {
+        console.error(" Database Error:", err);
+        return res.status(500).json({
+          message: "Database error",
+        });
+      }
+      res.json(results);
+    });
+  } catch (error) {
+    console.error("Server Error:", error);
+    res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
