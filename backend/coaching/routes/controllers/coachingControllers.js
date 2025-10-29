@@ -98,7 +98,6 @@ exports.getCoachingPostsByUserId = async (req, res) => {
     });
   } catch (error) {
     console.error('Error fetching job posts:', error);
-    console.error('Error fetching Coaching posts:', 
     res.status(500).json({
       success: false,
       message: 'Server error',
@@ -215,7 +214,6 @@ exports.deleteComment = async (req, res) => {
 };
 
 // like-------------------------------------------------------------------------------------------------------------------------------
-const database = connectDB().promise();
 
 exports.toggle_like = async (req, res) => {
   try {
@@ -345,7 +343,7 @@ exports.get_like_status = async (req, res) => {
     console.error("Error fetching likes:", error);
     res.status(500).json({ message: "Internal server error", error: error.message });
   }
-};
+
 
 
 //Search CoachingPost
@@ -382,6 +380,4 @@ exports.searchCoachings = async (req, res) => {
     res.status(500).json({
       message: "Internal server error",
     });
-  }
-};
- 
+  };
