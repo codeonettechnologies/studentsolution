@@ -270,47 +270,9 @@ exports.toggle_like = async (req, res) => {
     res.status(500).json({
       message: "Internal server error",
       error: error.message,
-    }
-
-// GetLike Status 
-// exports.get_like_status = async (req, res) => {
-//   try {
-//     const { coaching_post_id, user_id } = req.query;
-
-//     if (!coaching_post_id) {
-//       return res.status(400).json({ message: "coaching_post_id is required" });
-//     }
-
-//     const [likeCount] = await database.query(
-//       "SELECT COUNT(*) AS total_likes FROM coaching_post_likes WHERE coaching_post_id = ? AND `like` = 1",
-//       [coaching_post_id]
-//     );
-
-//     let liked = false;
-//     if (user_id) {
-//       const [userLike] = await database.query(
-//         "SELECT `like` FROM coaching_post_likes WHERE coaching_post_id = ? AND user_id = ?",
-//         [coaching_post_id, user_id]
-//       );
-//       liked = userLike.length > 0 && userLike[0].like === 1;
-//     }
-
-//     res.status(200).json({
-//       coaching_post_id,
-//       liked,
-//       total_likes: likeCount[0].total_likes,
-//     });
-//   } catch (error) {
-//     console.error("Get coaching like status error:", error);
-//     res.status(500).json({
-//       message: "Internal server error",
-//       error: error.message,
-//     });
-//   }
-// };
-
-
-
+  });
+}
+}
 
 
 exports.get_like_status = async (req, res) => {
@@ -343,32 +305,32 @@ exports.get_like_status = async (req, res) => {
     console.error("Error fetching likes:", error);
     res.status(500).json({ message: "Internal server error", error: error.message });
   }
+}
 
 
-
-//Search CoachingPost
+// Search CoachingPost
 exports.searchCoachings = async (req, res) => {
   try {
     const { query } = req.query;
- 
+
     if (!query) {
       return res.status(400).json({
         message: "Search query is required",
       });
     }
- 
+
     const sql = `
       SELECT cp.*, u.name, u.college
       FROM coaching_post cp
       JOIN users u ON cp.user_id = u.id
       WHERE u.name LIKE ? OR u.college LIKE ?
     `;
- 
+
     const searchValue = `%${query}%`;
- 
+
     db.query(sql, [searchValue, searchValue], (err, results) => {
       if (err) {
-        console.error(" Database Error:", err);
+        console.error("Database Error:", err);
         return res.status(500).json({
           message: "Database error",
         });
@@ -376,8 +338,9 @@ exports.searchCoachings = async (req, res) => {
       res.json(results);
     });
   } catch (error) {
-    console.error(" Server Error:", error);
+    console.error("Server Error:", error);
     res.status(500).json({
       message: "Internal server error",
     });
-  };
+  }
+};
