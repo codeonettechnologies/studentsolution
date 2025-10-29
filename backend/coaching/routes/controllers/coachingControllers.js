@@ -97,7 +97,8 @@ exports.getCoachingPostsByUserId = async (req, res) => {
       data: rows,
     });
   } catch (error) {
-    console.error('Error fetching Coaching posts:', error);
+    console.error('Error fetching job posts:', error);
+    console.error('Error fetching Coaching posts:', 
     res.status(500).json({
       success: false,
       message: 'Server error',
@@ -125,7 +126,8 @@ exports.deletePost = async (req, res) => {
   }
 };
 
-// -------------------- Comments --------------------
+
+
 
 exports.addComment = async (req, res) => {
   try {
@@ -270,10 +272,9 @@ exports.toggle_like = async (req, res) => {
     res.status(500).json({
       message: "Internal server error",
       error: error.message,
-    });
-  }
-};
+    }
 
+// GetLike Status 
 // exports.get_like_status = async (req, res) => {
 //   try {
 //     const { coaching_post_id, user_id } = req.query;
@@ -345,3 +346,42 @@ exports.get_like_status = async (req, res) => {
     res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
+
+
+//Search CoachingPost
+exports.searchCoachings = async (req, res) => {
+  try {
+    const { query } = req.query;
+ 
+    if (!query) {
+      return res.status(400).json({
+        message: "Search query is required",
+      });
+    }
+ 
+    const sql = `
+      SELECT cp.*, u.name, u.college
+      FROM coaching_post cp
+      JOIN users u ON cp.user_id = u.id
+      WHERE u.name LIKE ? OR u.college LIKE ?
+    `;
+ 
+    const searchValue = `%${query}%`;
+ 
+    db.query(sql, [searchValue, searchValue], (err, results) => {
+      if (err) {
+        console.error(" Database Error:", err);
+        return res.status(500).json({
+          message: "Database error",
+        });
+      }
+      res.json(results);
+    });
+  } catch (error) {
+    console.error(" Server Error:", error);
+    res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+ 

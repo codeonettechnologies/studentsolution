@@ -1,11 +1,8 @@
-const connectDB = require("../../../config/database");
-const database = connectDB().promise();
-
+const connectDB = require("../../config/database");
 const db = connectDB();
 const database = connectDB().promise();
 
-
-exports.createCoachingAsk = async (req, res) => {
+exports.createEntertainmentAsk = async (req, res) => {
   try {
     const { content, user_id } = req.body;
   console.log(req.body);
@@ -23,12 +20,12 @@ exports.createCoachingAsk = async (req, res) => {
       }
 
       // Insert question
-      const sql = "INSERT INTO coaching_ask (user_id, content) VALUES (?, ?)";
+      const sql = "INSERT INTO entertainment_ask (user_id, content) VALUES (?, ?)";
       db.query(sql, [user_id, content], (err, result) => {
         if (err) throw err;
         res.status(201).json({ 
-          message: "Coaching ask created successfully", 
-          coaching_ask_id: result.insertId 
+          message: "Entertainment ask created successfully", 
+          job_ask_id: result.insertId 
         });
       });
     });
@@ -40,25 +37,25 @@ exports.createCoachingAsk = async (req, res) => {
 };
 
 
-exports.getAllCoachingAsks = async (req, res) => {
+exports.getAllEntertainmentAsks = async (req, res) => {
   try {
     const sql = `
       SELECT 
-        ca.id,
-        ca.content,
-        ca.created_at,
-        ca.updated_at,
+        ea.id,
+        ea.content,
+        ea.created_at,
+        ea.updated_at,
         u.name,
         u.profile_image,
         u.role,
         u.college
-      FROM coaching_ask ca
-      JOIN users u ON ca.user_id = u.id
-      ORDER BY ca.created_at DESC
+      FROM entertainment_ask ea
+      JOIN users u ON ea.user_id = u.id
+      ORDER BY ea.created_at DESC
     `;
 
     db.query(sql, (err, results) => {
-      if (err) throw err;  
+      if (err) throw err;  // will be caught in catch
       res.json(results);
     });
   } catch (error) {
@@ -67,7 +64,9 @@ exports.getAllCoachingAsks = async (req, res) => {
   }
 };
 
-exports.getCoachingAsktsByUserId = async (req, res) => {
+
+
+exports.getEntertainmentAsktsByUserId = async (req, res) => {
   const { userId } = req.params;
 
   if (!userId || isNaN(userId) || parseInt(userId) <= 0) {
@@ -80,13 +79,13 @@ exports.getCoachingAsktsByUserId = async (req, res) => {
   try {
     const [rows] = await database.execute(
       `SELECT 
-         ca.*, 
+         ea.*, 
          u.name AS user_name, 
          u.profile_image, 
          u.college
-       FROM coaching_ask ca
-       JOIN users u ON ca.user_id = u.id
-       WHERE ca.user_id = ?`,
+       FROM entertainment_ask ea
+       JOIN users u ON ea.user_id = u.id
+       WHERE ea.user_id = ?`,
       [userId]
     );
 

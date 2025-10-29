@@ -60,13 +60,19 @@ const storage = multer.diskStorage({
       folder = "uploads/coaching_posts";
     } else if (req.baseUrl.includes("/tiffin")) {
       folder = "uploads/tiffin_posts";
+    } else if (req.baseUrl.includes("/entertainment")) {
+      folder = "uploads/entertainment_posts";
     } else if (req.body.section === "job") {
       folder = "uploads/job_posts";
     } else if (req.body.section === "coaching") {
       folder = "uploads/coaching_posts";
     } else if (req.body.section === "tiffin") {
       folder = "uploads/Tiffin_posts";
+    }else if (req.body.section === "entertainment") {
+      folder = "uploads/entertainment_posts";
     }
+
+
 
     if (!fs.existsSync(folder)) {
       fs.mkdirSync(folder, { recursive: true });
