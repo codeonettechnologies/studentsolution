@@ -173,6 +173,8 @@ export default function Ask() {
         }
 
         const res = await fetch(apiUrl);
+        console.log(res);
+        
         if (res.ok) {
           const data = await res.json();
           
