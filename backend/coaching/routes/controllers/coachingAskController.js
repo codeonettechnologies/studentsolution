@@ -1,4 +1,6 @@
 const connectDB = require("../../../config/database");
+const database = connectDB().promise();
+
 const db = connectDB();
 const database = connectDB().promise();
 
@@ -65,8 +67,6 @@ exports.getAllCoachingAsks = async (req, res) => {
   }
 };
 
-
-//GETSelf CoachingAsk 
 exports.getCoachingAsktsByUserId = async (req, res) => {
   const { userId } = req.params;
 

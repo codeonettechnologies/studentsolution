@@ -17,7 +17,6 @@ const upload = require("../../middlewares/upload");
 
 // -------------------- Coaching Posts --------------------
 
-// POST - Create coaching post
 router.post("/post/create", upload.single("image"), createPost);
 router.get("/post/get", getPost);
 router.get('/postGet/:userId', getCoachingPostsByUserId);
@@ -38,18 +37,6 @@ router.post("/comment", addComment);
 router.get("/:id/comments", getComment);
 router.delete("/comment/:id", deleteComment);
 
-
-
-// ------------------------------caoching Ask-----------------------------------
-const {createCoachingAsk, getAllCoachingAsks, getCoachingAsktsByUserId} = require("./controllers/coachingAskController")
-router.post("/coachingAsk", createCoachingAsk);
-router.get("/coachingAskGet",getAllCoachingAsks);
-router.get('/askGet/:userId', getCoachingAsktsByUserId);
-
-
-// --------------------------------coaching reply----------------------------
-const{createReply, getRepliesByAskId} = require("./controllers/coachingReplyController")
-router.post("/coachingReply",createReply);
 router.get("/:ask_reply_id", getRepliesByAskId);
 
 module.exports = router;

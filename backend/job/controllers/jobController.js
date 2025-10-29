@@ -329,54 +329,76 @@ exports.toggle_like = async (req, res) => {
 };
  
  
- exports.get_like_status = async (req, res) => {
-  try {
-    const { job_post_id, user_id } = req.query;
  
+exports.get_like_status = async (req, res) => {
+  try {
+    const { job_post_id } = req.query;
+
     if (!job_post_id) {
       return res.status(400).json({ message: "job_post_id is required" });
     }
- 
-    // Total likes count
-    const [likeCount] = await database.query(
-      "SELECT COUNT(*) AS total_likes FROM job_post_likes WHERE job_post_id = ? AND `like` = 1",
+
+    // Fetch all users who liked this post
+    const [likes] = await database.query(
+      `SELECT u.id AS user_id, u.name AS user_name
+       FROM job_post_likes l
+       JOIN users u ON l.user_id = u.id
+       WHERE l.job_post_id = ? AND l.like = 1`,
       [job_post_id]
     );
- 
-    let liked = false;
-    let userName = null;
- 
-    // If user_id is provided, check like status and fetch user name
-    if (user_id) {
-      const [userLike] = await database.query(
-        "SELECT * FROM job_post_likes WHERE job_post_id = ? AND user_id = ? AND `like` = 1",
-        [job_post_id, user_id]
-      );
- 
-      liked = userLike.length > 0;
- 
-      // Fetch user name
-      const [userData] = await database.query(
-        "SELECT name FROM users WHERE id = ?",
-        [user_id]
-      );
- 
-      if (userData.length > 0) {
-        userName = userData[0].name;
-      }
-    }
- 
+
+    // Total likes count
+    const totalLikes = likes.length;
+
     res.status(200).json({
+      message: "All likes fetched successfully",
       job_post_id,
-      liked,
-      total_likes: likeCount[0].total_likes,
-      user_name: userName || "Guest"
+      total_likes: totalLikes,
+      liked_users: likes
     });
- 
   } catch (error) {
-    console.error("Get like status error:", error);
+    console.error("Error fetching likes:", error);
     res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
+
+
+// job search controller
+// search by user name , content
  
+exports.searchJobs = async (req, res) => {
+  try {
+    const { query } = req.query;
+ 
+    if (!query) {
+      return res.status(400).json({
+        message: "Search query is required",
+      });
+    }
+ 
+    const sql = `
+      SELECT jp.*, u.name
+      FROM job_post jp
+      JOIN users u ON jp.user_id = u.id
+      WHERE u.name LIKE ? OR jp.content LIKE ?
+    `;
+ 
+    const searchValue = `%${query}%`;
+ 
+    db.query(sql, [searchValue, searchValue], (err, results) => {
+      if (err) {
+        console.error(" Database Error:", err);
+        return res.status(500).json({
+          message: "Database error",
+        });
+      }
+      res.json(results);
+    });
+  } catch (error) {
+    console.error("Server Error:", error);
+    res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
  
