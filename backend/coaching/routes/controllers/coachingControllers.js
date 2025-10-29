@@ -67,42 +67,40 @@ exports.getPost = (req, res) => {
 };
 
 // Get posts by user
-exports.getPostsByUserId = (req, res) => {
+ 
+exports.getCoachingPostsByUserId = async (req, res) => {
+  const { userId } = req.params;
+
+  // Manual validation
+  if (!userId || isNaN(userId) || parseInt(userId) <= 0) {
+    return res.status(400).json({
+      success: false,
+      message: 'Invalid user ID. It must be a positive number.',
+    });
+  }
+
   try {
-    const { id } = req.params;
+    const [rows] = await database.execute(
+      `SELECT 
+         cp.*, 
+         u.name AS user_name, 
+         u.profile_image, 
+         u.college
+       FROM coaching_post cp
+       JOIN users u ON cp.user_id = u.id
+       WHERE cp.user_id = ?`,
+      [userId]
+    );
 
-    if (!id) {
-      return res.status(400).json({ message: "User ID is required" });
-    }
-
-    const sql =
-      "SELECT * FROM coaching_post WHERE user_id = ? ORDER BY created_at DESC";
-
-    db.query(sql, [id], (err, results) => {
-      if (err) {
-        console.error("Database error:", err);
-        return res.status(500).json({
-          message: "Database error",
-          error: err.message,
-        });
-      }
-
-      if (results.length === 0) {
-        return res
-          .status(404)
-          .json({ message: "No posts found for this user" });
-      }
-
-      res.status(200).json({
-        message: "User posts fetched successfully",
-        data: results,
-      });
+    res.status(200).json({
+      success: true,
+      data: rows,
     });
   } catch (error) {
-    console.error("Internal server error:", error);
+    console.error('Error fetching job posts:', error);
     res.status(500).json({
-      message: "Internal server error",
-      error: error.message,
+      success: false,
+      message: 'Server error',
     });
   }
 };
@@ -275,6 +273,8 @@ exports.toggle_like = async (req, res) => {
   }
 };
 
+
+// GetLike Status 
 exports.get_like_status = async (req, res) => {
   try {
     const { coaching_post_id, user_id } = req.query;
@@ -310,3 +310,42 @@ exports.get_like_status = async (req, res) => {
     });
   }
 };
+
+
+//Search CoachingPost
+exports.searchCoachings = async (req, res) => {
+  try {
+    const { query } = req.query;
+ 
+    if (!query) {
+      return res.status(400).json({
+        message: "Search query is required",
+      });
+    }
+ 
+    const sql = `
+      SELECT cp.*, u.name, u.college
+      FROM coaching_post cp
+      JOIN users u ON cp.user_id = u.id
+      WHERE u.name LIKE ? OR u.college LIKE ?
+    `;
+ 
+    const searchValue = `%${query}%`;
+ 
+    db.query(sql, [searchValue, searchValue], (err, results) => {
+      if (err) {
+        console.error(" Database Error:", err);
+        return res.status(500).json({
+          message: "Database error",
+        });
+      }
+      res.json(results);
+    });
+  } catch (error) {
+    console.error(" Server Error:", error);
+    res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+ 

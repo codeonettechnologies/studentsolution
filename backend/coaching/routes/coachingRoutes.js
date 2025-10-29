@@ -1,5 +1,18 @@
 const express = require("express");
 const router = express.Router();
+const {
+  createPost,
+  getPost,
+  getCoachingPostsByUserId,
+  deletePost,
+  searchCoachings,
+  toggle_like,
+  addComment,
+  getComment,
+  deleteComment,
+  get_like_status,
+} = require("./controllers/coachingControllers");
+
 const upload = require("../../middlewares/upload");
 
 // -------------------- Coaching Posts --------------------
@@ -7,28 +20,36 @@ const upload = require("../../middlewares/upload");
 // POST - Create coaching post
 router.post("/post/create", upload.single("image"), createPost);
 router.get("/post/get", getPost);
-router.get("/post/:id", getPostsByUserId);
+router.get('/postGet/:userId', getCoachingPostsByUserId);
 router.delete("/post/:id", deletePost);
 
-// -------------------- Comments --------------------
+//--------------------- job search -----------------------------------------
+ 
+router.get("/search", searchCoachings);
+ 
 
-// Add new comment
+// -------------------- Likes --------------------
+
+router.post("/like/unlike", toggle_like);
+router.get("/getlike", get_like_status);
+
+// --------------------Comments--------------------
 router.post("/comment", addComment);
 router.get("/:id/comments", getComment);
 router.delete("/comment/:id", deleteComment);
 
 
 
-//-----------------------------coaching aks --------------------------
-const {createCoachingAsk ,getAllCoachingAsks} = require("./controllers/coachingAskController")
+// ------------------------------caoching Ask-----------------------------------
+const {createCoachingAsk, getAllCoachingAsks, getCoachingAsktsByUserId} = require("./controllers/coachingAskController")
 router.post("/coachingAsk", createCoachingAsk);
-router.get("/coachingAskGet", getAllCoachingAsks);
+router.get("/coachingAskGet",getAllCoachingAsks);
+router.get('/askGet/:userId', getCoachingAsktsByUserId);
 
 
-//------------------------coaching reply------------------------
-//-----------------------------coaching aks --------------------------
-const {createReply ,getRepliesByAskId} = require("./controllers/coachingReplyController")
-router.post("/coachingReply", createReply);
+// --------------------------------coaching reply----------------------------
+const{createReply, getRepliesByAskId} = require("./controllers/coachingReplyController")
+router.post("/coachingReply",createReply);
 router.get("/:ask_reply_id", getRepliesByAskId);
 
 module.exports = router;
