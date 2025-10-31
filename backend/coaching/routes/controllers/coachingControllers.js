@@ -214,6 +214,8 @@ exports.deleteComment = async (req, res) => {
 };
 
 // like-------------------------------------------------------------------------------------------------------------------------------
+// ✅ Toggle Like / Unlike
+const database = connectDB().promise();
 
 exports.toggle_like = async (req, res) => {
   try {
@@ -270,10 +272,12 @@ exports.toggle_like = async (req, res) => {
     res.status(500).json({
       message: "Internal server error",
       error: error.message,
-  });
-}
-}
+    });
+  }
+};
 
+ 
+// ✅ Get Like Status
 
 exports.get_like_status = async (req, res) => {
   try {
@@ -305,7 +309,8 @@ exports.get_like_status = async (req, res) => {
     console.error("Error fetching likes:", error);
     res.status(500).json({ message: "Internal server error", error: error.message });
   }
-}
+};
+
 
 
 // Search CoachingPost

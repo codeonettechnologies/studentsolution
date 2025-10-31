@@ -101,3 +101,71 @@ exports.getEntertainmentAsktsByUserId = async (req, res) => {
     });
   }
 };
+
+
+
+// Search ask API
+exports.searchAskentertainment = async (req, res) => {
+  try {
+    const { query } = req.query;
+ 
+    if (!query) {
+      return res.status(400).json({
+        message: "Search query is required",
+      });
+    }
+ 
+    const sql = `
+      SELECT ea.*, u.name
+      FROM etertainment_ask ea
+      JOIN users u ON ea.user_id = u.id
+      WHERE u.name LIKE ? OR ea.content LIKE ?
+    `;
+ 
+    const searchValue = `%${query}%`;
+ 
+    db.query(sql, [searchValue, searchValue], (err, results) => {
+      if (err) {
+        console.error(" Database Error:", err);
+        return res.status(500).json({
+          message: "Database error",
+        });
+      }
+      res.json(results);
+    });
+  } catch (error) {
+    console.error("Server Error:", error);
+    res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
+
+
+
+exports.delete_ask = async (req , res)=>{
+  try{
+     const {id} = req.params;
+ 
+      const sql = "DELETE FROM entertainment_ask WHERE id = ?";
+      db.query(sql , [id] , (err , result)=>{
+        if(err){
+          console.error("Database error" , err);
+          return res.status(500).json({
+            message: "Database error",
+             error: err.message
+          })
+        }
+         if (result.affectedRows === 0) {
+        return res.status(404).json({ message: "ask not found" });
+      }
+         res.status(200).json({ message: "aks deleted successfully" });
+      })
+  }catch(err){
+       res
+      .status(500)
+      .json({ message: "Internal server error", error: err.message });
+  }
+}
+ 

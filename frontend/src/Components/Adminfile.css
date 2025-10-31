@@ -1,0 +1,231 @@
+/* Admin Dashboard Layout */
+.admin-wrap {
+  display: flex;
+  min-height: 92vh;
+  background-color: #f5f6f7;
+  font-family: "Segoe UI", Arial, sans-serif;
+  margin-top: 55px;
+}
+.admin-navbar-link {
+  width: 240px;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  padding: 25px 20px;
+  box-sizing: border-box;
+  border-right: 1px solid #e0e0e0;
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.05);
+}
+.admin-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 8px;
+}
+.admin-nav-btn {
+  color: #333;
+  text-decoration: none;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+.admin-nav-btn:hover {
+  background-color: #e9ecef;
+  transform: translateX(4px);
+}
+.admin-nav-btn.active {
+  background-color: #dce4f7;
+  font-weight: 600;
+}
+.admin-dash-outlet {
+  flex: 1;
+  padding: 30px;
+  background-color: #fafafa;
+  box-sizing: border-box;
+}
+@media screen and (max-width: 768px) {
+  .admin-wrap {
+    flex-direction: column;
+  }
+  .admin-navbar-link {
+    width: 100%;
+    flex-direction: row;
+    overflow-x: auto;
+    align-items: center;
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+    box-shadow: none;
+  }
+  .admin-title {
+    margin: 0 15px 0 0;
+    border-bottom: none;
+  }
+  .admin-nav-btn {
+    margin-right: 10px;
+    margin-bottom: 0;
+    flex-shrink: 0;
+  }
+}
+/*adminaddcollege file css*/
+.add-clg-frm {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+.add-main {
+  background-color: #fff;
+  width: 100%;
+  max-width: 400px;
+  padding: 30px 35px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+.add-main:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+.form-title {
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 1.6rem;
+  color: #2c3e50;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+.form-group label {
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+  color: #555;
+}
+.form-input {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  outline: none;
+  background-color: #f9f9f9;
+}
+.form-input:focus {
+  border-color: #007bff;
+  background-color: #fff;
+  box-shadow: 0 0 4px rgba(0, 123, 255, 0.3);
+}
+.submit-btn {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.submit-btn:hover {
+  background-color: #0056b3;
+  transform: translateY(-1px);
+}
+@media (max-width: 480px) {
+  .add-main {
+    max-width: 90%;
+    padding: 25px;
+  }
+  .form-title {
+    font-size: 1.4rem;
+  }
+}
+/*Ads file css*/
+.ads-form-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+.ads-card {
+  background-color: #fff;
+  width: 100%;
+  max-width: 420px;
+  padding: 35px 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+.ads-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.15);
+}
+.ads-title {
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 1.6rem;
+  color: #2c3e50;
+  font-weight: 600;
+}
+.ads-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+.ads-group label {
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+  color: #555;
+}
+.ads-input[type="file"] {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background-color: #f9f9f9;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.ads-input[type="file"]:hover {
+  background-color: #f1f1f1;
+}
+.ads-input[type="file"]:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 4px rgba(0, 123, 255, 0.3);
+}
+.ads-submit-btn {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.ads-submit-btn:hover {
+  background-color: #0056b3;
+  transform: translateY(-1px);
+}
+@media (max-width: 480px) {
+  .ads-card {
+    max-width: 90%;
+    padding: 25px;
+  }
+  .ads-title {
+    font-size: 1.4rem;
+  }
+}

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
-export default function PostItem() {
+export default function PostItem({ searchQuery }) {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [originalPosts, setOriginalPosts] = useState([]);
   const [activeCommentsPost, setActiveCommentsPost] = useState(null);
   const [activeLikesPost, setActiveLikesPost] = useState(null);
   const [likesUsers, setLikesUsers] = useState([]);
@@ -29,8 +30,7 @@ export default function PostItem() {
 
         const res = await fetch(apiUrl);
         const data = await res.json();
-  
-       
+
         if (data.data) {
           const postsWithData = await Promise.all(
             data.data.map(async (p) => {
@@ -41,6 +41,7 @@ export default function PostItem() {
               const commentsData = await commentsRes.json();
               const postComments = (commentsData.data || []).map((c) => ({
                 id: c.id,
+                user_id: c.user_id,
                 user_name: c.user_name || "Unknown",
                 text: c.comment_text,
               }));
@@ -64,8 +65,9 @@ export default function PostItem() {
 
               return {
                 id: p.id,
-                name: p.user_name||"Unknown User",
-                college: p.college ||p.user_college || "",
+                user_id: p.user_id,
+                name: p.user_name || "Unknown User",
+                college: p.college || p.user_college || "",
                 message: p.content,
                 image: p.image_url
                   ? `http://localhost:5000/uploads/${currentSection}_posts/${p.image_url}`
@@ -165,6 +167,7 @@ export default function PostItem() {
         const commentsData = await commentsRes.json();
         const postComments = (commentsData.data || []).map((c) => ({
           id: c.id,
+          user_id: c.user_id,
           user_name: c.user_name || "Unknown",
           text: c.comment_text,
         }));
@@ -184,7 +187,7 @@ export default function PostItem() {
 
     try {
       const res = await fetch(
-        `http://localhost:5000/job/comment/${commentId}`,
+        `http://localhost:5000/${currentSection}/comment/${commentId}`,
         {
           method: "DELETE",
         }
@@ -275,6 +278,50 @@ export default function PostItem() {
     }
   };
 
+  useEffect(() => {
+    const fetchSearchResults = async () => {
+      if (!searchQuery.trim()) {
+        setPosts(originalPosts);
+        return;
+      }
+      try {
+        const res = await fetch(
+          `http://localhost:5000/${currentSection}/searchPost?query=${encodeURIComponent(
+            searchQuery
+          )}`
+        );
+        const data = await res.json();
+      console.log(data ,"hahahahahahahahahahahahah");
+      
+        if (data && Array.isArray(data)) {
+          const mappedResults = data.map((p) => ({
+            id: p.id,
+            name: p.name || "Unknown User",
+            college: p.college || p.user_college || "",
+            message: p.content,
+            image: p.image_url
+                  ? `http://localhost:5000/uploads/${currentSection}_posts/${p.image_url}`
+                  : null,
+            profile_image: p.profile_image
+              ? `http://localhost:5000/uploads/${p.profile_image}`
+              : null,
+            comments: [],
+            created_at: new Date(p.created_at).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            }),
+          }));
+          setPosts(mappedResults);
+        }
+      } catch (err) {
+        console.error("Search error:", err);
+      }
+    };
+
+    fetchSearchResults();
+  }, [searchQuery, currentSection, originalPosts]);
+
   // -------------------- UI --------------------
   if (loading) return <p>Loading posts...</p>;
   if (posts.length === 0)
@@ -295,29 +342,31 @@ export default function PostItem() {
                 <span className="created-date">{p.created_at}</span>
               </div>
             </div>
-            <div className="post-options">
-              <button
-                className="three-dots-buttons"
-                onClick={() =>
-                  setActiveDropdownPost(
-                    activeDropdownPost === p.id ? null : p.id
-                  )
-                }
-              >
-                ⋮
-              </button>
+            {isMyPostsPage && userId === p.user_id && (
+              <div className="post-options">
+                <button
+                  className="three-dots-buttons"
+                  onClick={() =>
+                    setActiveDropdownPost(
+                      activeDropdownPost === p.id ? null : p.id
+                    )
+                  }
+                >
+                  ⋮
+                </button>
 
-              {activeDropdownPost === p.id && (
-                <div className="dropdown-menu">
-                  <button
-                    className="delete-button"
-                    onClick={() => handleDeletePost(p.id)}
-                  >
-                    Delete
-                  </button>
-                </div>
-              )}
-            </div>
+                {activeDropdownPost === p.id && (
+                  <div className="dropdown-menu">
+                    <button
+                      className="delete-button"
+                      onClick={() => handleDeletePost(p.id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="inner-content">
@@ -392,31 +441,34 @@ export default function PostItem() {
                     <p>
                       <strong>{c.user_name}</strong>: {c.text}
                     </p>
-                    <div className="comment-options">
-                      <button
-                        className="three-dots-button"
-                        onClick={() =>
-                          setActiveCommentDropdown(
-                            activeCommentDropdown === c.id ? null : c.id
-                          )
-                        }
-                      >
-                        ⋮
-                      </button>
 
-                      {activeCommentDropdown === c.id && (
-                        <div className="dropdown-menu">
-                          <button
-                            className="delete-button"
-                            onClick={() =>
-                              deleteComment(c.id, activeCommentsPost.id)
-                            }
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      )}
-                    </div>
+                    {userId === c.user_id && (
+                      <div className="comment-options">
+                        <button
+                          className="three-dots-button"
+                          onClick={() =>
+                            setActiveCommentDropdown(
+                              activeCommentDropdown === c.id ? null : c.id
+                            )
+                          }
+                        >
+                          ⋮
+                        </button>
+
+                        {activeCommentDropdown === c.id && (
+                          <div className="dropdown-menu">
+                            <button
+                              className="delete-button"
+                              onClick={() =>
+                                deleteComment(c.id, activeCommentsPost.id)
+                              }
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 ))
               )}

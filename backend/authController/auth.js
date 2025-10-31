@@ -127,7 +127,7 @@ exports.login = (req, res) => {
         city: user.city,
         field: user.field,
         college_year: user.college_year,
-        type: user.type,
+        role: user.role,
         profile_image: user.profile_image,
       },
     });

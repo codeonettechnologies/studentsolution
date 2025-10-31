@@ -1,5 +1,7 @@
 /*Post Ask Job File Css */
 .main-content-area {
+  position: relative;
+  margin: 0 auto;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f0f2f5;
   width: 100%;
@@ -8,18 +10,24 @@
   box-sizing: border-box;
   justify-self: center;
 }
-/*Tab Navigation (Post / Ask)*/
 .tab-navigation {
+  position: sticky;
+  top: 0;
+  z-index: 300;
   display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 0;
   background-color: #ffffff;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
+  margin-bottom: 1px;
   overflow: hidden;
 }
 .tab-button {
+  padding: 8px 16px;
   flex: 1;
-  padding: 15px 20px;
+  padding: 10px 20px;
   font-size: 1.1em;
   font-weight: 600;
   color: #555;
@@ -37,6 +45,61 @@
   color: #007bff;
   border-bottom-color: #007bff;
   background-color: #e6f2ff;
+  margin-bottom: -10px;
+  margin-top: -10px;
+}
+.feed-header-bar {
+  position: sticky;
+  top: 74px;
+  z-index: 250;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 10px 15px;
+  margin-bottom: 20px;
+}
+.search-box-input {
+  flex-grow: 1;
+  max-width: 80%;
+  padding: 10px 15px;
+  border: 1px solid #ced4da;
+  border-radius: 20px;
+  font-size: 1em;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  margin: 0 15px;
+  text-align: center;
+}
+.search-box-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.1rem rgba(0, 123, 255, 0.25);
+  outline: none;
+}
+.create-post-button {
+  width: 40px;
+  height: 40px;
+  background: #007bff;
+  border-radius: 50%;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+  border: none;
+  margin-right: 25px;
+  transition: background-color 0.2s, transform 0.2s;
+  flex-shrink: 0;
+}
+.create-post-button:hover {
+  background: #0056b3;
+}
+.feed-scroll-area {
+  max-height: calc(100vh - 180px);
+  overflow-y: auto;
+  padding-bottom: 50px;
 }
 /* Tab Content (Create Post / Create Ask sections)*/
 .tab-content {
@@ -62,8 +125,8 @@
   align-items: flex-start;
   gap: 15px;
 }
-.postForm-options{
-   display: flex;
+.postForm-options {
+  display: flex;
   justify-content: flex-end;
   gap: 10px;
   padding-top: 15px;
@@ -179,7 +242,7 @@
   align-items: center;
   line-height: normal;
 }
- .profile-logo {
+.profile-logo {
   width: 55px !important;
   height: 55px !important;
   border-radius: 50% !important;
@@ -197,7 +260,7 @@
   margin-top: 15px !important;
   font-size: 16px !important;
   font-weight: 600 !important;
-} 
+}
 .coll-name,
 .created-date,
 .divider {
@@ -207,7 +270,7 @@
   font-size: 15px;
   margin-bottom: -14px;
 }
-.coll-name{
+.coll-name {
   margin-bottom: -14px;
 }
 .divider {
@@ -312,7 +375,6 @@
   font-size: 20px;
   cursor: pointer;
   transition: transform 0.2s;
-  margin-left: 50px;
 }
 .heart-button:hover {
   transform: scale(1.2);
@@ -326,6 +388,34 @@
   align-items: center;
   gap: 6px;
   font-size: 15px;
+}
+.share-btn {
+  background: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.share-btn:hover {
+  background: #0056b3;
+  transform: translateY(-2px);
+}
+.share-btn:active {
+  transform: scale(0.98);
+}
+@media (max-width: 600px) {
+  .share-btn {
+    font-size: 14px;
+    padding: 8px 14px;
+  }
 }
 .mmodal-overlay {
   position: fixed;
@@ -392,8 +482,14 @@
   color: #666;
 }
 @keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.9); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 @media (max-width: 768px) {
   .main-content-area {
@@ -465,49 +561,32 @@
     font-size: 0.85em;
   }
 }
-.feed-header-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  padding: 10px 15px;
+/* Dynamic Section Heading - Simple & Clean */
+.section-heading {
+  font-size: 24px;
+  font-weight: 600;
   margin-bottom: 20px;
-}
-.search-box-input {
-  flex-grow: 1;
-  max-width: 80%;
   padding: 10px 15px;
-  border: 1px solid #ced4da;
-  border-radius: 20px;
-  font-size: 1em;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  margin: 0 15px;
   text-align: center;
+  color: #333;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
-.search-box-input:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 0 0.1rem rgba(0, 123, 255, 0.25);
-  outline: none;
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .section-heading {
+    font-size: 20px;
+    padding: 8px 12px;
+  }
 }
-.create-post-button {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  margin-right: 25px;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.2s, transform 0.2s;
-  flex-shrink: 0;
-}
-.create-post-button:hover {
-  background-color: #0056b3;
+
+@media (max-width: 480px) {
+  .section-heading {
+    font-size: 18px;
+    padding: 6px 10px;
+  }
 }
 .plus-icon {
   font-size: 24px;
@@ -544,7 +623,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  right: 0px;
+  right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.6);
   display: flex;
@@ -553,30 +632,67 @@
   z-index: 1000;
 }
 .modal-content {
-  background: white;
+  background: #fff;
   padding: 25px;
-  border-radius: 8px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  position: relative;
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
   width: 90%;
   max-width: 550px;
-  position: fixed; 
-  top: 300px;       
-  left: 400px;  
+  position: relative;
+  top: 50px;
+  left: -80px;
   z-index: 1001;
+  transition: all 0.3s ease-in-out;
 }
 .modal-close-button {
   position: absolute;
-  top: 25px;
-  right: 35px;
+  top: 20px;
+  right: 25px;
   background: none;
   border: none;
-  font-size: 28px;
+  font-size: 26px;
   cursor: pointer;
   color: #888;
 }
 .modal-close-button:hover {
   color: #333;
+}
+@media (max-width: 1024px) {
+  .modal-content {
+    position: relative;
+    top: 0;
+    left: 0;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+}
+@media (max-width: 768px) {
+  .modal-content {
+    width: 90%;
+    max-width: 400px;
+    padding: 18px;
+  }
+}
+@media (max-width: 600px) {
+  .modal-content {
+    width: 92%;
+    max-width: 360px;
+    padding: 15px;
+    border-radius: 8px;
+  }
+
+  .modal-close-button {
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+  }
+}
+@media (max-width: 400px) {
+  .modal-content {
+    width: 95%;
+    padding: 12px;
+    max-width: 320px;
+  }
 }
 .create-post-form-section .post-textarea {
   min-height: 120px;

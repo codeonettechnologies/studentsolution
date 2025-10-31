@@ -240,114 +240,102 @@ exports.delete_comment = (req, res) => {
  
 //------------like----------------------------
 
- 
+ // ✅ Toggle Like / Unlike
+
 exports.toggle_like = async (req, res) => {
   try {
     const { user_id, entertainment_post_id } = req.body;
- 
+
     if (!user_id || !entertainment_post_id) {
-      return res.status(400).json({ message: "user_id and entertainment_post_id are required" });
+      return res
+        .status(400)
+        .json({ message: "user_id and entertainment_post_id are required" });
     }
- 
+
     const [existing] = await database.query(
       "SELECT `like` FROM entertainment_post_likes WHERE entertainment_post_id = ? AND user_id = ?",
       [entertainment_post_id, user_id]
     );
- 
+
     let message = "";
     let liked = false;
- 
+
     if (existing.length > 0) {
-   
       const newLikeValue = existing[0].like ? 0 : 1;
- 
+
       await database.query(
         "UPDATE entertainment_post_likes SET `like` = ?, updated_at = NOW() WHERE entertainment_post_id = ? AND user_id = ?",
         [newLikeValue, entertainment_post_id, user_id]
       );
- 
-      message = newLikeValue ? "Post liked successfully" : "Post unliked successfully";
+
+      message = newLikeValue
+        ? "Post liked successfully"
+        : "Post unliked successfully";
       liked = !!newLikeValue;
     } else {
-   
       await database.query(
         "INSERT INTO entertainment_post_likes (entertainment_post_id, user_id, `like`) VALUES (?, ?, 1)",
-        [job_post_id, user_id]
+        [entertainment_post_id, user_id]
       );
- 
+
       message = "Post liked successfully";
       liked = true;
     }
- 
- 
+
     const [result] = await database.query(
       "SELECT COUNT(*) AS total_likes FROM entertainment_post_likes WHERE entertainment_post_id = ? AND `like` = 1",
       [entertainment_post_id]
     );
- 
+
     res.status(200).json({
       message,
       liked,
       total_likes: result[0].total_likes,
     });
- 
   } catch (error) {
     console.error("Toggle like error:", error);
-    res.status(500).json({ message: "Internal server error", error: error.message });
+    res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+    });
   }
 };
+
  
- // Get like 
- exports.get_like_status = async (req, res) => {
+// ✅ Get Like Status
+
+exports.get_like_status = async (req, res) => {
   try {
-    const { entertainment_post_id, user_id } = req.query;
- 
+    const { entertainment_post_id } = req.query;
+
     if (!entertainment_post_id) {
       return res.status(400).json({ message: "entertainment_post_id is required" });
     }
- 
-    // Total likes count
-    const [likeCount] = await database.query(
-      "SELECT COUNT(*) AS total_likes FROM entertainment_post_likes WHERE entertainment_post_id = ? AND `like` = 1",
+
+    // Fetch all users who liked this post
+    const [likes] = await database.query(
+      `SELECT u.id AS user_id, u.name AS user_name
+       FROM entertainment_post_likes l
+       JOIN users u ON l.user_id = u.id
+       WHERE l.entertainment_post_id = ? AND l.like = 1`,
       [entertainment_post_id]
     );
- 
-    let liked = false;
-    let userName = null;
- 
-    // If user_id is provided, check like status and fetch user name
-    if (user_id) {
-      const [userLike] = await database.query(
-        "SELECT * FROM entertainment_post_likes WHERE entertainment_post_id = ? AND user_id = ? AND `like` = 1",
-        [entertainment_post_id, user_id]
-      );
- 
-      liked = userLike.length > 0;
- 
-      // Fetch user name
-      const [userData] = await database.query(
-        "SELECT name FROM users WHERE id = ?",
-        [user_id]
-      );
- 
-      if (userData.length > 0) {
-        userName = userData[0].name;
-      }
-    }
- 
+
+    // Total likes count
+    const totalLikes = likes.length;
+
     res.status(200).json({
-      entertainment_post_id,
-      liked,
-      total_likes: likeCount[0].total_likes,
-      user_name: userName || "Guest"
+      message: "All likes fetched successfully",
+     entertainment_post_id,
+      total_likes: totalLikes,
+      liked_users: likes
     });
- 
   } catch (error) {
-    console.error("Get like status error:", error);
+    console.error("Error fetching likes:", error);
     res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
- 
+
 
 
 //Search CoachingPost
