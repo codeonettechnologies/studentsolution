@@ -11,14 +11,13 @@ export default function AskForm({ onCancel, onAskCreated }) {
   // Map each section to its own endpoint
   const askEndpointMap = {
     job: "jobAsk",
-    coaching: "coachingAsk",
+    coaching: "caochingAsk",
     tiffin: "tiffinAsk",
-    notebook: "notebookAsk",
+    entertainment: "EntertainmentAsk",
   };
 
   // If section not found, fallback to jobAsk
   const askRoute = askEndpointMap[currentSection] || "jobAsk";
-
   const handleSubmit = async () => {
     if (!content.trim()) {
       alert("Please enter a question or content.");

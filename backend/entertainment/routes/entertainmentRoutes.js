@@ -39,15 +39,19 @@ router.get("/:id/comments", get_comments);
 router.delete("/comment/:id", delete_comment);
 
 //------------------Entertainment ask routes ------------------------------------- 
-const {createEntertainmentAsk ,getAllEntertainmentAsks , getEntertainmentAsktsByUserId} = require("../controllers/entertainmentAskController")
+const {createEntertainmentAsk ,getAllEntertainmentAsks , getEntertainmentAsktsByUserId, delete_ask, searchAskentertainment} = require("../controllers/entertainmentAskController")
 router.post("/EntertainmentAsk", createEntertainmentAsk);
 router.get("/EntertainmentAskGet", getAllEntertainmentAsks);
 router.get('/askGet/:userId', getEntertainmentAsktsByUserId);
+router.delete("/ask/:id", delete_ask);
+router.get("/searchAsk", searchAskentertainment);
 
 //------------- Entertainment reply route-----------------------------------------------------
-const {createReply ,getRepliesByAskId} = require("../controllers/entertainmentReplyController")
+const {createReply ,getRepliesByAskId, delete_reply} = require("../controllers/entertainmentReplyController")
 router.post("/EntertainmentReply" , createReply)
 router.get("/:ask_reply_id", getRepliesByAskId);
+router.delete("/reply/:id", delete_reply);
+ 
 
 
 module.exports = router;

@@ -35,10 +35,11 @@ router.get("/:id/comments", get_comments);
 router.delete("/comment/:id", delete_comment);
  
 //------------------job ask routes ------------------------------------- 
-const {createJobAsk ,getAllJobAsks , getJobAsktsByUserId , searchAskJobs} = require("../controllers/jobAskController")
+const {createJobAsk ,getAllJobAsks , getJobAsktsByUserId , searchAskJobs , delete_ask} = require("../controllers/jobAskController")
 router.post("/jobAsk", createJobAsk);
 router.get("/jobAskGet", getAllJobAsks);
 router.get('/askGet/:userId', getJobAsktsByUserId);
+router.delete("/ask/:id", delete_ask);
 router.get("/searchAsk", searchAskJobs);
 
 //------------- job reply route-----------------------------------------------------

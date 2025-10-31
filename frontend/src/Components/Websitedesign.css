@@ -561,7 +561,7 @@ body {
 .dash-content {
   display: flex;
   flex: 1;
-  height: 100vh;
+  height: 90vh;
   overflow: hidden;
   margin-top: 60px;
 }
@@ -601,7 +601,7 @@ body {
   top: 80px;
   left: 0;
   width: 100%;
-  height: calc(100vh - 80px);
+  height: calc(90vh - 80px);
   z-index: 999;
   transition: opacity 0.3s ease;
 }
