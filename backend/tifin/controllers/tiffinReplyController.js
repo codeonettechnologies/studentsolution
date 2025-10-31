@@ -8,8 +8,6 @@ exports.createReply = async (req, res) => {
     if (!user_id || !ask_reply_id || !content) {
       return res.status(400).json({ message: "user_id, ask_reply_id and content are required" });
     }
-
-    // Optional: check if user exists
     db.query("SELECT * FROM users WHERE id = ?", [user_id], (err, userResult) => {
       if (err) throw err;
       if (userResult.length === 0) {
@@ -77,3 +75,30 @@ exports.getRepliesByAskId = async (req, res) => {
     res.status(500).json({ message: "Database error" });
   }
 };
+
+
+
+exports.delete_reply = async (req , res)=>{
+  try{
+     const {id} = req.params;
+
+      const sql = "DELETE FROM tiffin_reply WHERE id = ?";
+      db.query(sql , [id] , (err , result)=>{
+        if(err){
+          console.error("Database error" , err);
+          return res.status(500).json({
+            message: "Database error",
+             error: err.message
+          })
+        }
+         if (result.affectedRows === 0) {
+        return res.status(404).json({ message: "reply not found" });
+      }
+         res.status(200).json({ message: "reply deleted successfully" });
+      })
+  }catch(err){
+       res
+      .status(500)
+      .json({ message: "Internal server error", error: err.message });
+  }
+}

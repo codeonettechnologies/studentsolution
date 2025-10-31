@@ -139,7 +139,6 @@ exports.searchAskJobs = async (req, res) => {
 };
 
 
-
  
 exports.delete_ask = async (req , res)=>{
   try{
