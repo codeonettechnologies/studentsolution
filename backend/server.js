@@ -12,12 +12,11 @@ const jobPostRoutes = require("./job/routes/jobRoute");
 const coachingRoutes = require("./coaching/routes/coachingRoutes");
 // tifin route 
 const tifnRoutes = require("./tifin/routes/tifinRoute")
-//Entertainment route
-const entertainmentRoutes = require("./entertainment/routes/entertainmentRoutes")
+// Accomodation Route 
+const accomodationRoutes = require("./accommodation/routes/accommodationRoute");
 
 dotenv.config();
 const app = express();
-
 app.use(
   cors({
     origin: "http://localhost:3000",
@@ -34,19 +33,13 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // auth
 app.use("/api/auth", authRoutes);
-
 //coaching
 app.use("/coaching", coachingRoutes);
 
 // job
 app.use("/job", jobPostRoutes);
-
-//tiffin
 app.use("/tiffin", tifnRoutes);
-
-//entertainment 
-app.use("/entertainment", entertainmentRoutes);
-
+app.use("/accomodation" , accomodationRoutes)
 app.use((req, res, next) => {
   req.db = connectDB;
   next();
