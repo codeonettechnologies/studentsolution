@@ -12,6 +12,9 @@ export default function AdminDashbord() {
         <Link to="/admindashboard/addads" className="admin-nav-btn">
           Add Ads
         </Link>
+        <Link to="/admindashboard/addshopproduct" className="admin-nav-btn">
+          Add Shopping Product
+        </Link>
       </div>
 
       <div className="admin-dash-outlet">

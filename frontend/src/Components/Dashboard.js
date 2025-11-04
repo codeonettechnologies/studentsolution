@@ -36,22 +36,68 @@ export default function Dashboard() {
             <div className="profile-info">
               <div className="navbar-links">
                 {[
-                  { to: "/dashboard/general", label: "General", icon: <MdSpaceDashboard />, section: "general" },
-                  { to: "/dashboard/job", label: "Job", icon: <FaBriefcase />, section: "job" },
-                  { to: "/dashboard/coaching", label: "Institute", icon: <PiChalkboardTeacherFill />, section: "coaching" },
-                  {to: "/dashboard/tiffin", label: "Food", icon: <GiMeal />, section: "tiffin"},
-                  { to: "/dashboard/entertainment", label: "Entertainment", icon: <MdLiveTv />, section: "entertainment" },
-                  { to: "/dashboard/notes", label: "Education / Notes", icon: <IoBookSharp />, section: "notes" },
-                   { to: "/dashboard/accomodation", label: "Accommodation", icon: <GiFamilyHouse />, section: "accomodation" },
-                    { to: "/dashboard/shoping", label: "Shoping", icon: <TfiShoppingCart />, section: "shoping" },
-                     { to: "/dashboard/useditem", label: "Used-Item", icon: <FaRecycle />, section: "useditem" },
+                  {
+                    to: "/dashboard/general",
+                    label: "General",
+                    icon: <MdSpaceDashboard />,
+                    section: "general",
+                  },
+                  {
+                    to: "/dashboard/job",
+                    label: "Job",
+                    icon: <FaBriefcase />,
+                    section: "job",
+                  },
+                  {
+                    to: "/dashboard/coaching",
+                    label: "Institute",
+                    icon: <PiChalkboardTeacherFill />,
+                    section: "coaching",
+                  },
+                  {
+                    to: "/dashboard/tiffin",
+                    label: "Food",
+                    icon: <GiMeal />,
+                    section: "tiffin",
+                  },
+                  {
+                    to: "/dashboard/entertainment",
+                    label: "Entertainment",
+                    icon: <MdLiveTv />,
+                    section: "entertainment",
+                  },
+                  {
+                    to: "/dashboard/notes",
+                    label: "Education / Notes",
+                    icon: <IoBookSharp />,
+                    section: "notes",
+                  },
+                  {
+                    to: "/dashboard/accommodation",
+                    label: "Accommodation",
+                    icon: <GiFamilyHouse />,
+                    section: "accommodation",
+                  },
+                  {
+                    to: "/dashboard/shop",
+                    label: "Shoping",
+                    icon: <TfiShoppingCart />,
+                    section: "shoping",
+                  },
+                  {
+                    to: "/dashboard/useditem",
+                    label: "Used-Item",
+                    icon: <FaRecycle />,
+                    section: "useditem",
+                  },
                 ].map((item, index) => (
                   <NavLink
                     key={index}
                     to={item.to}
                     className={({ isActive }) => {
                       // Normal condition for blue highlight
-                      if (isActive && !isMyPostAskPage) return "nav-item active-blue";
+                      if (isActive && !isMyPostAskPage)
+                        return "nav-item active-blue";
 
                       // If we are on /mypostask and this section matches last used section
                       if (isMyPostAskPage && currentSection === item.section)
@@ -92,4 +138,3 @@ export default function Dashboard() {
     </>
   );
 }
-

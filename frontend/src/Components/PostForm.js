@@ -18,7 +18,7 @@ export default function PostForm({ onCancel, onPostCreated }) {
   }, [file]);
 
   const currentSection = localStorage.getItem("currentSection");
-console.log(currentSection);
+  console.log(currentSection);
 
   const handleSubmit = async () => {
     if (!content.trim() && !file) {
@@ -42,7 +42,7 @@ console.log(currentSection);
       });
 
       const data = await res.json();
-      console.log("API Response:", data);
+  
 
       if (
         data.message === "Job post created" ||
