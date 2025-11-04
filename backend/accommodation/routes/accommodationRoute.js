@@ -32,4 +32,29 @@ router.get("/getlike", get_like_status);
   
 //---------------------------- search ------------------------------
 router.get("/searchPost", searchAccommodation);
+
+//--------------------------------------ask-----------------------------------------
+const {
+  createAccommodationAsk,
+  getAllAccommodationAsks,
+  getAccommodationAsktsByUserId,
+  searchAskAccommodations,
+  delete_ask,
+} = require("../controllers/aksController");
+router.post("/jobAsk", createAccommodationAsk);
+router.get("/jobAskGet", getAllAccommodationAsks);
+router.get("/askGet/:userId", getAccommodationAsktsByUserId);
+router.delete("/ask/:id", delete_ask);
+router.get("/searchAsk", searchAskAccommodations);
+
+//-------------  reply route-----------------------------------------------------------------
+const {
+  createReply,
+  getRepliesByAskId,
+  delete_reply,
+} = require("../controllers/replyController");
+router.post("/jobReply", createReply);
+router.get("/:ask_reply_id", getRepliesByAskId);
+router.delete("/reply/:id", delete_reply);
+
 module.exports = router;
