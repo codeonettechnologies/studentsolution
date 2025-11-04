@@ -331,7 +331,7 @@ function QuestionItem({ q, onQuestionDeleted, userId }) {
   );
 }
 
-export default function Ask({ searchQuery }) {
+export default function Ask({ searchQuery, refreshTrigger }) {
   const [questions, setQuestions] = useState([]);
   const [originalQuestions, setOriginalQuestions] = useState([]);
   const currentSection = localStorage.getItem("currentSection");
@@ -355,9 +355,12 @@ export default function Ask({ searchQuery }) {
 
         if (res.ok) {
           const data = await res.json();
-          if (Array.isArray(data)) setQuestions(data);
-          else if (Array.isArray(data.data)) setQuestions(data.data);
-          else setQuestions([]);
+          let fetchedData = [];
+
+          if (Array.isArray(data)) fetchedData = data;
+          else if (Array.isArray(data.data)) fetchedData = data.data;
+          setQuestions(fetchedData);
+          setOriginalQuestions(fetchedData);
         } else {
           console.error("Failed to fetch questions:", res.statusText);
         }
@@ -367,7 +370,7 @@ export default function Ask({ searchQuery }) {
       }
     };
     fetchQuestions();
-  }, [currentSection, userId, isMyPostsPage]);
+  }, [currentSection, userId, isMyPostsPage, refreshTrigger]);
 
   //-------------------- Search Asks --------------------
 

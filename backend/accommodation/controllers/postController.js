@@ -1,4 +1,3 @@
-
 const connectDB = require("../../config/database");
 const db = connectDB();
 const database = connectDB().promise();
@@ -112,7 +111,9 @@ exports.delete_accommodation_post = (req, res) => {
     const { id } = req.params;
 
     if (!id) {
-      return res.status(400).json({ message: "accommodation post id is required" });
+      return res
+        .status(400)
+        .json({ message: "accommodation post id is required" });
     }
 
     const sql = "DELETE FROM accommodation_post WHERE id = ?";
@@ -126,10 +127,14 @@ exports.delete_accommodation_post = (req, res) => {
       }
 
       if (result.affectedRows === 0) {
-        return res.status(404).json({ message: "accommodation post not found" });
+        return res
+          .status(404)
+          .json({ message: "accommodation post not found" });
       }
 
-      res.status(200).json({ message: "accommodation post deleted successfully" });
+      res
+        .status(200)
+        .json({ message: "accommodation post deleted successfully" });
     });
   } catch (error) {
     res
@@ -138,12 +143,7 @@ exports.delete_accommodation_post = (req, res) => {
   }
 };
 
-
-
 //---------------------------------------comment-------------------------------------------------------------------------
-
-
-
 
 exports.add_comment = (req, res) => {
   try {
@@ -158,18 +158,22 @@ exports.add_comment = (req, res) => {
     const sql =
       "INSERT INTO accommodation_post_comments (accommodation_post_id, user_id, comment_text) VALUES (?, ?, ?)";
 
-    db.query(sql, [accommodation_post_id, user_id, comment_text], (err, result) => {
-      if (err) {
-        console.error("Database error:", err);
-        return res
-          .status(500)
-          .json({ message: "Database error", error: err.message });
-      }
+    db.query(
+      sql,
+      [accommodation_post_id, user_id, comment_text],
+      (err, result) => {
+        if (err) {
+          console.error("Database error:", err);
+          return res
+            .status(500)
+            .json({ message: "Database error", error: err.message });
+        }
 
-      res
-        .status(201)
-        .json({ message: "Comment added successfully", id: result.insertId });
-    });
+        res
+          .status(201)
+          .json({ message: "Comment added successfully", id: result.insertId });
+      }
+    );
   } catch (error) {
     res
       .status(500)
@@ -236,8 +240,6 @@ exports.delete_comment = (req, res) => {
   }
 };
 
-
-
 //------------like----------------------------
 
 exports.toggle_like = async (req, res) => {
@@ -297,53 +299,36 @@ exports.toggle_like = async (req, res) => {
   }
 };
 
-
-
 exports.get_like_status = async (req, res) => {
   try {
-    const { accommodation_post_id, user_id } = req.query;
+    const { accommodation_post_id } = req.query;
 
     if (!accommodation_post_id) {
-      return res.status(400).json({ message: "accommodation_post_id is required" });
+      return res
+        .status(400)
+        .json({ message: " accommodation_post_id is required" });
     }
 
-    // Total likes count
-    const [likeCount] = await database.query(
-      "SELECT COUNT(*) AS total_likes FROM accommodation_post_likes WHERE accommodation_post_id = ? AND `like` = 1",
+    // Fetch all users who liked this post
+    const [likes] = await database.query(
+      `SELECT u.id AS user_id, u.name AS user_name
+       FROM  accommodation_post_likes l
+       JOIN users u ON l.user_id = u.id
+       WHERE l. accommodation_post_id = ? AND l.like = 1`,
       [accommodation_post_id]
     );
 
-    let liked = false;
-    let userName = null;
-
-    // If user_id is provided, check like status and fetch user name
-    if (user_id) {
-      const [userLike] = await database.query(
-        "SELECT * FROM accommodation_post_likes WHERE accommodation_post_id = ? AND user_id = ? AND `like` = 1",
-        [accommodation_post_id, user_id]
-      );
-
-      liked = userLike.length > 0;
-
-      // Fetch user name
-      const [userData] = await database.query(
-        "SELECT name FROM users WHERE id = ?",
-        [user_id]
-      );
-
-      if (userData.length > 0) {
-        userName = userData[0].name;
-      }
-    }
+    // Total likes count
+    const totalLikes = likes.length;
 
     res.status(200).json({
+      message: "All likes fetched successfully",
       accommodation_post_id,
-      liked,
-      total_likes: likeCount[0].total_likes,
-      user_name: userName || "Guest",
+      total_likes: totalLikes,
+      liked_users: likes,
     });
   } catch (error) {
-    console.error("Get like status error:", error);
+    console.error("Error fetching likes:", error);
     res
       .status(500)
       .json({ message: "Internal server error", error: error.message });

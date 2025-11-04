@@ -15,7 +15,7 @@ const {
 } = require("../controllers/postController")
 const upload = require("../../middlewares/upload")
 
-router.post('/post/create', upload.single('image'), accommodation_post);
+router.post('/post/create',  upload.single('image'), accommodation_post);
 router.get('/post/get', get_all_accommodation_posts);
 router.get('/postGet/:userId', getaccommodationPostsByUserId);
 router.delete("/post/:id", delete_accommodation_post);

@@ -15,6 +15,8 @@ const tifnRoutes = require("./tifin/routes/tifinRoute")
 // Accomodation Route 
 const accomodationRoutes = require("./accommodation/routes/accommodationRoute");
 
+const entertainmentRoute = require("./entertainment/routes/entertainmentRoutes")
+
 dotenv.config();
 const app = express();
 app.use(
@@ -39,7 +41,8 @@ app.use("/coaching", coachingRoutes);
 // job
 app.use("/job", jobPostRoutes);
 app.use("/tiffin", tifnRoutes);
-app.use("/accomodation" , accomodationRoutes)
+app.use("/accommodation" , accomodationRoutes)
+app.use("/entertainment" , entertainmentRoute)
 app.use((req, res, next) => {
   req.db = connectDB;
   next();

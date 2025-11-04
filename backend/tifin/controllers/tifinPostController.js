@@ -286,52 +286,38 @@ exports.toggle_like = async (req, res) => {
     res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
- 
- 
- exports.get_like_status = async (req, res) => {
-  try {
-    const { tiffin_post_id, user_id } = req.query;
 
-    if (!tiffin_post_id) {
-      return res.status(400).json({ message: "tiffin_post_id is required" });
+
+exports.get_like_status = async (req, res) => {
+  try {
+
+    
+    const {  tiffin_post_id } = req.query;
+
+    if (! tiffin_post_id) {
+      return res.status(400).json({ message: " tiffin_post_id is required" });
     }
 
-
-    const [likeCount] = await database.query(
-      "SELECT COUNT(*) AS total_likes FROM tiffin_post_likes WHERE tiffin_post_id = ? AND `like` = 1",
-      [tiffin_post_id]
+    // Fetch all users who liked this post
+    const [likes] = await database.query(
+      `SELECT u.id AS user_id, u.name AS user_name
+       FROM  tiffin_post_likes l
+       JOIN users u ON l.user_id = u.id
+       WHERE l. tiffin_post_id = ? AND l.like = 1`,
+      [ tiffin_post_id]
     );
 
-    let liked = false;
-    let userInfo = null;
-
-
-    if (user_id) {
-      const [userLike] = await database.query(
-        "SELECT * FROM tiffin_post_likes WHERE tiffin_post_id = ? AND user_id = ? AND `like` = 1",
-        [tiffin_post_id, user_id]
-      );
-      liked = userLike.length > 0;
-
-      const [userDetails] = await database.query(
-        "SELECT name, profile_image, college FROM users WHERE id = ?",
-        [user_id]
-      );
-
-      if (userDetails.length > 0) {
-        userInfo = userDetails[0];
-      }
-    }
+    // Total likes count
+    const totalLikes = likes.length;
 
     res.status(200).json({
-      tiffin_post_id,
-      liked,
-      total_likes: likeCount[0].total_likes,
-      user: userInfo, // 🟩 user details included here
+      message: "All likes fetched successfully",
+       tiffin_post_id,
+      total_likes: totalLikes,
+      liked_users: likes
     });
-
   } catch (error) {
-    console.error("Get like status error:", error);
+    console.error("Error fetching likes:", error);
     res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
