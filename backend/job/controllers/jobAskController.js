@@ -113,7 +113,10 @@ exports.searchAskJobs = async (req, res) => {
     }
  
     const sql = `
-      SELECT ja.*, u.name
+      SELECT ja.*,
+      u.college,
+       u.profile_image,
+      u.name
       FROM Job_ask ja
       JOIN users u ON ja.user_id = u.id
       WHERE u.name LIKE ? OR ja.content LIKE ?

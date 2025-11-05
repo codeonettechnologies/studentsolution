@@ -129,6 +129,7 @@ exports.login = (req, res) => {
         college_year: user.college_year,
         role: user.role,
         profile_image: user.profile_image,
+        mobile_number:user.mobile_number,
       },
     });
   });

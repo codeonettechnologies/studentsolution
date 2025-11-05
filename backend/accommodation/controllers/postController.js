@@ -334,7 +334,6 @@ exports.get_like_status = async (req, res) => {
       .json({ message: "Internal server error", error: error.message });
   }
 };
-
 exports.searchAccommodation = async (req, res) => {
   try {
     const { query } = req.query;
@@ -351,7 +350,8 @@ exports.searchAccommodation = async (req, res) => {
     const sql = `
       SELECT 
         ap.*, 
-        u.name AS post_user_name
+        u.name AS post_user_name,
+        u.profile_image AS post_user_image
       FROM accommodation_post ap
       JOIN users u ON ap.user_id = u.id
       WHERE u.name LIKE ? OR ap.content LIKE ?
@@ -372,7 +372,7 @@ exports.searchAccommodation = async (req, res) => {
 
       // 2️⃣ Get all likes (who liked which post)
       const likesSql = `
-        SELECT l.accommodation_post_id, u.id AS user_id, u.name AS user_name
+        SELECT l.accommodation_post_id, u.id AS user_id, u.name AS user_name, u.profile_image
         FROM accommodation_post_likes l
         JOIN users u ON l.user_id = u.id
         WHERE l.accommodation_post_id IN (?) AND l.like = 1
@@ -380,7 +380,7 @@ exports.searchAccommodation = async (req, res) => {
 
       // 3️⃣ Get all comments (who commented + what)
       const commentsSql = `
-        SELECT c.accommodation_post_id, c.comment_text, u.id AS user_id, u.name AS user_name
+        SELECT c.accommodation_post_id, c.comment_text, u.id AS user_id, u.name AS user_name, u.profile_image
         FROM accommodation_post_comments c
         JOIN users u ON c.user_id = u.id
         WHERE c.accommodation_post_id IN (?)
@@ -414,11 +414,13 @@ exports.searchAccommodation = async (req, res) => {
               likes: postLikes.map((l) => ({
                 user_id: l.user_id,
                 name: l.user_name,
+                profile_image: l.profile_image, // ✅ added
               })),
               comments: postComments.map((c) => ({
                 user_id: c.user_id,
                 name: c.user_name,
                 comment: c.comment_text,
+                profile_image: c.profile_image, // ✅ added
               })),
             };
           });
