@@ -11,6 +11,8 @@ export default function CommonContent() {
   const [openModal, setOpenModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [sectionText, setSectionText] = useState("");
+  const [postRefreshTrigger, setPostRefreshTrigger] = useState(0);
+  const [askRefreshTrigger, setAskRefreshTrigger] = useState(0);
 
   const currentSection = localStorage.getItem("currentSection") || "Job";
 
@@ -27,6 +29,16 @@ export default function CommonContent() {
         sectionHeadingMap.default
     );
   }, [currentSection]);
+
+  const handlePostCreated = (newPostData) => {
+    setPostRefreshTrigger((prev) => prev + 1);
+    setOpenModal(false);
+  };
+
+  const handleAskCreated = (newAskData) => {
+    setAskRefreshTrigger((prev) => prev + 1);
+    setOpenModal(false);
+  };
 
   return (
     <div className="main-content-area">
@@ -57,24 +69,49 @@ export default function CommonContent() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <button className="create-post-button" onClick={() => setOpenModal(true)}>
+        <button
+          className="create-post-button"
+          onClick={() => setOpenModal(true)}
+        >
           <TiPlus />
         </button>
       </div>
 
       {/* Tab Content */}
-      {tab === "post" ? (
-        <PostItem searchQuery={searchQuery} />
-      ) : (
-        <Ask searchQuery={searchQuery} />
-      )}
+      {/* {tab === "post" ? (
+  <div className="tab-content">
+    <PostItem searchQuery={searchQuery} refreshTrigger={postRefreshTrigger} />
+  </div>
+) : (
+  <div className="tab-content">
+    <Ask searchQuery={searchQuery} refreshTrigger={askRefreshTrigger} />
+  </div>
+)} */}
+
+      {/* Tab Content with animation */}
+      <div key={tab} className={`tab-content fade-slide`}>
+        {tab === "post" ? (
+          <PostItem
+            searchQuery={searchQuery}
+            refreshTrigger={postRefreshTrigger}
+          />
+        ) : (
+          <Ask searchQuery={searchQuery} refreshTrigger={askRefreshTrigger} />
+        )}
+      </div>
 
       {/* Modal */}
       <Modal isOpen={openModal} onClose={() => setOpenModal(false)}>
         {tab === "post" ? (
-          <PostForm onCancel={() => setOpenModal(false)} />
+          <PostForm
+            onCancel={() => setOpenModal(false)}
+            onPostCreated={handlePostCreated}
+          />
         ) : (
-          <AskForm onCancel={() => setOpenModal(false)} />
+          <AskForm
+            onCancel={() => setOpenModal(false)}
+            onAskCreated={handleAskCreated}
+          />
         )}
       </Modal>
     </div>

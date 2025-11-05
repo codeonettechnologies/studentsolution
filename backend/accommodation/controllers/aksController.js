@@ -2,10 +2,10 @@ const connectDB = require("../../config/database");
 const db = connectDB();
 const database = connectDB().promise();
 
-exports.createJobAsk = async (req, res) => {
+exports.createAccommodationAsk = async (req, res) => {
   try {
     const { content, user_id } = req.body;
-  console.log(req.body);
+
   
     if (!content || !user_id) {
       return res.status(400).json({ message: "Content and user_id are required" });
@@ -20,12 +20,12 @@ exports.createJobAsk = async (req, res) => {
       }
 
       // Insert question
-      const sql = "INSERT INTO job_ask (user_id, content) VALUES (?, ?)";
+      const sql = "INSERT INTO accommodation_ask (user_id, content) VALUES (?, ?)";
       db.query(sql, [user_id, content], (err, result) => {
         if (err) throw err;
         res.status(201).json({ 
-          message: "Job ask created successfully", 
-          job_ask_id: result.insertId 
+          message: "accommodation ask created successfully", 
+          accommodation_ask_id: result.insertId 
         });
       });
     });
@@ -37,21 +37,21 @@ exports.createJobAsk = async (req, res) => {
 };
 
 
-exports.getAllJobAsks = async (req, res) => {
+exports.getAllAccommodationAsks = async (req, res) => {
   try {
     const sql = `
       SELECT 
-        ja.id,
-        ja.content,
-        ja.created_at,
-        ja.updated_at,
+        aa.id,
+        aa.content,
+        aa.created_at,
+        aa.updated_at,
         u.name,
         u.profile_image,
         u.role,
         u.college
-      FROM job_ask ja
-      JOIN users u ON ja.user_id = u.id
-      ORDER BY ja.created_at DESC
+      FROM accommodation_ask aa
+      JOIN users u ON aa.user_id = u.id
+      ORDER BY aa.created_at DESC
     `;
 
     db.query(sql, (err, results) => {
@@ -64,7 +64,7 @@ exports.getAllJobAsks = async (req, res) => {
   }
 };
 
-exports.getJobAsktsByUserId = async (req, res) => {
+exports.getAccommodationAsktsByUserId = async (req, res) => {
   const { userId } = req.params;
 
   if (!userId || isNaN(userId) || parseInt(userId) <= 0) {
@@ -77,13 +77,13 @@ exports.getJobAsktsByUserId = async (req, res) => {
   try {
     const [rows] = await database.execute(
       `SELECT 
-         ja.*, 
+         aa.*, 
          u.name AS user_name, 
          u.profile_image, 
          u.college
-       FROM job_ask ja
-       JOIN users u ON ja.user_id = u.id
-       WHERE ja.user_id = ?`,
+       FROM accommodation_ask aa
+       JOIN users u ON aa.user_id = u.id
+       WHERE aa.user_id = ?`,
       [userId]
     );
 
@@ -92,7 +92,7 @@ exports.getJobAsktsByUserId = async (req, res) => {
       data: rows,
     });
   } catch (error) {
-    console.error('Error fetching job asks:', error);
+    console.error('Error fetching accommodation asks:', error);
     res.status(500).json({
       success: false,
       message: 'Server error',
@@ -102,7 +102,7 @@ exports.getJobAsktsByUserId = async (req, res) => {
 
 
 
-exports.searchAskJobs = async (req, res) => {
+exports.searchAskAccommodations = async (req, res) => {
   try {
     const { query } = req.query;
  
@@ -113,10 +113,10 @@ exports.searchAskJobs = async (req, res) => {
     }
  
     const sql = `
-      SELECT ja.*, u.name
-      FROM Job_ask ja
-      JOIN users u ON ja.user_id = u.id
-      WHERE u.name LIKE ? OR ja.content LIKE ?
+      SELECT aa.*, u.name
+      FROM accommodation_ask aa
+      JOIN users u ON aa.user_id = u.id
+      WHERE u.name LIKE ? OR aa.content LIKE ?
     `;
  
     const searchValue = `%${query}%`;
@@ -144,7 +144,7 @@ exports.delete_ask = async (req , res)=>{
   try{
      const {id} = req.params;
  
-      const sql = "DELETE FROM job_ask WHERE id = ?";
+      const sql = "DELETE FROM accommodation_ask WHERE id = ?";
       db.query(sql , [id] , (err , result)=>{
         if(err){
           console.error("Database error" , err);

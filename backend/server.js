@@ -17,9 +17,14 @@ const entertainmentRoutes = require("./entertainment/routes/entertainmentRoutes"
 
 const shopingRoutes = require("./Shopping/routes/shopingRoutes");
 
+const tifnRoutes = require("./tifin/routes/tifinRoute")
+// Accomodation Route 
+const accomodationRoutes = require("./accommodation/routes/accommodationRoute");
+
+const entertainmentRoute = require("./entertainment/routes/entertainmentRoutes")
+
 dotenv.config();
 const app = express();
-
 app.use(
   cors({
     origin: "http://localhost:3000",
@@ -36,14 +41,11 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // auth
 app.use("/api/auth", authRoutes);
-
 //coaching
 app.use("/coaching", coachingRoutes);
 
 // job
 app.use("/job", jobPostRoutes);
-
-//tiffin
 app.use("/tiffin", tifnRoutes);
 
 //entertainment 
@@ -51,6 +53,8 @@ app.use("/entertainment", entertainmentRoutes);
 
 app.use("/shopping", shopingRoutes);
 
+app.use("/accommodation" , accomodationRoutes)
+app.use("/entertainment" , entertainmentRoute)
 app.use((req, res, next) => {
   req.db = connectDB;
   next();

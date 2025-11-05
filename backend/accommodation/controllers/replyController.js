@@ -8,21 +8,22 @@ exports.createReply = async (req, res) => {
     if (!user_id || !ask_reply_id || !content) {
       return res.status(400).json({ message: "user_id, ask_reply_id and content are required" });
     }
+
+    // Optional: check if user exists
     db.query("SELECT * FROM users WHERE id = ?", [user_id], (err, userResult) => {
       if (err) throw err;
       if (userResult.length === 0) {
         return res.status(400).json({ message: "User does not exist" });
       }
 
-      // Optional: check if question exists
-      db.query("SELECT * FROM tiffin_ask WHERE id = ?", [ask_reply_id], (err, askResult) => {
+      db.query("SELECT * FROM accommodation_ask WHERE id = ?", [ask_reply_id], (err, askResult) => {
         if (err) throw err;
         if (askResult.length === 0) {
           return res.status(400).json({ message: "Question does not exist" });
         }
 
         // Insert reply
-        const sql = "INSERT INTO tiffin_reply (user_id, ask_reply_id, content) VALUES (?, ?, ?)";
+        const sql = "INSERT INTO accommodation_reply (user_id, ask_reply_id, content) VALUES (?, ?, ?)";
         db.query(sql, [user_id, ask_reply_id, content], (err, result) => {
           if (err) throw err;
           res.status(201).json({ 
@@ -51,18 +52,18 @@ exports.getRepliesByAskId = async (req, res) => {
 
     const sql = `
       SELECT 
-        tr.id,
-        tr.content,
-        tr.created_at,
-        tr.updated_at,
+        ar.id,
+        ar.content,
+        ar.created_at,
+        ar.updated_at,
         u.name,
         u.profile_image,
         u.role,
         u.college
-      FROM tiffin_reply tr
-      JOIN users u ON tr.user_id = u.id
-      WHERE tr.ask_reply_id = ?
-      ORDER BY tr.created_at ASC
+      FROM accommodation_reply ar
+      JOIN users u ON ar.user_id = u.id
+      WHERE ar.ask_reply_id = ?
+      ORDER BY ar.created_at ASC
     `;
 
     db.query(sql, [ask_reply_id], (err, results) => {
@@ -77,12 +78,11 @@ exports.getRepliesByAskId = async (req, res) => {
 };
 
 
-
 exports.delete_reply = async (req , res)=>{
   try{
      const {id} = req.params;
-
-      const sql = "DELETE FROM tiffin_reply WHERE id = ?";
+ 
+      const sql = "DELETE FROM accommodation_reply WHERE id = ?";
       db.query(sql , [id] , (err , result)=>{
         if(err){
           console.error("Database error" , err);

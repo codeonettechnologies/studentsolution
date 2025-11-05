@@ -7,11 +7,12 @@ const {
   get_all_tiffin_posts,
   getTiffinPostsByUserId,
   delete_tiffin_post,
-  post_comment,
+  post_comment, 
   get_comments,
-  delete_comment,
+  delete_comment, 
   toggle_like,
-  get_like_status
+  get_like_status,
+  searchTiffinPosts
 } = require("../../tifin/controllers/tifinPostController");
 
 //-----------------tiffin router-------------------------------------------------
@@ -30,13 +31,19 @@ router.delete("/comment/:id", delete_comment);
 router.post("/like/unlike", toggle_like);
 router.get("/getlike", get_like_status);
 
+router.get("/searchPost", searchTiffinPosts);
+
 //------------------job ask routes ------------------------------------- 
-const {createTiffinAsk ,getAllTiffinAsks} = require("../controllers/tiffinAskController")
+const {createTiffinAsk ,getAllTiffinAsks , getFoodAskByUserId , searchFoodAsk , deleteFood} = require("../controllers/tiffinAskController")
 router.post("/tiffinAsk", createTiffinAsk);
 router.get("/tiffinAskGet", getAllTiffinAsks);
+router.get('/foodGet/:userId', getFoodAskByUserId);
+router.get("/searchAsk", searchFoodAsk);
+router.delete("/foodAsk/:id" , deleteFood)
 
-const {createReply ,getRepliesByAskId} = require("../controllers/tiffinReplyController")
+const {createReply ,getRepliesByAskId , delete_reply} = require("../controllers/tiffinReplyController")
 router.post("/tiffinReply" , createReply)
 router.get("/:ask_reply_id", getRepliesByAskId);
+router.delete("/reply/:id", delete_reply);
 
 module.exports = router;

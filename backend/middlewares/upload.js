@@ -1,3 +1,4 @@
+
 // const multer = require("multer");
 // const path = require("path");
 // const fs = require("fs");
@@ -10,10 +11,14 @@
 //       folder = "uploads/job_posts";
 //     } else if (req.baseUrl.includes("/coaching")) {
 //       folder = "uploads/coaching_posts";
+//     } else if (req.baseUrl.includes("/tiffin")) {
+//       folder = "uploads/tiffin_posts";
 //     } else if (req.body.section === "job") {
 //       folder = "uploads/job_posts";
 //     } else if (req.body.section === "coaching") {
 //       folder = "uploads/coaching_posts";
+//     } else if (req.body.section === "tiffin") {
+//       folder = "uploads/Tiffin_posts";
 //     }
 
 //     if (!fs.existsSync(folder)) {
@@ -52,7 +57,7 @@ const fs = require("fs");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    let folder = "uploads/others"; 
+    let folder = "uploads/others";
 
     if (req.baseUrl.includes("/job")) {
       folder = "uploads/job_posts";
@@ -60,19 +65,22 @@ const storage = multer.diskStorage({
       folder = "uploads/coaching_posts";
     } else if (req.baseUrl.includes("/tiffin")) {
       folder = "uploads/tiffin_posts";
-    } else if (req.baseUrl.includes("/entertainment")) {
+    } else if (req.baseUrl.includes("/accommodation")) {
+      folder = "uploads/accommodation_posts";
+    }else if (req.baseUrl.includes("/entertainment")) {
       folder = "uploads/entertainment_posts";
-    } else if (req.body.section === "job") {
+    }  
+    else if (req.body.section === "job") {
       folder = "uploads/job_posts";
     } else if (req.body.section === "coaching") {
       folder = "uploads/coaching_posts";
     } else if (req.body.section === "tiffin") {
-      folder = "uploads/Tiffin_posts";
+      folder = "uploads/tiffin_posts";
+    } else if (req.body.section === "accommodation") {
+      folder = "uploads/accommodation_posts";
     }else if (req.body.section === "entertainment") {
       folder = "uploads/entertainment_posts";
     }
-
-
 
     if (!fs.existsSync(folder)) {
       fs.mkdirSync(folder, { recursive: true });
@@ -102,4 +110,3 @@ const upload = multer({
 });
 
 module.exports = upload;
-
