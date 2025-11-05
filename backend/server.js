@@ -11,9 +11,11 @@ const jobPostRoutes = require("./job/routes/jobRoute");
 // coaching route
 const coachingRoutes = require("./coaching/routes/coachingRoutes");
 // tifin route 
-const tifnRoutes = require("./tifin/routes/tifinRoute")
+const tifnRoutes = require("./tifin/routes/tifinRoute");
 //Entertainment route
-const entertainmentRoutes = require("./entertainment/routes/entertainmentRoutes")
+const entertainmentRoutes = require("./entertainment/routes/entertainmentRoutes");
+
+const shopingRoutes = require("./Shopping/routes/shopingRoutes");
 
 dotenv.config();
 const app = express();
@@ -46,6 +48,8 @@ app.use("/tiffin", tifnRoutes);
 
 //entertainment 
 app.use("/entertainment", entertainmentRoutes);
+
+app.use("/shopping", shopingRoutes);
 
 app.use((req, res, next) => {
   req.db = connectDB;
