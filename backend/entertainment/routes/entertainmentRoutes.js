@@ -24,7 +24,7 @@ router.delete("/post/:id", delete_entertainmentPosts);
 
 //--------------------- Entertainment search -----------------------------------------
  
-router.get("/search", searchEntertainments);
+router.get("/searchPost", searchEntertainments);
 
 
 //-------------like route----------------------------
@@ -45,6 +45,7 @@ router.get("/EntertainmentAskGet", getAllEntertainmentAsks);
 router.get('/askGet/:userId', getEntertainmentAsktsByUserId);
 router.delete("/ask/:id", delete_ask);
 router.get("/searchAsk", searchAskentertainment);
+
 
 //------------- Entertainment reply route-----------------------------------------------------
 const {createReply ,getRepliesByAskId, delete_reply} = require("../controllers/entertainmentReplyController")
