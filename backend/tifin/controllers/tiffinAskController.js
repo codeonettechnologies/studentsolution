@@ -111,7 +111,10 @@ exports.searchFoodAsk = async (req, res) => {
       });
     }
     const sql = `
-      SELECT ta.*, u.name
+      SELECT ta.*, 
+      u.college,
+       u.profile_image,
+      u.name
       FROM tiffin_ask ta
       JOIN users u ON ta.user_id = u.id
       WHERE u.name LIKE ? OR ta.content LIKE ? 

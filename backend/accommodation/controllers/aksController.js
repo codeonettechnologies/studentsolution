@@ -113,7 +113,10 @@ exports.searchAskAccommodations = async (req, res) => {
     }
  
     const sql = `
-      SELECT aa.*, u.name
+      SELECT aa.*, 
+      u.college,
+       u.profile_image,
+      u.name
       FROM accommodation_ask aa
       JOIN users u ON aa.user_id = u.id
       WHERE u.name LIKE ? OR aa.content LIKE ?
