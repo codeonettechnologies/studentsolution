@@ -11,6 +11,12 @@ const jobPostRoutes = require("./job/routes/jobRoute");
 // coaching route
 const coachingRoutes = require("./coaching/routes/coachingRoutes");
 // tifin route 
+const tifnRoutes = require("./tifin/routes/tifinRoute");
+//Entertainment route
+const entertainmentRoutes = require("./entertainment/routes/entertainmentRoutes");
+
+const shopingRoutes = require("./Shopping/routes/shopingRoutes");
+
 const tifnRoutes = require("./tifin/routes/tifinRoute")
 // Accomodation Route 
 const accomodationRoutes = require("./accommodation/routes/accommodationRoute");
@@ -41,6 +47,12 @@ app.use("/coaching", coachingRoutes);
 // job
 app.use("/job", jobPostRoutes);
 app.use("/tiffin", tifnRoutes);
+
+//entertainment 
+app.use("/entertainment", entertainmentRoutes);
+
+app.use("/shopping", shopingRoutes);
+
 app.use("/accommodation" , accomodationRoutes)
 app.use("/entertainment" , entertainmentRoute)
 app.use((req, res, next) => {
