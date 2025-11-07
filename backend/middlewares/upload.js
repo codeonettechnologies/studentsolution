@@ -18,8 +18,15 @@ const storage = multer.diskStorage({
       folder = "uploads/accommodation_posts";
     }else if (req.baseUrl.includes("/entertainment")) {
       folder = "uploads/entertainment_posts";
+<<<<<<< Updated upstream
     } else if (req.baseUrl.includes("/shopping")) {
       folder = "uploads/shopping_posts";
+=======
+    }   else if (req.baseUrl.includes("/shopping")) {
+      folder = "uploads/shopping_posts";
+    } else if (req.baseUrl.includes("/usedItem")) {
+      folder = "uploads/usedItem_posts";
+>>>>>>> Stashed changes
     }
     else if (req.body.section === "job") {
       folder = "uploads/job_posts";
@@ -35,7 +42,13 @@ const storage = multer.diskStorage({
       folder = "uploads/entertainment_posts";
     }else if (req.body.section === "shopping") {
       folder = "uploads/shopping_posts";
+<<<<<<< Updated upstream
+=======
+    }else if (req.body.section === "usedItem") {
+      folder = "uploads/usedItem_posts";
+>>>>>>> Stashed changes
     }
+
 
     if (!fs.existsSync(folder)) {
       fs.mkdirSync(folder, { recursive: true });
