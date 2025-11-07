@@ -14,14 +14,20 @@ const coachingRoutes = require("./coaching/routes/coachingRoutes");
 const tifnRoutes = require("./tifin/routes/tifinRoute");
 //Entertainment route
 const entertainmentRoutes = require("./entertainment/routes/entertainmentRoutes");
-
+//shopping
 const shopingRoutes = require("./Shopping/routes/shopingRoutes");
+<<<<<<< Updated upstream
 
 // const tifnRoutes = require("./tifin/routes/tifinRoute")
+=======
+>>>>>>> Stashed changes
 // Accomodation Route 
 const accomodationRoutes = require("./accommodation/routes/accommodationRoute");
-
+//entertainment
 const entertainmentRoute = require("./entertainment/routes/entertainmentRoutes")
+//usedItem
+const usedItemRoute = require("./usedItem/routes/usedItemRoutes")
+
 
 const generalRoute = require("./general/routes/generalRoute")
 
@@ -49,17 +55,31 @@ app.use("/coaching", coachingRoutes);
 // job
 app.use("/job", jobPostRoutes);
 
+<<<<<<< Updated upstream
+=======
+//tiffin
+>>>>>>> Stashed changes
 app.use("/tiffin", tifnRoutes);
 
 //entertainment 
 app.use("/entertainment", entertainmentRoutes);
 
+//shopping
 app.use("/shopping", shopingRoutes);
 
+//usedItem
+app.use("/usedItem", usedItemRoute);
+
+//accommodation
 app.use("/accommodation" , accomodationRoutes)
+
+//entertainment
 app.use("/entertainment" , entertainmentRoute)
+<<<<<<< Updated upstream
 app.use("/general" , generalRoute)
 
+=======
+>>>>>>> Stashed changes
 
 
 app.use((req, res, next) => {

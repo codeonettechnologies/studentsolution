@@ -47,35 +47,58 @@ exports.getAllProducts = (req, res) => {
   });
 };
 
+<<<<<<< Updated upstream
 
 
+=======
+>>>>>>> Stashed changes
 //-------------------- Delete PRODUCTS --------------------
 exports.deleteProduct = (req, res) => {
   try {
     const { id } = req.params;
+<<<<<<< Updated upstream
  
     if (!id) {
       return res.status(400).json({ message: "Product ID is required" });
     }
  
+=======
+
+    if (!id) {
+      return res.status(400).json({ message: "Product ID is required" });
+    }
+
+>>>>>>> Stashed changes
     const sql = "DELETE FROM products WHERE id = ?";
     db.query(sql, [id], (err, result) => {
       if (err)
         return res.status(500).json({ message: "Database error", error: err.message });
+<<<<<<< Updated upstream
  
       if (result.affectedRows === 0) {
         return res.status(404).json({ message: "Product not found" });
       }
  
+=======
+
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+
+>>>>>>> Stashed changes
       res.status(200).json({ message: "Product deleted successfully" });
     });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
+<<<<<<< Updated upstream
  
  
  
+=======
+
+>>>>>>> Stashed changes
 
 //-------------------- ADD TO CART --------------------
 exports.addToCart = (req, res) => {
@@ -114,18 +137,42 @@ exports.addToCart = (req, res) => {
 //-------------------- GET USER CART --------------------
 exports.getUserCart = (req, res) => {
   const { user_id } = req.params;
+
   const sql = `
-    SELECT c.id, p.name, p.price, p.image_url, c.quantity
+    SELECT 
+      c.id AS cart_id,
+      c.user_id,
+      c.product_id,
+      c.quantity,
+      p.name AS product_name,
+      p.description AS product_description,
+      p.price AS product_price,
+      p.image_url AS product_image
     FROM cart c
     JOIN products p ON c.product_id = p.id
     WHERE c.user_id = ?
   `;
+
   db.query(sql, [user_id], (err, results) => {
     if (err)
+<<<<<<< Updated upstream
       return res
         .status(500)
         .json({ message: "Database error", error: err.message });
     res.status(200).json({ message: "Cart fetched", data: results });
+=======
+      return res.status(500).json({ message: "Database error", error: err.message });
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: "Cart is empty", data: [] });
+    }
+
+    res.status(200).json({
+      message: "Cart fetched successfully",
+      count: results.length,
+      data: results
+    });
+>>>>>>> Stashed changes
   });
 };
 
@@ -140,18 +187,22 @@ exports.placeOrder = async (req, res) => {
         .json({ message: "user_id and address are required" });
     }
 
-    // ✅ Get user mobile number
+     // ✅ Get user mobile number
     const [userRows] = await database.query(
       "SELECT mobile_number FROM users WHERE id = ?",
       [user_id]
     );
-
+ 
     if (userRows.length === 0) {
       return res.status(404).json({ message: "User not found" });
     }
-
+ 
     const userMobile = userRows[0].mobile_number;
     console.log("User Mobile:", userMobile);
+<<<<<<< Updated upstream
+=======
+ 
+>>>>>>> Stashed changes
 
     // ✅ Get cart items
     const [cartItems] = await database.query(
@@ -219,6 +270,36 @@ exports.getMyOrders = async (req, res) => {
     res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
+
+// -------------------- GET MY ORDERS --------------------
+exports.getMyOrders = async (req, res) => {
+  try {
+    const { user_id } = req.params;
+
+    if (!user_id) {
+      return res.status(400).json({ message: "user_id is required" });
+    }
+
+    const [orders] = await database.query(
+      "SELECT id, total_price, address, payment_mode, user_mobile, status, created_at FROM orders WHERE user_id = ? ORDER BY created_at DESC",
+      [user_id]
+    );
+
+    if (orders.length === 0) {
+      return res.status(404).json({ message: "No orders found for this user" });
+    }
+
+    res.status(200).json({
+      message: "Orders fetched successfully",
+      total_orders: orders.length,
+      orders,
+    });
+  } catch (error) {
+    console.error("Get My Orders Error:", error);
+    res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+};
+
 
 //-------------------- SEARCH PRODUCTS --------------------
 exports.searchProducts = async (req, res) => {
