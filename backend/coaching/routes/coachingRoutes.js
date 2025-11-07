@@ -24,7 +24,7 @@ router.delete("/post/:id", deletePost);
 
 //--------------------- job search -----------------------------------------
  
-router.get("/search", searchCoachings);
+router.get("/searchPost", searchCoachings);
  
 
 // -------------------- Likes --------------------
