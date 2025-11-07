@@ -111,6 +111,18 @@ const Header = () => {
                 >
                   Post / Ask
                 </Link>
+                  <Link
+                  to="/dashboard/mycard"
+                  onClick={() => setDropdownOpen(false)}
+                >
+                  Cart Items
+                </Link>
+                 <Link
+                  to="/dashboard/myorder"
+                  onClick={() => setDropdownOpen(false)}
+                >
+                 My Order
+                </Link>
                 <button onClick={handleLogout}>Logout</button>
               </div>
             )}

@@ -18,7 +18,9 @@ const storage = multer.diskStorage({
       folder = "uploads/accommodation_posts";
     }else if (req.baseUrl.includes("/entertainment")) {
       folder = "uploads/entertainment_posts";
-    }  
+    } else if (req.baseUrl.includes("/shopping")) {
+      folder = "uploads/shopping_posts";
+    }
     else if (req.body.section === "job") {
       folder = "uploads/job_posts";
     } else if (req.body.section === "coaching") {
@@ -31,6 +33,8 @@ const storage = multer.diskStorage({
       folder = "uploads/accommodation_posts";
     }else if (req.body.section === "entertainment") {
       folder = "uploads/entertainment_posts";
+    }else if (req.body.section === "shopping") {
+      folder = "uploads/shopping_posts";
     }
 
     if (!fs.existsSync(folder)) {

@@ -9,17 +9,29 @@ exports.addProduct = (req, res) => {
     const image_url = req.file ? req.file.filename : null;
 
     if (!name || !price) {
-      return res.status(400).json({ message: "Product name and price are required" });
+      return res
+        .status(400)
+        .json({ message: "Product name and price are required" });
     }
 
-    const sql = "INSERT INTO products (name, description, price, image_url) VALUES (?, ?, ?, ?)";
+    const sql =
+      "INSERT INTO products (name, description, price, image_url) VALUES (?, ?, ?, ?)";
     db.query(sql, [name, description, price, image_url], (err, result) => {
       if (err)
-        return res.status(500).json({ message: "Database error", error: err.message });
-      res.status(201).json({ message: "Product added successfully", product_id: result.insertId });
+        return res
+          .status(500)
+          .json({ message: "Database error", error: err.message });
+      res
+        .status(201)
+        .json({
+          message: "Product added successfully",
+          product_id: result.insertId,
+        });
     });
   } catch (error) {
-    res.status(500).json({ message: "Internal server error", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
   }
 };
 
@@ -28,29 +40,74 @@ exports.getAllProducts = (req, res) => {
   const sql = "SELECT * FROM products ORDER BY id DESC";
   db.query(sql, (err, results) => {
     if (err)
-      return res.status(500).json({ message: "Database error", error: err.message });
+      return res
+        .status(500)
+        .json({ message: "Database error", error: err.message });
     res.status(200).json({ message: "All products fetched", data: results });
   });
 };
+
+
+
+//-------------------- Delete PRODUCTS --------------------
+exports.deleteProduct = (req, res) => {
+  try {
+    const { id } = req.params;
+ 
+    if (!id) {
+      return res.status(400).json({ message: "Product ID is required" });
+    }
+ 
+    const sql = "DELETE FROM products WHERE id = ?";
+    db.query(sql, [id], (err, result) => {
+      if (err)
+        return res.status(500).json({ message: "Database error", error: err.message });
+ 
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+ 
+      res.status(200).json({ message: "Product deleted successfully" });
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+};
+ 
+ 
+ 
 
 //-------------------- ADD TO CART --------------------
 exports.addToCart = (req, res) => {
   try {
     const { user_id, product_id, quantity } = req.body;
 
+    console.log("BODY:", req.body);
+    console.log("HEADERS:", req.headers["content-type"]);
+
     if (!user_id || !product_id) {
-      return res.status(400).json({ message: "user_id and product_id are required" });
+      return res
+        .status(400)
+        .json({ message: "user_id and product_id are required" });
     }
 
     const sql =
       "INSERT INTO cart (user_id, product_id, quantity) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE quantity = quantity + ?";
-    db.query(sql, [user_id, product_id, quantity || 1, quantity || 1], (err) => {
-      if (err)
-        return res.status(500).json({ message: "Database error", error: err.message });
-      res.status(200).json({ message: "Product added to cart" });
-    });
+    db.query(
+      sql,
+      [user_id, product_id, quantity || 1, quantity || 1],
+      (err) => {
+        if (err)
+          return res
+            .status(500)
+            .json({ message: "Database error", error: err.message });
+        res.status(200).json({ message: "Product added to cart" });
+      }
+    );
   } catch (error) {
-    res.status(500).json({ message: "Internal server error", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
   }
 };
 
@@ -65,7 +122,9 @@ exports.getUserCart = (req, res) => {
   `;
   db.query(sql, [user_id], (err, results) => {
     if (err)
-      return res.status(500).json({ message: "Database error", error: err.message });
+      return res
+        .status(500)
+        .json({ message: "Database error", error: err.message });
     res.status(200).json({ message: "Cart fetched", data: results });
   });
 };
@@ -76,7 +135,9 @@ exports.placeOrder = async (req, res) => {
     const { user_id, address } = req.body;
 
     if (!user_id || !address) {
-      return res.status(400).json({ message: "user_id and address are required" });
+      return res
+        .status(400)
+        .json({ message: "user_id and address are required" });
     }
 
     // ✅ Get user mobile number
@@ -90,6 +151,7 @@ exports.placeOrder = async (req, res) => {
     }
 
     const userMobile = userRows[0].mobile_number;
+    console.log("User Mobile:", userMobile);
 
     // ✅ Get cart items
     const [cartItems] = await database.query(
@@ -122,6 +184,38 @@ exports.placeOrder = async (req, res) => {
     });
   } catch (error) {
     console.error("Order error:", error);
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
+  }
+};
+
+
+// -------------------- GET MY ORDERS --------------------
+exports.getMyOrders = async (req, res) => {
+  try {
+    const { user_id } = req.params;
+ 
+    if (!user_id) {
+      return res.status(400).json({ message: "user_id is required" });
+    }
+ 
+    const [orders] = await database.query(
+      "SELECT id, total_price, address, payment_mode, user_mobile, status, created_at FROM orders WHERE user_id = ? ORDER BY created_at DESC",
+      [user_id]
+    );
+ 
+    if (orders.length === 0) {
+      return res.status(404).json({ message: "No orders found for this user" });
+    }
+ 
+    res.status(200).json({
+      message: "Orders fetched successfully",
+      total_orders: orders.length,
+      orders,
+    });
+  } catch (error) {
+    console.error("Get My Orders Error:", error);
     res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
@@ -159,7 +253,9 @@ exports.cancelOrder = async (req, res) => {
     const { user_id } = req.body;
 
     if (!order_id || !user_id) {
-      return res.status(400).json({ message: "order_id and user_id are required" });
+      return res
+        .status(400)
+        .json({ message: "order_id and user_id are required" });
     }
 
     const [order] = await database.query(
@@ -168,7 +264,9 @@ exports.cancelOrder = async (req, res) => {
     );
 
     if (order.length === 0) {
-      return res.status(404).json({ message: "Order not found or not belongs to user" });
+      return res
+        .status(404)
+        .json({ message: "Order not found or not belongs to user" });
     }
 
     if (order[0].status === "Cancelled") {

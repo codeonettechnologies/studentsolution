@@ -17,7 +17,7 @@ const entertainmentRoutes = require("./entertainment/routes/entertainmentRoutes"
 
 const shopingRoutes = require("./Shopping/routes/shopingRoutes");
 
-const tifnRoutes = require("./tifin/routes/tifinRoute")
+// const tifnRoutes = require("./tifin/routes/tifinRoute")
 // Accomodation Route 
 const accomodationRoutes = require("./accommodation/routes/accommodationRoute");
 
@@ -48,6 +48,7 @@ app.use("/coaching", coachingRoutes);
 
 // job
 app.use("/job", jobPostRoutes);
+
 app.use("/tiffin", tifnRoutes);
 
 //entertainment 

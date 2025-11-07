@@ -229,3 +229,117 @@
     font-size: 1.4rem;
   }
 }
+/*Add product file css*/
+.admin-container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.open-form-btn {
+  background-color: #007bff;
+  color: white;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.open-form-btn:hover {
+  background-color: #0056b3;
+}
+
+/* ✅ Popup modal */
+.add-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.add-modal-content {
+  background: white;
+  padding: 20px;
+  width: 400px;
+  border-radius: 8px;
+  position: relative;
+  animation: fadeIn 0.3s ease-in-out;
+}
+.close-btn {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  font-size: 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.add-modal-content input {
+  width: 100%;
+  margin: 8px 0;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+.crop-area {
+  margin-top: 10px;
+}
+.crop-btn,
+.add-btn {
+  margin-top: 10px;
+  background-color: #007bff;
+  color: white;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.add-btn:hover {
+  background-color: #0056b3;
+}
+.table-container {
+  margin-top: 30px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th, td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+th {
+  background: #f5f5f5;
+}
+.menu-container {
+  position: relative;
+  display: inline-block;
+}
+.menu-icon {
+  cursor: pointer;
+  font-size: 18px;
+}
+.dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: 20px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  z-index: 10;
+}
+.dropdown-menu button {
+  display: block;
+  background: none;
+  border: none;
+  width: 100%;
+  padding: 8px 15px;
+  cursor: pointer;
+}
+.dropdown-menu button:hover {
+  background: #f0f0f0;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}

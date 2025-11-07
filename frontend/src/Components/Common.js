@@ -10,25 +10,8 @@ export default function CommonContent() {
   const [tab, setTab] = useState("post");
   const [openModal, setOpenModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [sectionText, setSectionText] = useState("");
   const [postRefreshTrigger, setPostRefreshTrigger] = useState(0);
   const [askRefreshTrigger, setAskRefreshTrigger] = useState(0);
-
-  const currentSection = localStorage.getItem("currentSection") || "Job";
-
-  useEffect(() => {
-    const sectionHeadingMap = {
-      job: "Explore the latest job opportunities here!",
-      coaching: "Find the best coaching tips and guides.",
-      tiffin: "Discover delicious tiffin and food options.",
-      entertainment: "Enjoy trending entertainment content.",
-      default: "Check out the latest content in this section.",
-    };
-    setSectionText(
-      sectionHeadingMap[currentSection.toLowerCase()] ||
-        sectionHeadingMap.default
-    );
-  }, [currentSection]);
 
   const handlePostCreated = (newPostData) => {
     setPostRefreshTrigger((prev) => prev + 1);
@@ -42,7 +25,6 @@ export default function CommonContent() {
 
   return (
     <div className="main-content-area">
-      <h2 className="section-heading">{sectionText}</h2>
 
       {/* Tabs */}
       <div className="tab-navigation">
