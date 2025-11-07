@@ -28,6 +28,29 @@ router.post("/comment", add_comment);
 router.get("/:id/comments", get_comments);
 router.delete("/comment/:id", delete_comment);
 
+//------------------General ask routes -------------------------------------
+const {
+  createGeneralAsk,
+  getAllGeneralAsks,
+  getGeneralAsktsByUserId,
+  searchAskGenerals,
+  delete_ask,
+} = require("../controllers/aksController");
 
+router.post("/generalAsk", createGeneralAsk);
+router.get("/generalAskGet", getAllGeneralAsks);
+router.get("/askGet/:userId", getGeneralAsktsByUserId);
+router.delete("/ask/:id", delete_ask);
+router.get("/searchAsk", searchAskGenerals);
+
+//------------- job reply route-----------------------------------------------------------------
+const {
+  createReply,
+  getRepliesByAskId,
+  delete_reply,
+} = require("../controllers/replyController");
+router.post("/generalReply", createReply);
+router.get("/:ask_reply_id", getRepliesByAskId);
+router.delete("/reply/:id", delete_reply);
 
 module.exports = router;

@@ -1,0 +1,168 @@
+const connectDB = require("../../config/database");
+const db = connectDB();
+const database = connectDB().promise();
+
+exports.createGeneralAsk = async (req, res) => {
+  try {
+    const { content, user_id } = req.body;
+  
+  
+    if (!content || !user_id) {
+      return res.status(400).json({ message: "Content and user_id are required" });
+    }
+
+    db.query("SELECT * FROM users WHERE id = ?", [user_id], (err, userResult) => {
+      if (err) throw err;
+
+      if (userResult.length === 0) {
+        return res.status(400).json({ message: "User does not exist" });
+      }
+
+      const sql = "INSERT INTO general_ask (user_id, content) VALUES (?, ?)";
+      db.query(sql, [user_id, content], (err, result) => {
+        if (err) throw err;
+        res.status(201).json({ 
+          message: "general ask created successfully", 
+          general_ask_id: result.insertId 
+        });
+      });
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Database error" });
+  }
+};
+
+
+exports.getAllGeneralAsks = async (req, res) => {
+  try {
+    const sql = `
+      SELECT 
+        ga.id,
+        ga.content,
+        ga.created_at,
+        ga.updated_at,
+        u.name,
+        u.profile_image,
+        u.role,
+        u.college
+      FROM general_ask ga
+      JOIN users u ON ga.user_id = u.id
+      ORDER BY ga.created_at DESC
+    `;
+
+    db.query(sql, (err, results) => {
+      if (err) throw err;  // will be caught in catch
+      res.json(results);
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Database error" });
+  }
+};
+
+exports.getGeneralAsktsByUserId = async (req, res) => {
+  const { userId } = req.params;
+
+  if (!userId || isNaN(userId) || parseInt(userId) <= 0) {
+    return res.status(400).json({
+      success: false,
+      message: 'Invalid user ID. It must be a positive number.',
+    });
+  }
+
+  try {
+    const [rows] = await database.execute(
+      `SELECT 
+         ga.*, 
+         u.name AS user_name, 
+         u.profile_image, 
+         u.college
+       FROM general_ask ga
+       JOIN users u ON ga.user_id = u.id
+       WHERE ga.user_id = ?`,
+      [userId]
+    );
+
+    res.status(200).json({
+      success: true,
+      data: rows,
+    });
+  } catch (error) {
+    console.error('Error fetching general asks:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
+    });
+  }
+};
+
+
+
+exports.searchAskGenerals = async (req, res) => {
+  try {
+    const { query } = req.query;
+ 
+    if (!query) {
+      return res.status(400).json({
+        message: "Search query is required",
+      });
+    }
+ 
+    const sql = `
+      SELECT ga.*,
+      u.college,
+      u.profile_image,
+      u.name
+      FROM general_ask ga
+      JOIN users u ON ga.user_id = u.id
+      WHERE u.name LIKE ? OR ga.content LIKE ?
+    `;
+ 
+    const searchValue = `%${query}%`;
+ 
+    db.query(sql, [searchValue, searchValue], (err, results) => {
+      if (err) {
+        console.error(" Database Error:", err);
+        return res.status(500).json({
+          message: "Database error",
+        });
+      }
+      res.json(results);
+    });
+  } catch (error) {
+    console.error("Server Error:", error);
+    res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
+
+ 
+exports.delete_ask = async (req , res)=>{
+  try{
+     const {id} = req.params;
+ 
+      const sql = "DELETE FROM general_ask WHERE id = ?";
+      db.query(sql , [id] , (err , result)=>{
+        if(err){
+          console.error("Database error" , err);
+          return res.status(500).json({
+            message: "Database error",
+             error: err.message
+          })
+        }
+         if (result.affectedRows === 0) {
+        return res.status(404).json({ message: "ask not found" });
+      }
+         res.status(200).json({ message: "aks deleted successfully" });
+      })
+  }catch(err){
+       res
+      .status(500)
+      .json({ message: "Internal server error", error: err.message });
+  }
+}
+ 
