@@ -3,13 +3,13 @@ import React, { useEffect } from "react";
 export default function Modal({ isOpen, onClose, children }) {
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = "hidden"; // disable background scroll
+      document.body.style.overflow = "hidden"; 
     } else {
-      document.body.style.overflow = "auto"; // enable again
+      document.body.style.overflow = "auto"; 
     }
 
     return () => {
-      document.body.style.overflow = "auto"; // cleanup
+      document.body.style.overflow = "auto"; 
     };
   }, [isOpen]);
 

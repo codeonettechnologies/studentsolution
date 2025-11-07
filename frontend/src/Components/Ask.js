@@ -351,10 +351,12 @@ export default function Ask({ searchQuery, refreshTrigger }) {
         }
 
         const res = await fetch(apiUrl);
-        console.log(res);
+    
 
         if (res.ok) {
           const data = await res.json();
+          console.log(data ,"data");
+          
           let fetchedData = [];
 
           if (Array.isArray(data)) fetchedData = data;

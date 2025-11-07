@@ -12,16 +12,6 @@ export default function UsedItem() {
 
   const currentSection = localStorage.getItem("currentSection") || "Used-Item";
 
-  useEffect(() => {
-    const sectionHeadingMap = {
-      useditem: "Find and list pre-owned items easily!",
-    };
-    setSectionText(
-      sectionHeadingMap[currentSection.toLowerCase()] ||
-        sectionHeadingMap.default
-    );
-  }, [currentSection]);
-
   const products = [
     {
       image:
@@ -72,9 +62,6 @@ export default function UsedItem() {
 
   return (
     <div className="main-content-area">
-      {/* Section Heading */}
-      <h2 className="section-heading">{sectionText}</h2>
-
       {/* Tabs */}
       <div className="tab-navigation">
         <button
@@ -118,8 +105,7 @@ export default function UsedItem() {
                   <div className="shop-details">
                     <h2 className="product-name">{product.name}</h2>
                     <p className="product-description">{product.description}</p>
-                    <p className="product-price">{product.price}</p>
-                    <button className="buy-btn">Add to Cart</button>
+                    <p className="used-product-price">{product.price}</p>
                   </div>
                 </div>
               ))

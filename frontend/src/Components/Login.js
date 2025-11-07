@@ -34,7 +34,7 @@ export default function Login() {
         // localStorage.setItem("userType", data.user.type);
         // localStorage.setItem("userCollege", data.user.college);
         // localStorage.setItem("userCity", data.user.city);
-
+        
         alert("Login Successful!");
         console.log(data.user);
 
