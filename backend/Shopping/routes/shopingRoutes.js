@@ -11,7 +11,7 @@ const {
   placeOrder,
   getMyOrders,
   cancelOrder,
-  searchProducts
+  searchProducts,
 } = require("../controllers/shoppingControllers");
 
 // Product routes
@@ -19,12 +19,8 @@ const {
 router.post("/products", upload.single("image"), addProduct);
 router.get("/products", getAllProducts);
 router.delete("/products/delete/:id", deleteProduct);
-<<<<<<< Updated upstream
-=======
 
->>>>>>> Stashed changes
-
-//Search routes 
+//Search routes
 router.get("/search", searchProducts);
 
 // Cart routes
@@ -33,14 +29,10 @@ router.get("/cart/:user_id", getUserCart);
 
 // Order route
 router.post("/order", placeOrder);
-<<<<<<< Updated upstream
+
 router.get("/order/:user_id", getMyOrders);
-=======
-router.get("/order/:user_id", getMyOrders); 
->>>>>>> Stashed changes
 
 //Cancel order
 router.put("/order/cancel/:order_id", cancelOrder);
-
 
 module.exports = router;
