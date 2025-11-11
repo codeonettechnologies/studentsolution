@@ -39,6 +39,8 @@ exports.create_UsedItemAsk = async (req, res) => {
 // ---------------- GET ALL ASKS ----------------
 exports.getAll_UsedItemAsks = async (req, res) => {
   try {
+    console.log("inside");
+    
     const sql = `
       SELECT 
         ua.id,
@@ -49,7 +51,7 @@ exports.getAll_UsedItemAsks = async (req, res) => {
         u.profile_image,
         u.role,
         u.college
-      FROM usedItem_ask ua
+      FROM useditem_ask ua
       JOIN users u ON ua.user_id = u.id
       ORDER BY ua.created_at DESC
     `;
@@ -82,7 +84,7 @@ exports.get_asksByUserId = async (req, res) => {
          u.name AS user_name, 
          u.profile_image, 
          u.college
-       FROM usedItem_ask ua
+       FROM useditem_ask ua
        JOIN users u ON ua.user_id = u.id
        WHERE ua.user_id = ?`,
       [userId]
@@ -114,7 +116,7 @@ exports.searchAsk_usedItem = async (req, res) => {
 
     const sql = `
       SELECT ua.*, u.name
-      FROM usedItem_ask ua
+      FROM useditem_ask ua
       JOIN users u ON ua.user_id = u.id
       WHERE u.name LIKE ? OR ua.content LIKE ?
     `;
@@ -143,7 +145,7 @@ exports.deleteAsk_usedItem = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const sql = "DELETE FROM usedItem_ask WHERE id = ?";
+    const sql = "DELETE FROM useditem_ask WHERE id = ?";
     db.query(sql, [id], (err, result) => {
       if (err) {
         console.error("Database error", err);

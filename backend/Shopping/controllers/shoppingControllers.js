@@ -46,25 +46,21 @@ exports.getAllProducts = (req, res) => {
     res.status(200).json({ message: "All products fetched", data: results });
   });
 };
+
 //-------------------- Delete PRODUCTS --------------------
 exports.deleteProduct = (req, res) => {
   try {
     const { id } = req.params;
- 
+
     if (!id) {
       return res.status(400).json({ message: "Product ID is required" });
     }
-    if (!id) {
-      return res.status(400).json({ message: "Product ID is required" });
-    }
+
     const sql = "DELETE FROM products WHERE id = ?";
     db.query(sql, [id], (err, result) => {
       if (err)
         return res.status(500).json({ message: "Database error", error: err.message });
- 
-      if (result.affectedRows === 0) {
-        return res.status(404).json({ message: "Product not found" });
-      }
+
       if (result.affectedRows === 0) {
         return res.status(404).json({ message: "Product not found" });
       }
@@ -75,6 +71,7 @@ exports.deleteProduct = (req, res) => {
     res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
+
 //-------------------- ADD TO CART --------------------
 exports.addToCart = (req, res) => {
   try {
@@ -134,6 +131,7 @@ exports.getUserCart = (req, res) => {
         .status(500)
         .json({ message: "Database error", error: err.message });
     res.status(200).json({ message: "Cart fetched", data: results });
+
       return res.status(500).json({ message: "Database error", error: err.message });
 
     if (results.length === 0) {
@@ -144,7 +142,6 @@ exports.getUserCart = (req, res) => {
       count: results.length,
       data: results
     });
-
   });
 };
 

@@ -3,7 +3,9 @@ const db = connectDB();
 
 const postNotes = (req, res) => {
   try {
-    const { user_id, topic, details } = req.body;
+    console.log("incoming" , req.body);
+    const user_id = req.body.userId
+    const { topic, details } = req.body;
 
     if (!user_id || isNaN(user_id)) {
       return res.status(400).json({ error: "Valid user_id is required" });
@@ -109,7 +111,9 @@ const getNotesByUserId = (req, res) => {
 
 const deleteNotesByUser = (req, res) => {
   const { noteId } = req.params;
-  const { user_id } = req.body; // user_id of logged-in user
+  const user_id = req.body.userId
+  // const { user_id } = req.body; 
+
 
   if (!noteId || isNaN(noteId)) {
     return res.status(400).json({ success: false, message: "Invalid note ID" });

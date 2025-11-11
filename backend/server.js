@@ -27,7 +27,6 @@ app.use(
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 connectDB();
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
@@ -37,12 +36,12 @@ app.use("/job", jobPostRoutes);
 app.use("/tiffin", tifnRoutes);
 app.use("/shopping", shopingRoutes);
 app.use("/usedItem", usedItemRoute);
-app.use("/shopping", shopingRoutes);
 app.use("/accommodation" , accomodationRoutes)
 app.use("/entertainment" , entertainmentRoute)
 app.use("/general" , generalRoute)
 app.use("/notes" , noteRoute)
 app.use("/admin" , adminRoute)
+
 
 app.use((req, res, next) => {
   req.db = connectDB;

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
 // Single Answer Item
-function AnswerItem({ a, onDelete }) {
+function AnswerItem({ a, onDelete, userId }) {
   const [showMenu, setShowMenu] = useState(false);
 
   const handleDeleteClick = () => {
@@ -11,6 +11,9 @@ function AnswerItem({ a, onDelete }) {
     }
     setShowMenu(false);
   };
+
+  // Only show delete if current user is the one who posted the reply
+  const canDelete = a.user_id === userId;
 
   return (
     <div
@@ -29,55 +32,55 @@ function AnswerItem({ a, onDelete }) {
         <strong>{a.name}:</strong> {a.content}
       </p>
 
-      {/* Three-dot menu */}
-      <div
-        style={{
-          position: "absolute",
-          right: "10px",
-          top: "10px",
-          cursor: "pointer",
-        }}
-      >
-        <span
-          onClick={() => setShowMenu((prev) => !prev)}
-          style={{ fontSize: "18px", color: "#555" }}
+      {canDelete && (
+        <div
+          style={{
+            position: "absolute",
+            right: "10px",
+            top: "10px",
+            cursor: "pointer",
+          }}
         >
-          &#x22EE;
-        </span>
-        {showMenu && (
-          <div
-            style={{
-              position: "absolute",
-              right: 0,
-              top: "22px",
-              background: "#fff",
-              border: "1px solid #ccc",
-              borderRadius: "6px",
-              boxShadow: "0 4px 10px rgba(0,0,0,0.15)",
-              minWidth: "100px",
-              zIndex: 100,
-              textAlign: "center",
-              animation: "fadeIn 0.15s forwards",
-            }}
+          <span
+            onClick={() => setShowMenu((prev) => !prev)}
+            style={{ fontSize: "18px", color: "#555" }}
           >
-            <button
-              onClick={handleDeleteClick}
+            &#x22EE;
+          </span>
+          {showMenu && (
+            <div
               style={{
-                background: "none",
-                border: "none",
-                padding: "8px 12px",
-                width: "100%",
-                cursor: "pointer",
-                fontSize: "14px",
-                color: "red",
-                borderRadius: "4px",
+                position: "absolute",
+                right: 0,
+                top: "22px",
+                background: "#fff",
+                border: "1px solid #ccc",
+                borderRadius: "6px",
+                boxShadow: "0 4px 10px rgba(0,0,0,0.15)",
+                minWidth: "100px",
+                zIndex: 100,
+                textAlign: "center",
               }}
             >
-              Delete
-            </button>
-          </div>
-        )}
-      </div>
+              <button
+                onClick={handleDeleteClick}
+                style={{
+                  background: "none",
+                  border: "none",
+                  padding: "8px 12px",
+                  width: "100%",
+                  cursor: "pointer",
+                  fontSize: "14px",
+                  color: "red",
+                  borderRadius: "4px",
+                }}
+              >
+                Delete
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -89,7 +92,11 @@ function QuestionItem({ q, onQuestionDeleted, userId }) {
   const [showAll, setShowAll] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
 
-  const currentSection = localStorage.getItem("currentSection");
+  const currentSection = (
+    localStorage.getItem("currentSection") || ""
+  ).toLowerCase();
+  console.log(currentSection); // should always print "useditem" if it was "UsedItem" or "USEDITEM"
+
   const userData = JSON.parse(localStorage.getItem("user")) || {};
 
   // Fetch Replies
@@ -101,6 +108,7 @@ function QuestionItem({ q, onQuestionDeleted, userId }) {
         );
         if (res.ok) {
           const data = await res.json();
+          console.log("Fetched replies:", data);
           setAllAnswers(Array.isArray(data) ? data : []);
         }
       } catch (error) {
@@ -311,6 +319,7 @@ function QuestionItem({ q, onQuestionDeleted, userId }) {
             userId={userId}
           />
         ))}
+
         {allAnswers.length > 1 && (
           <button
             onClick={() => setShowAll(!showAll)}
@@ -338,7 +347,9 @@ export default function Ask({ searchQuery, refreshTrigger }) {
   const user = JSON.parse(localStorage.getItem("user"));
   const userId = user?.id;
   const location = useLocation();
+console.log(currentSection , "currentSection");
 
+  
   const isMyPostsPage = location.pathname.includes("mypostask");
 
   // Fetch Questions
@@ -351,12 +362,12 @@ export default function Ask({ searchQuery, refreshTrigger }) {
         }
 
         const res = await fetch(apiUrl);
-    
 
         if (res.ok) {
           const data = await res.json();
-          console.log(data ,"data");
-          
+          console.log("data", data);
+      
+
           let fetchedData = [];
 
           if (Array.isArray(data)) fetchedData = data;

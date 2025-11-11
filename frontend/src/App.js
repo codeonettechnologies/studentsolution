@@ -27,6 +27,7 @@ import Myorder from "./Components/Myorder";
 import ShopItem from "./Components/Shopping";
 import UsedItem from "./Components/UsedItem";
 import Learning from "./Components/Learning";
+import LearningDetails from "./Components/LearningDetail";
 
 function App() {
   return (
@@ -37,25 +38,26 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard/*" element={<Dashboard />}>
-            <Route path="common" element={<CommonContent />}/>
-            <Route path="general" element={<General />}/>
+            <Route path="common" element={<CommonContent />} />
+            <Route path="general" element={<General />} />
             <Route path="job" element={<Job />} />
             <Route path="coaching" element={<Coaching />} />
             <Route path="tiffin" element={<Tiffin />} />
             <Route path="mypostask" element={<Mypostask />} />
             <Route path="mycard" element={<Mycardproduct />} />
-            <Route path="myorder" element={<Myorder/>} />
+            <Route path="myorder" element={<Myorder />} />
             <Route path="entertainment" element={<Entertainment />} />
             <Route path="Accommodation" element={<Accomodation />} />
-            <Route path="Learning" element={<Learning />} />
-            <Route path="shop" element={<ShopItem />}/>
-            <Route path="useditem" element={<UsedItem />}/>
+            <Route path="learning" element={<Learning />} />
+            <Route path="learning-details" element={<LearningDetails />}/>
+            <Route path="shop" element={<ShopItem />} />
+            <Route path="useditem" element={<UsedItem />} />
           </Route>
 
           <Route path="/admindashboard/*" element={<AdminDashbord />}>
-           <Route path="addcollege" element={<AddCollege />}/>
-           <Route path="addads" element={<AddAds />}/>
-           <Route path="addproduct" element={<AddProduct />} />
+            <Route path="addcollege" element={<AddCollege />} />
+            <Route path="addads" element={<AddAds />} />
+            <Route path="addproduct" element={<AddProduct />} />
           </Route>
         </Routes>
       </Router>

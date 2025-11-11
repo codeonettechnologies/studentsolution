@@ -42,6 +42,7 @@ export default function Myorder() {
           {orders.map((order) => (
             <div key={order.id} className="order-card">
               <p><strong>Order ID:</strong> {order.id}</p>
+              <p><strong>Product Name:</strong>{order.name}</p>
               <p><strong>Total Price:</strong> ₹{order.total_price}</p>
               <p><strong>Address:</strong> {order.address}</p>
               <p><strong>Payment Mode:</strong> {order.payment_mode}</p>

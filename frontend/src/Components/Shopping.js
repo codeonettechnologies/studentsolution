@@ -31,12 +31,14 @@ export default function ShopItem() {
   // Function to fetch search results
   const fetchProducts = (query) => {
     if (!query.trim()) {
-      fetchAllProducts(); 
+      fetchAllProducts();
       return;
     }
 
     setLoading(true);
-    const url = `http://localhost:5000/shopping/search?query=${encodeURIComponent(query)}`;
+    const url = `http://localhost:5000/shopping/search?query=${encodeURIComponent(
+      query
+    )}`;
 
     fetch(url)
       .then((res) => res.json())
@@ -93,45 +95,43 @@ export default function ShopItem() {
 
   return (
     <>
-      <div className="search-bar">
-        <input
-          type="text"
-          placeholder="Search by name, price, or description..."
-          value={search}
-          onChange={handleSearchChange}
-        />
-      </div>
-
       {loading && <p className="loading">Loading...</p>}
-
-      <div className="shop-container">
-        {products.length > 0 ? (
-          products.map((product) => (
-            <div key={product.id} className="shop-card">
-              <div className="shop-image">
-                <img
-                  src={`http://localhost:5000/uploads/shopping_posts/${product.image_url}`}
-                  alt={product.name}
-                />
-              </div>
-              <div className="shop-details">
-                <h2 className="product-name">{product.name}</h2>
-                <p className="product-description">
-                  {product.description || "No description available."}
-                </p>
-                <p className="product-price">₹{product.price}</p>
-                <button
-                  className="buy-btn"
-                  onClick={() => handleAddToCart(product)}
-                >
-                  Add to Cart
-                </button>
-              </div>
-            </div>
-          ))
-        ) : (
-          !loading && <p className="no-data">No products found.</p>
-        )}
+      <div className="main-content-area">
+        <div className="search-bar">
+          <input
+            type="text"
+            placeholder="Search by name, price, or description..."
+            value={search}
+            onChange={handleSearchChange}
+          />
+        </div>
+        <div className="shop-container">
+          {products.length > 0
+            ? products.map((product) => (
+                <div key={product.id} className="shop-card">
+                  <div className="shop-image">
+                    <img
+                      src={`http://localhost:5000/uploads/shopping_posts/${product.image_url}`}
+                      alt={product.name}
+                    />
+                  </div>
+                  <div className="shop-details">
+                    <h2 className="product-name">{product.name}</h2>
+                    <p className="product-description">
+                      {product.description || "No description available."}
+                    </p>
+                    <p className="product-price">₹{product.price}</p>
+                    <button
+                      className="buy-btn"
+                      onClick={() => handleAddToCart(product)}
+                    >
+                      Add to Cart
+                    </button>
+                  </div>
+                </div>
+              ))
+            : !loading && <p className="no-data">No products found.</p>}
+        </div>
       </div>
     </>
   );

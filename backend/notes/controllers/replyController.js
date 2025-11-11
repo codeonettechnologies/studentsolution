@@ -57,6 +57,7 @@ exports.getRepliesByAskId = async (req, res) => {
         nr.content,
         nr.created_at,
         nr.updated_at,
+        nr.user_id,
         u.name,
         u.profile_image,
         u.role,
