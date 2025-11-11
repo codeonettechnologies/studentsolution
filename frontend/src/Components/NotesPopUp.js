@@ -1,14 +1,22 @@
 import React, { useState } from "react";
 
 export default function LearningPopup({ isOpen, onClose }) {
+
+  const user = JSON.parse(localStorage.getItem("user"));
+  const userId = user?.id;
+console.log("user" , userId);
+
   const [formData, setFormData] = useState({
-    title: "",
+    topic: "",
     details: "",
     image: null,
     pdf: null,
+    userId: ""
   });
 
-  if (!isOpen) return null; 
+  const [loading, setLoading] = useState(false);
+
+  if (!isOpen) return null;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,11 +28,42 @@ export default function LearningPopup({ isOpen, onClose }) {
     setFormData({ ...formData, [name]: files[0] });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
+    if (!userId) {
+      alert("User not logged in. Please log in first.");
+      return;
+    }
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    alert("Form submitted successfully!");
-    onClose(); 
+    setLoading(true);
+
+    try {
+      const data = new FormData();
+      data.append("topic", formData.topic);
+      data.append("details", formData.details);
+      data.append("userId", userId);
+      if (formData.image) data.append("image", formData.image);
+      if (formData.pdf) data.append("pdf", formData.pdf);
+
+      const res = await fetch("http://localhost:5000/notes/notePost", {
+        method: "POST",
+        body: data, 
+      });
+
+      const result = await res.json();
+
+      if (res.ok && result.message) {
+        alert(" " + result.message);
+        setFormData({ topic: "", details: "", image: null, pdf: null });
+        onClose();
+      } else {
+        alert("❌ Failed to upload note");
+      }
+    } catch (error) {
+      console.error("Error uploading note:", error);
+      alert("❌ Something went wrong! Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -37,9 +76,9 @@ export default function LearningPopup({ isOpen, onClose }) {
           <label>Topic:</label>
           <input
             type="text"
-            name="title"
+            name="topic"
             placeholder="Enter topic"
-            value={formData.title}
+            value={formData.topic}
             onChange={handleChange}
             required
           />
@@ -70,8 +109,8 @@ export default function LearningPopup({ isOpen, onClose }) {
             onChange={handleFileChange}
           />
 
-          <button type="submit" className="note-submit-btn">
-            Submit
+          <button type="submit" className="note-submit-btn" disabled={loading}>
+            {loading ? "Uploading..." : "Submit"}
           </button>
         </form>
       </div>

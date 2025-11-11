@@ -41,8 +41,8 @@ const {
   searchAskAccommodations,
   delete_ask,
 } = require("../controllers/aksController");
-router.post("/jobAsk", createAccommodationAsk);
-router.get("/jobAskGet", getAllAccommodationAsks);
+router.post("/accommodation", createAccommodationAsk);
+router.get("/accommodationAskGet", getAllAccommodationAsks);
 router.get("/askGet/:userId", getAccommodationAsktsByUserId);
 router.delete("/ask/:id", delete_ask);
 router.get("/searchAsk", searchAskAccommodations);
@@ -53,7 +53,7 @@ const {
   getRepliesByAskId,
   delete_reply,
 } = require("../controllers/replyController");
-router.post("/jobReply", createReply);
+router.post("/accommodationReply", createReply);
 router.get("/:ask_reply_id", getRepliesByAskId);
 router.delete("/reply/:id", delete_reply);
 

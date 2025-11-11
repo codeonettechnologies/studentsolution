@@ -45,15 +45,15 @@ const {create_UsedItemAsk,
      get_asksByUserId, 
      deleteAsk_usedItem,
      searchAsk_usedItem} = require("../controllers/usedItemAskControllers")
-router.post("/Ask", create_UsedItemAsk);
-router.get("/askGet", getAll_UsedItemAsks);
+router.post("/useditemAsk", create_UsedItemAsk);
+router.get("/useditemAskGet", getAll_UsedItemAsks);
 router.get('/askGet/:userId', get_asksByUserId);
 router.delete("/ask/:id", deleteAsk_usedItem);
 router.get("/searchAsk", searchAsk_usedItem);
 
 
 const {createReply ,getRepliesByAskId, delete_reply} = require("../controllers/usedItemReplyControllers")
-router.post("/usedItemReply" , createReply)
+router.post("/useditemReply" , createReply)
 router.get("/:ask_reply_id", getRepliesByAskId);
 router.delete("/reply/:id", delete_reply);
 

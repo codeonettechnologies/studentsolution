@@ -202,7 +202,7 @@ export default function PostItem({ searchQuery, refreshTrigger }) {
       );
       const data = await res.json();
       if (res.ok && data.message.includes("Comment deleted")) {
-        await fetchPosts(); // 🔥 refresh instantly
+        await fetchPosts(); // refresh instantly
       } else {
         alert("Failed to delete comment");
       }
@@ -282,47 +282,83 @@ export default function PostItem({ searchQuery, refreshTrigger }) {
 
   // -------------------- Search Posts --------------------
   useEffect(() => {
-    const fetchSearchResults = async () => {
-      if (!searchQuery.trim()) {
-        setPosts(originalPosts);
-        return;
-      }
-      try {
-        const res = await fetch(
-          `http://localhost:5000/${currentSection}/searchPost?query=${encodeURIComponent(
-            searchQuery
-          )}`
-        );
-        const data = await res.json();
-        console.log(data, "datatatatatatatatt");
+  const fetchSearchResults = async () => {
+    if (!searchQuery.trim()) {
+      setPosts(originalPosts);
+      return;
+    }
 
-        if (data && Array.isArray(data)) {
-          const mappedResults = data.map((p) => ({
-            id: p.id,
-            name: p.name || "Unknown User",
-            college: p.college || p.user_college || "",
-            message: p.content,
-            image: p.image_url
-              ? `http://localhost:5000/uploads/${currentSection}_posts/${p.image_url}`
-              : null,
-            profile_image: p.profile_image
-              ? `http://localhost:5000/uploads/${p.profile_image}`
-              : null,
-            comments: [],
-            created_at: new Date(p.created_at).toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            }),
-          }));
-          setPosts(mappedResults);
-        }
-      } catch (err) {
-        console.error("Search error:", err);
+    try {
+      const res = await fetch(
+        `http://localhost:5000/${currentSection}/searchPost?query=${encodeURIComponent(searchQuery)}`
+      );
+      const data = await res.json();
+
+      if (data && Array.isArray(data)) {
+        const postsWithExtraData = await Promise.all(
+          data.map(async (p) => {
+            // Fetch comments
+            const commentsRes = await fetch(
+              `http://localhost:5000/${currentSection}/${p.id}/comments`
+            );
+            const commentsData = await commentsRes.json();
+            const postComments = (commentsData.data || []).map((c) => ({
+              id: c.id,
+              user_id: c.user_id,
+              user_name: c.user_name || "Unknown",
+              text: c.comment_text,
+            }));
+
+            // Fetch likes
+            const postIdParam = `${currentSection}_post_id`;
+            let likesCount = 0;
+            let likedByUser = false;
+            try {
+              const likeRes = await fetch(
+                `http://localhost:5000/${currentSection}/getlike?${postIdParam}=${p.id}`
+              );
+              const likeData = await likeRes.json();
+              likesCount = likeData.total_likes || 0;
+              likedByUser = likeData.liked_users?.some(
+                (u) => u.user_id === userId
+              );
+            } catch (error) {
+              console.warn("Like fetch failed for post:", p.id, error);
+            }
+
+            return {
+              id: p.id,
+              name: p.user_name || "Unknown User",
+              college: p.user_college_name || p.user_college || "",
+              message: p.content,
+              image: p.image_url
+                ? `http://localhost:5000/uploads/${currentSection}_posts/${p.image_url}`
+                : null,
+              profile_image: p.user_profile
+                ? `http://localhost:5000/uploads/${p.user_profile}`
+                : "default-profile.png",
+              comments: postComments,
+              likes: likesCount,
+              liked: likedByUser,
+              created_at: new Date(p.created_at).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              }),
+            };
+          })
+        );
+
+        setPosts(postsWithExtraData);
       }
-    };
-    fetchSearchResults();
-  }, [searchQuery, currentSection, originalPosts]);
+    } catch (err) {
+      console.error("Search error:", err);
+    }
+  };
+
+  fetchSearchResults();
+}, [searchQuery, currentSection, originalPosts]);
+
 
   // -------------------- UI --------------------
   if (loading) return <p>Loading posts...</p>;

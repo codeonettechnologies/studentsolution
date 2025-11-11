@@ -7,19 +7,21 @@ export default function AskForm({ onCancel, onAskCreated }) {
   const user = JSON.parse(localStorage.getItem("user"));
   const userId = user?.id;
   const currentSection = localStorage.getItem("currentSection");
-   console.log(currentSection , "currentSection");
+  console.log(currentSection, "currentSection");
 
   // Map each section to its own endpoint
   const askEndpointMap = {
-    general : "generalAsk",
+    general: "generalAsk",
     job: "jobAsk",
     coaching: "caochingAsk",
     tiffin: "tiffinAsk",
+    accommodation: "accommodation",
     entertainment: "EntertainmentAsk",
-   
+    useditem: "useditemAsk",
+    notes:"noteAsk"
   };
 
-  // If section not found, fallback to jobAsk
+  // If section not found, fallback tjobAsko
   const askRoute = askEndpointMap[currentSection] || "general";
   const handleSubmit = async () => {
     if (!content.trim()) {

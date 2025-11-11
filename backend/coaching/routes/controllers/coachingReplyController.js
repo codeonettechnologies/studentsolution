@@ -55,6 +55,7 @@ exports.getRepliesByAskId = async (req, res) => {
       SELECT 
         cr.id,
         cr.content,
+        cr.user_id, 
         cr.created_at,
         cr.updated_at,
         u.name,

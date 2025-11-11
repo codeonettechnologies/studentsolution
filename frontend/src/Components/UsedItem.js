@@ -1,64 +1,126 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import Modal from "./PopupModal";
 import PostForm from "./PostForm";
 import AskForm from "./AskForm";
+import Ask from "./Ask";
 import { TiPlus } from "react-icons/ti";
+import { FiMoreVertical, FiTrash2 } from "react-icons/fi";
 
 export default function UsedItem() {
   const [tab, setTab] = useState("post");
   const [openModal, setOpenModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [sectionText, setSectionText] = useState("");
+  const [usedItems, setUsedItems] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [activeMenu, setActiveMenu] = useState(null);
+  const [askRefreshTrigger, setAskRefreshTrigger] = useState(0);
 
-  const currentSection = localStorage.getItem("currentSection") || "Used-Item";
+  const location = useLocation();
+  const isMyPostsPage = location.pathname.includes("mypostask");
 
-  const products = [
-    {
-      image:
-        "https://th.bing.com/th/id/OIP.wTf5JcvIAzx7FYt483d30AHaE8?w=280&h=187&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3",
-      name: "Stylish Casual Shoes",
-      description:
-        "Comfortable and trendy casual shoes for everyday wear. Lightweight and durable for all-day comfort.",
-      price: "₹1,499",
-    },
-    {
-      image:
-        "https://th.bing.com/th/id/OIP.hqvPO_0QYbPzm5qXIhfDYAAAAA?w=181&h=182&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3",
-      name: "Classic Leather Wallet",
-      description:
-        "Premium quality leather wallet with multiple card slots and a sleek finish for modern men.",
-      price: "₹899",
-    },
-    {
-      image:
-        "https://tse1.mm.bing.net/th/id/OIP.p5u-TKxHBPT3sC6M9fAXOgHaFS?rs=1&pid=ImgDetMain&o=7&rm=3",
-      name: "Noise Cancelling Headphones",
-      description:
-        "Wireless over-ear headphones with powerful bass, clear sound, and long-lasting battery life.",
-      price: "₹3,499",
-    },
-    {
-      image:
-        "https://th.bing.com/th/id/OIP.nVP57pjOkZ1-bU-azimqlAHaHa?w=195&h=195&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3",
-      name: "Smart Fitness Watch",
-      description:
-        "Track your fitness goals with this smartwatch — heart rate monitor, steps tracker, and more.",
-      price: "₹2,999",
-    },
-    {
-      image:
-        "https://th.bing.com/th/id/OIP.WWrBRroB17UPtapB0tVflgHaEJ?w=288&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3",
-      name: "Stylish Backpack",
-      description:
-        "Spacious and stylish backpack with padded compartments for laptop and essentials. Perfect for work or travel.",
-      price: "₹1,199",
-    },
-  ];
+  const user = JSON.parse(localStorage.getItem("user"));
+  const userId = user?.id;
 
-  // Filter products by search
-  const filteredProducts = products.filter((p) =>
-    p.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // ---------------- Fetch Used Items ----------------
+  const fetchUsedItems = async () => {
+    if (!userId && isMyPostsPage) return;
+    setLoading(true);
+    try {
+      const apiUrl = isMyPostsPage
+        ? `http://localhost:5000/usedItem/postGet/${userId}`
+        : "http://localhost:5000/usedItem/post/get";
+
+      const res = await fetch(apiUrl);
+      const data = await res.json();
+
+      if (data?.data) {
+        const normalizedData = data.data.map((item) => ({
+          id: item.id,
+          title: item.title,
+          description: item.description,
+          price: item.price,
+          image_url: item.image_url,
+          user_name: item.user_name || user.name,
+          user_college: item.user_college || user.college || "",
+          user_year: item.user_year || user.year || "",
+        }));
+        setUsedItems(normalizedData);
+      } else {
+        setUsedItems([]);
+        console.error("Failed to fetch used items:", data);
+      }
+    } catch (error) {
+      console.error("Error fetching used items:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsedItems();
+  }, [isMyPostsPage]);
+
+  // ---------------- Search API Integration ----------------
+  const handleSearch = async (query) => {
+    setSearchQuery(query);
+    if (!query.trim()) {
+      fetchUsedItems();
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `http://localhost:5000/useditem/searchPost?query=${encodeURIComponent(
+          query
+        )}`
+      );
+      const data = await res.json();
+
+      if (data.message === "Search results fetched successfully") {
+        const normalizedData = data.data.map((item) => ({
+          id: item.id,
+          title: item.title,
+          description: item.description,
+          price: item.price,
+          image_url: item.image_url,
+          user_name: item.name,
+          user_college: item.college,
+          user_year: item.year || "",
+        }));
+        setUsedItems(normalizedData);
+      } else {
+        setUsedItems([]);
+      }
+    } catch (err) {
+      console.error("Search error:", err);
+      setUsedItems([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ---------------- Delete Post ----------------
+  const handleDelete = async (postId) => {
+    if (!window.confirm("Are you sure you want to delete this post?")) return;
+
+    try {
+      const res = await fetch(`http://localhost:5000/usedItem/post/${postId}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+
+      if (data.message === "Used item post deleted successfully") {
+        setUsedItems((prev) => prev.filter((item) => item.id !== postId));
+        alert("Post deleted successfully!");
+      } else {
+        alert("Failed to delete post!");
+      }
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
+  };
 
   return (
     <div className="main-content-area">
@@ -78,52 +140,107 @@ export default function UsedItem() {
         </button>
       </div>
 
-      {/* Search Bar + + Button */}
+      {/* Search Bar + Add Button */}
       <div className="feed-header-bar">
         <input
           type="text"
           placeholder={`Search ${tab === "post" ? "used items" : "asks"}...`}
           className="search-box-input"
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={(e) => handleSearch(e.target.value)}
         />
-        <button className="create-post-button" onClick={() => setOpenModal(true)}>
-          <TiPlus />
-        </button>
+
+        {!isMyPostsPage && (
+          <button
+            className="create-post-button"
+            onClick={() => setOpenModal(true)}
+          >
+            <TiPlus />
+          </button>
+        )}
       </div>
 
       {/* Tab Content */}
-      <div key={tab} className={`tab-content fade-slide`}>
+      <div key={tab} className="tab-content fade-slide">
         {tab === "post" ? (
           <div className="shop-container">
-            {filteredProducts.length > 0 ? (
-              filteredProducts.map((product, index) => (
-                <div key={index} className="shop-card">
+            {loading ? (
+              <p className="loading-text">Loading...</p>
+            ) : usedItems.length > 0 ? (
+              usedItems.map((item, index) => (
+                <div key={item.id} className="shop-card">
+                  {/* 3-dot menu only on My Posts page */}
+                  {isMyPostsPage && (
+                    <div className="item-three-dot-menu">
+                      <FiMoreVertical
+                        onClick={() =>
+                          setActiveMenu(activeMenu === index ? null : index)
+                        }
+                        className="item-three-dot-icon"
+                      />
+                      {activeMenu === index && (
+                        <div className="item-menu-dropdown">
+                          <button
+                            onClick={() => handleDelete(item.id)}
+                            className="delete-btnn"
+                          >
+                            <FiTrash2 /> Delete
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   <div className="shop-image">
-                    <img src={product.image} alt={product.name} />
+                    <img
+                      src={`http://localhost:5000/uploads/useditem_posts/${item.image_url}`}
+                      alt={item.title}
+                    />
                   </div>
+
                   <div className="shop-details">
-                    <h2 className="product-name">{product.name}</h2>
-                    <p className="product-description">{product.description}</p>
-                    <p className="used-product-price">{product.price}</p>
+                    <h2 className="product-name">{item.title}</h2>
+                    <p className="product-description">{item.description}</p>
+                    <p className="product-price">₹{item.price}</p>
+
+                    <div className="useditem-user-info">
+                      <div>
+                        <p className="useditem-user-name">{item.user_name}</p>
+                        <p className="useditem-user-meta">
+                          {item.user_college} • {item.user_year}
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))
             ) : (
-              <p className="no-results">No matching items found.</p>
+              <p className="no-results">No items found.</p>
             )}
           </div>
         ) : (
-          <p className="ask-placeholder">Ask about a product or service...</p>
+          <Ask searchQuery={searchQuery} refreshTrigger={askRefreshTrigger} />
         )}
       </div>
 
       {/* Modal */}
       <Modal isOpen={openModal} onClose={() => setOpenModal(false)}>
         {tab === "post" ? (
-          <PostForm onCancel={() => setOpenModal(false)} />
+          <PostForm
+            onCancel={() => setOpenModal(false)}
+            onPostCreated={async () => {
+              await fetchUsedItems();
+              setOpenModal(false);
+            }}
+          />
         ) : (
-          <AskForm onCancel={() => setOpenModal(false)} />
+          <AskForm
+            onCancel={() => setOpenModal(false)}
+            onAskCreated={() => {
+              setAskRefreshTrigger((prev) => prev + 1);
+              setOpenModal(false);
+            }}
+          />
         )}
       </Modal>
     </div>

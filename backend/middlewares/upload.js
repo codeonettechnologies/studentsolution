@@ -83,17 +83,13 @@ const storage = multer.diskStorage({
       folder = "uploads/accommodation_posts";
     } else if (req.baseUrl.includes("/entertainment")) {
       folder = "uploads/entertainment_posts";
-
-    } else if (req.baseUrl.includes("/shopping")) {
-      folder = "uploads/shopping_posts";
-
     }   else if (req.baseUrl.includes("/shopping")) {
       folder = "uploads/shopping_posts";
     } else if (req.baseUrl.includes("/usedItem")) {
       folder = "uploads/usedItem_posts";
-
     } else if (req.baseUrl.includes("/notes")) {
       folder = "uploads/notes_post";
+
     }
 
     // Support via body.section if baseUrl not matched
@@ -116,6 +112,7 @@ const storage = multer.diskStorage({
       folder = "uploads/usedItem_posts";
     } else if (req.body.section === "notes") {
       folder = "uploads/notes_post";
+
     }
 
 

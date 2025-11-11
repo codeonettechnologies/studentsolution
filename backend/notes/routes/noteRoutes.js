@@ -27,7 +27,7 @@ const {
   delete_ask,
 } = require("../controllers/aksController");
 router.post("/noteAsk", createNoteAsk);
-router.get("/noteAskGet", getAllNoteAsks);
+router.get("/notesAskGet", getAllNoteAsks);
 router.get("/askGet/:userId", getNoteAsktsByUserId);
 router.delete("/ask/:id", delete_ask);
 router.get("/searchAsk", searchAsknotes);
@@ -38,7 +38,7 @@ const {
   getRepliesByAskId,
   delete_reply,
 } = require("../controllers/replyController");
-router.post("/noteReply", createReply);
+router.post("/notesReply", createReply);
 router.get("/:ask_reply_id", getRepliesByAskId);
 router.delete("/reply/:id", delete_reply);
 

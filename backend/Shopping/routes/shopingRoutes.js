@@ -19,8 +19,6 @@ const {
 router.post("/products", upload.single("image"), addProduct);
 router.get("/products", getAllProducts);
 router.delete("/products/delete/:id", deleteProduct);
-
-//Search routes
 router.get("/search", searchProducts);
 
 // Cart routes
@@ -29,7 +27,6 @@ router.get("/cart/:user_id", getUserCart);
 
 // Order route
 router.post("/order", placeOrder);
-
 router.get("/order/:user_id", getMyOrders);
 
 //Cancel order

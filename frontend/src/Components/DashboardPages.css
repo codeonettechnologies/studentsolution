@@ -1050,77 +1050,227 @@
 /* Notes UI Section  Css*/
 .learning-ui {
   margin-top: 30px;
-  padding: 20px;
-  background: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 25px;
+  background: #fff;
+  border-radius: 12px;
   max-width: 700px;
   margin-left: auto;
   margin-right: auto;
   text-align: left;
   position: relative;
   z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.note-card {
+  position: relative;
+  padding: 20px;
+  border-radius: 10px;
+  background: #fafafa;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.note-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+}
+.note-user-name {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 13px;
+  color: #888;
+  font-weight: 500;
 }
 .learning-ui h4 {
   font-size: 20px;
   margin-bottom: 10px;
   color: #333;
 }
-.learning-ui h6 {
+.note-details {
   font-size: 15px;
   color: #555;
   margin-bottom: 15px;
+  line-height: 1.5;
 }
-.learning-ui img {
-  width: 100%;
-  height: auto;
-  border-radius: 8px;
-  margin-bottom: 15px;
-  object-fit: cover;
+.image-link {
+  display: inline-block;
+  margin-bottom: 8px;
+  padding: 8px 12px;
+  background: #f0f4ff;
+  border-radius: 6px;
+  font-weight: 500;
+  color: #4e73df;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.image-link:hover {
+  background: #dce4ff;
+  color: #3752b4;
 }
 .pdf-preview {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #f7f7f7;
-  padding: 10px 15px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
+  display: inline-block;
+  margin-bottom: 8px;
+  padding: 8px 12px;
+  background: #f1f1f1;
+  border-radius: 6px;
+  font-weight: 500;
+  color: #333;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
 }
-.pdf-preview span {
+.pdf-preview:hover {
+  background: #007bff;
+  color: #fff;
+}
+.item-three-dot-menu {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+}
+.item-three-dot-icon {
+  font-size: 20px;
+  cursor: pointer;
+  color: #555;
+}
+.item-menu-dropdown {
+  position: absolute;
+  top: 25px;
+  left: 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  padding: 5px 0;
+  z-index: 10;
+}
+.item-menu-dropdown button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 15px;
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
   color: #333;
   font-weight: 500;
+  transition: background 0.2s ease;
 }
-.pdf-preview a {
-  color: #007bff;
-  text-decoration: none;
-  font-weight: 500;
-}
-.pdf-preview a:hover {
-  text-decoration: underline;
+.item-menu-dropdown button:hover {
+  background: #f0f0f0;
 }
 @media (max-width: 768px) {
   .learning-ui {
     width: 90%;
-    padding: 15px;
+    padding: 20px;
+    gap: 18px;
   }
   .learning-ui h4 {
     font-size: 18px;
   }
-  .learning-ui h6 {
+  .note-details {
     font-size: 14px;
   }
 }
 @media (max-width: 480px) {
   .learning-ui {
-    padding: 10px;
+    padding: 15px;
+    gap: 15px;
   }
-  .learning-ui img {
-    border-radius: 6px;
+  .note-user-name {
+    font-size: 12px;
+    top: 10px;
+    right: 10px;
   }
-  .pdf-preview {
-    flex-direction: column;
-    gap: 8px;
-    align-items: flex-start;
+}
+/* LearningDetails.css File */
+.learning-details-page {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+.learning-details-page button {
+  background: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+.learning-details-page button:hover {
+  background: #0056b3;
+}
+.learning-details-page h2 {
+  font-size: 28px;
+  margin: 10px 0 15px;
+  color: #222;
+}
+.learning-details-page p {
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+.learning-details-page .note-author {
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 10px;
+}
+.learning-details-page img {
+  width: 100%;
+  border-radius: 8px;
+  object-fit: cover;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease;
+}
+.learning-details-page img:hover {
+  transform: scale(1.02);
+}
+.learning-details-page iframe {
+  width: 100%;
+  height: 600px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  margin-bottom: 20px;
+}
+@media (max-width: 768px) {
+  .learning-details-page {
+    margin: 20px;
+    padding: 15px;
+  }
+  .learning-details-page h2 {
+    font-size: 24px;
+  }
+  .learning-details-page p {
+    font-size: 15px;
+  }
+  .learning-details-page iframe {
+    height: 400px;
+  }
+}
+@media (max-width: 480px) {
+  .learning-details-page h2 {
+    font-size: 20px;
+  }
+  .learning-details-page p {
+    font-size: 14px;
+  }
+  .learning-details-page iframe {
+    height: 300px;
+  }
+  .learning-details-page button {
+    padding: 8px 15px;
+    font-size: 14px;
   }
 }
