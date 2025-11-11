@@ -14,6 +14,7 @@ const usedItemRoute = require("./usedItem/routes/usedItemRoutes")
 const shopingRoutes = require("./Shopping/routes/shopingRoutes");
 const generalRoute = require("./general/routes/generalRoute")
 const noteRoute = require("./notes/routes/noteRoutes")
+const adminRoute = require("./admin/routes/adminRoutes")
 
 dotenv.config();
 const app = express();
@@ -41,6 +42,7 @@ app.use("/accommodation" , accomodationRoutes)
 app.use("/entertainment" , entertainmentRoute)
 app.use("/general" , generalRoute)
 app.use("/notes" , noteRoute)
+app.use("/admin" , adminRoute)
 
 app.use((req, res, next) => {
   req.db = connectDB;
