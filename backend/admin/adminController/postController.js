@@ -43,6 +43,33 @@ exports.getColleges = async (req, res) => {
   }
 };
 
+exports.deleteCollege = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ message: "College ID is required" });
+    }
+
+    const query = "DELETE FROM colleges WHERE id = ?";
+
+    db.query(query, [id], (err, result) => {
+      if (err) {
+        console.error("Error deleting college:", err);
+        return res.status(500).json({ message: "Database error" });
+      }
+
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: "College not found" });
+      }
+      res.status(200).json({ message: "College deleted successfully" });
+    });
+  } catch (error) {
+    console.error("Server error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 
 exports.addAd = (req, res) => {
   const image = req.files?.image ? req.files.image[0].filename : null;
@@ -110,6 +137,35 @@ exports.updateAd = async (req, res) => {
       }
 
       res.status(200).json({ message: "Ad updated successfully" });
+    });
+  } catch (error) {
+    console.error("Server error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
+exports.deleteAd = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ message: "Ad ID is required" });
+    }
+
+    const query = "DELETE FROM ads WHERE id = ?";
+
+    db.query(query, [id], (err, result) => {
+      if (err) {
+        console.error("Error deleting ad:", err);
+        return res.status(500).json({ message: "Database error" });
+      }
+
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: "Ad not found" });
+      }
+
+      res.status(200).json({ message: "Ad deleted successfully" });
     });
   } catch (error) {
     console.error("Server error:", error);
