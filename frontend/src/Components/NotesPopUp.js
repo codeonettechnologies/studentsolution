@@ -1,17 +1,25 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 export default function LearningPopup({ isOpen, onClose }) {
+  useEffect(() => {
+    if (isOpen) {
+      document.body.classList.add("popup-open");
+    } else {
+      document.body.classList.remove("popup-open");
+    }
+    return () => document.body.classList.remove("popup-open");
+  }, [isOpen]);
 
   const user = JSON.parse(localStorage.getItem("user"));
   const userId = user?.id;
-console.log("user" , userId);
+  console.log("user", userId);
 
   const [formData, setFormData] = useState({
     topic: "",
     details: "",
     image: null,
     pdf: null,
-    userId: ""
+    userId: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -46,7 +54,7 @@ console.log("user" , userId);
 
       const res = await fetch("http://localhost:5000/notes/notePost", {
         method: "POST",
-        body: data, 
+        body: data,
       });
 
       const result = await res.json();
@@ -56,11 +64,11 @@ console.log("user" , userId);
         setFormData({ topic: "", details: "", image: null, pdf: null });
         onClose();
       } else {
-        alert("❌ Failed to upload note");
+        alert("Failed to upload note");
       }
     } catch (error) {
       console.error("Error uploading note:", error);
-      alert("❌ Something went wrong! Please try again.");
+      alert("Something went wrong! Please try again.");
     } finally {
       setLoading(false);
     }
@@ -89,25 +97,31 @@ console.log("user" , userId);
             placeholder="Enter topic details"
             value={formData.details}
             onChange={handleChange}
-            rows="4"
+            rows="8"
             required
           ></textarea>
 
-          <label>Upload Image:</label>
-          <input
-            type="file"
-            name="image"
-            accept="image/*"
-            onChange={handleFileChange}
-          />
+          <div className="upload-row">
+            <div className="upload-field">
+              <label>Upload Image:</label>
+              <input
+                type="file"
+                name="image"
+                accept="image/*"
+                onChange={handleFileChange}
+              />
+            </div>
 
-          <label>Upload PDF:</label>
-          <input
-            type="file"
-            name="pdf"
-            accept=".pdf"
-            onChange={handleFileChange}
-          />
+            <div className="upload-field">
+              <label>Upload PDF:</label>
+              <input
+                type="file"
+                name="pdf"
+                accept=".pdf"
+                onChange={handleFileChange}
+              />
+            </div>
+          </div>
 
           <button type="submit" className="note-submit-btn" disabled={loading}>
             {loading ? "Uploading..." : "Submit"}

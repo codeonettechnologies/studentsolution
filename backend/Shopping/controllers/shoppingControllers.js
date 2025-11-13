@@ -77,8 +77,8 @@ exports.addToCart = (req, res) => {
   try {
     const { user_id, product_id, quantity } = req.body;
 
-    console.log("BODY:", req.body);
-    console.log("HEADERS:", req.headers["content-type"]);
+   
+    // console.log("HEADERS:", req.headers["content-type"]);
 
     if (!user_id || !product_id) {
       return res
@@ -126,18 +126,20 @@ exports.getUserCart = (req, res) => {
   `;
 
   db.query(sql, [user_id], (err, results) => {
-    if (err)
-      return res
-        .status(500)
-        .json({ message: "Database error", error: err.message });
-    res.status(200).json({ message: "Cart fetched", data: results });
+    if (err) {
+      console.error("Database error:", err);
+      return res.status(500).json({
+        message: "Database error",
+        error: err?.message || "Unknown error"
+      });
+    }
 
-      return res.status(500).json({ message: "Database error", error: err.message });
-
-    if (results.length === 0) {
+    if (!results || results.length === 0) {
       return res.status(404).json({ message: "Cart is empty", data: [] });
     }
-    res.status(200).json({
+
+    // Successful response
+    return res.status(200).json({
       message: "Cart fetched successfully",
       count: results.length,
       data: results

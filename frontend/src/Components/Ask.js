@@ -12,9 +12,7 @@ function AnswerItem({ a, onDelete, userId }) {
     setShowMenu(false);
   };
 
-  // Only show delete if current user is the one who posted the reply
   const canDelete = a.user_id === userId;
-
   return (
     <div
       style={{
@@ -95,7 +93,7 @@ function QuestionItem({ q, onQuestionDeleted, userId }) {
   const currentSection = (
     localStorage.getItem("currentSection") || ""
   ).toLowerCase();
-  console.log(currentSection); // should always print "useditem" if it was "UsedItem" or "USEDITEM"
+  console.log(currentSection);
 
   const userData = JSON.parse(localStorage.getItem("user")) || {};
 
@@ -215,11 +213,15 @@ function QuestionItem({ q, onQuestionDeleted, userId }) {
             marginRight: "10px",
           }}
         />
-        <div>
-          <div style={{ fontSize: "14px", color: "#333" }}>
-            <strong>{q.name || q.user_name}</strong> | {q.college} |{" "}
-            {new Date(q.created_at).toLocaleDateString()}
-          </div>
+        <div style={{ fontSize: "14px", color: "#333" }}>
+          <strong>{q.name || q.user_name}</strong>
+          <br />
+          {q.college} |{" "}
+          {new Date(q.created_at).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })}
         </div>
 
         {/* Three-dot menu */}
@@ -347,9 +349,8 @@ export default function Ask({ searchQuery, refreshTrigger }) {
   const user = JSON.parse(localStorage.getItem("user"));
   const userId = user?.id;
   const location = useLocation();
-console.log(currentSection , "currentSection");
+  console.log(currentSection, "currentSection");
 
-  
   const isMyPostsPage = location.pathname.includes("mypostask");
 
   // Fetch Questions
@@ -365,8 +366,7 @@ console.log(currentSection , "currentSection");
 
         if (res.ok) {
           const data = await res.json();
-          console.log("data", data);
-      
+          console.log("data ask", data);
 
           let fetchedData = [];
 
@@ -389,7 +389,7 @@ console.log(currentSection , "currentSection");
 
   useEffect(() => {
     const fetchSearchResults = async () => {
-      if (!searchQuery.trim()) {
+      if (!searchQuery.trim() || searchQuery.trim().length < 3) {
         setQuestions(originalQuestions);
         return;
       }

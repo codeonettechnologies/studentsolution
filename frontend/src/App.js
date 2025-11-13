@@ -28,6 +28,8 @@ import ShopItem from "./Components/Shopping";
 import UsedItem from "./Components/UsedItem";
 import Learning from "./Components/Learning";
 import LearningDetails from "./Components/LearningDetail";
+import ProductDetails from "./Components/ShoppingDetails";
+import UsedItemDetails from "./Components/UsedItemDetails";
 
 function App() {
   return (
@@ -44,14 +46,16 @@ function App() {
             <Route path="coaching" element={<Coaching />} />
             <Route path="tiffin" element={<Tiffin />} />
             <Route path="mypostask" element={<Mypostask />} />
-            <Route path="mycard" element={<Mycardproduct />} />
+            <Route path="mycartproduct" element={<Mycardproduct />} />
             <Route path="myorder" element={<Myorder />} />
             <Route path="entertainment" element={<Entertainment />} />
             <Route path="Accommodation" element={<Accomodation />} />
             <Route path="learning" element={<Learning />} />
             <Route path="learning-details" element={<LearningDetails />}/>
+            <Route path="shopping-details" element={<ProductDetails />}/>
             <Route path="shop" element={<ShopItem />} />
             <Route path="useditem" element={<UsedItem />} />
+            <Route path="useditemdetails" element={<UsedItemDetails />}/>
           </Route>
 
           <Route path="/admindashboard/*" element={<AdminDashbord />}>

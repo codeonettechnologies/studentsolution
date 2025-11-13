@@ -72,161 +72,451 @@
   }
 }
 /*adminaddcollege file css*/
-.add-clg-frm {
+.college-container {
+  padding: 30px;
+  font-family: "Poppins", "Segoe UI", Arial, sans-serif;
+  background-color: #f8fafc;
+  min-height: 100vh;
+}
+.college-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+.college-header h2 {
+  font-size: 1.8rem;
+  color: #1f2937;
+  font-weight: 600;
+}
+.add-btn {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+.add-btn:hover {
+  background: linear-gradient(135deg, #0056b3, #004494);
+  transform: translateY(-1px);
+}
+.college-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+.college-table th {
+  background: #f5f5f5;
+  color: black;
+  font-weight: 500;
+  text-align: center;
+  padding: 14px 16px;
+  font-size: 1rem;
+  letter-spacing: 0.3px;
+}
+.college-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #eee;
+  color: #374151;
+  font-size: 0.95rem;
+}
+.college-table tr:last-child td {
+  border-bottom: none;
+}
+.no-data {
+  text-align: center;
+  color: #6b7280;
+  font-style: italic;
+  padding: 20px 0;
+}
+.menu-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #4b5563;
+  padding: 5px;
+  transition: color 0.2s;
+}
+.menu-btn:hover {
+  color: #007bff;
+}
+.action-menu {
+  position: absolute;
+  right: 220px;
+  top: 35px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  animation: fadeIn 0.2s ease;
+}
+.delete-option {
+  background: transparent;
+  border: none;
+  color: #dc2626;
+  padding: 10px 16px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+.delete-option:hover {
+  background-color: #fee2e2;
+}
+.college-popup {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 80vh;
-  font-family: "Segoe UI", Arial, sans-serif;
+  animation: fadeIn 0.25s ease;
 }
-.add-main {
-  background-color: #fff;
-  width: 100%;
-  max-width: 400px;
-  padding: 30px 35px;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease, box-shadow 0.3s ease;
-}
-.add-main:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+.college-card {
+  background: #fff;
+  padding: 25px 30px;
+  border-radius: 14px;
+  width: 380px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  animation: slideUp 0.3s ease;
 }
 .form-title {
-  text-align: center;
-  margin-bottom: 25px;
-  font-size: 1.6rem;
-  color: #2c3e50;
+  font-size: 1.5rem;
+  color: #1f2937;
   font-weight: 600;
-  letter-spacing: 0.5px;
+  margin-bottom: 20px;
+  text-align: center;
 }
 .form-group {
   display: flex;
   flex-direction: column;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 .form-group label {
-  margin-bottom: 8px;
+  margin-bottom: 6px;
+  color: #4b5563;
   font-size: 0.95rem;
-  color: #555;
+  font-weight: 500;
 }
 .form-input {
   padding: 10px 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
   font-size: 1rem;
-  transition: all 0.3s ease;
   outline: none;
-  background-color: #f9f9f9;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  background-color: #f9fafb;
 }
 .form-input:focus {
   border-color: #007bff;
+  box-shadow: 0 0 4px rgba(0, 123, 255, 0.4);
   background-color: #fff;
-  box-shadow: 0 0 4px rgba(0, 123, 255, 0.3);
+}
+.form-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 15px;
 }
 .submit-btn {
-  width: 100%;
-  padding: 12px;
-  font-size: 1rem;
-  font-weight: 600;
   background-color: #007bff;
   color: #fff;
+  padding: 10px 18px;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  font-weight: 500;
+  transition: all 0.3s;
 }
 .submit-btn:hover {
   background-color: #0056b3;
-  transform: translateY(-1px);
 }
-@media (max-width: 480px) {
-  .add-main {
-    max-width: 90%;
-    padding: 25px;
+.cancel-btn {
+  background-color: #f3f4f6;
+  color: #374151;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.cancel-btn:hover {
+  background-color: #e5e7eb;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
-  .form-title {
+  to {
+    opacity: 1;
+  }
+}
+@keyframes slideUp {
+  from {
+    transform: translateY(25px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@media (max-width: 600px) {
+  .college-card {
+    width: 90%;
+  }
+  .college-header h2 {
     font-size: 1.4rem;
+  }
+  .add-btn {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+  .action-menu {
+    position: absolute;
+    right: 15px;
+    top: 35px;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    animation: fadeIn 0.2s ease;
   }
 }
 /*Ads file css*/
-.ads-form-wrap {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 80vh;
-  font-family: "Segoe UI", Arial, sans-serif;
+.ads-container {
+  padding: 25px;
+  font-family: "Poppins", Arial, sans-serif;
+  background-color: #f8fafc;
+  min-height: 100vh;
+  box-sizing: border-box;
 }
-.ads-card {
-  background-color: #fff;
-  width: 100%;
-  max-width: 420px;
-  padding: 35px 40px;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+.ads-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+.ads-header h2 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #1e293b;
+  letter-spacing: 0.5px;
+}
+.add-btn {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(37, 99, 235, 0.3);
   transition: all 0.3s ease;
 }
-.ads-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.15);
+.add-btn:hover {
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  transform: translateY(-2px);
+}
+.ads-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+}
+.ads-table th,
+.ads-table td {
+  padding: 14px 12px;
+  text-align: center;
+}
+.ads-table th {
+  background: #f5f5f5;
+  color: black;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+.ads-table td {
+  border-bottom: 1px solid #e2e8f0;
+  background-color: #fff;
+}
+.ads-table tr:hover td {
+  background-color: #f9fafb;
+}
+.ads-img {
+  width: 100px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #e2e8f0;
+  transition: transform 0.3s;
+}
+.ads-img:hover {
+  transform: scale(1.05);
+}
+.delete-btn {
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  padding: 7px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.delete-btn:hover {
+  background-color: #dc2626;
+  transform: scale(1.05);
+}
+.no-data {
+  text-align: center;
+  color: #6b7280;
+  padding: 25px 0;
+  font-size: 0.95rem;
+}
+.ads-popup {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  backdrop-filter: blur(2px);
+}
+.ads-card {
+  background: #fff;
+  padding: 30px 25px;
+  border-radius: 16px;
+  width: 400px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  animation: popupFade 0.3s ease;
+}
+@keyframes popupFade {
+  from {
+    opacity: 0;
+    transform: translateY(-15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 .ads-title {
   text-align: center;
-  margin-bottom: 25px;
-  font-size: 1.6rem;
-  color: #2c3e50;
+  font-size: 1.4rem;
+  color: #1e293b;
   font-weight: 600;
+  margin-bottom: 25px;
 }
 .ads-group {
   display: flex;
   flex-direction: column;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 .ads-group label {
+  font-size: 0.9rem;
+  color: #334155;
   margin-bottom: 8px;
-  font-size: 0.95rem;
-  color: #555;
+  font-weight: 500;
 }
 .ads-input[type="file"] {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
   padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 0.95rem;
-  background-color: #f9f9f9;
+  background-color: #f8fafc;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: 0.3s;
 }
 .ads-input[type="file"]:hover {
-  background-color: #f1f1f1;
+  background-color: #f1f5f9;
 }
 .ads-input[type="file"]:focus {
-  outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 4px rgba(0, 123, 255, 0.3);
+  outline: 2px solid #2563eb;
+  border-color: #2563eb;
+}
+.ads-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+.ads-submit-btn,
+.ads-cancel-btn {
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 0.9rem;
+  width: 48%;
+  transition: all 0.3s ease;
 }
 .ads-submit-btn {
-  width: 100%;
-  padding: 12px;
-  font-size: 1rem;
-  font-weight: 600;
   background-color: #007bff;
   color: #fff;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.3s ease;
 }
 .ads-submit-btn:hover {
   background-color: #0056b3;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+}
+.ads-cancel-btn {
+  background-color: #9ca3af;
+  color: #fff;
+}
+.ads-cancel-btn:hover {
+  background-color: #6b7280;
+  transform: translateY(-2px);
+}
+@media (max-width: 768px) {
+  .ads-card {
+    width: 90%;
+  }
+  .ads-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .ads-header h2 {
+    font-size: 1.3rem;
+  }
+  .add-btn {
+    width: 100%;
+    text-align: center;
+  }
+  .ads-table th,
+  .ads-table td {
+    font-size: 0.85rem;
+    padding: 10px;
+  }
+  .ads-img {
+    width: 80px;
+    height: 60px;
+  }
 }
 @media (max-width: 480px) {
-  .ads-card {
-    max-width: 90%;
-    padding: 25px;
-  }
   .ads-title {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
+  }
+  .ads-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .ads-submit-btn,
+  .ads-cancel-btn {
+    width: 100%;
   }
 }
 /*Add product file css*/
@@ -234,7 +524,6 @@
   padding: 20px;
   font-family: Arial, sans-serif;
 }
-
 .open-form-btn {
   background-color: #007bff;
   color: white;
@@ -246,12 +535,11 @@
 .open-form-btn:hover {
   background-color: #0056b3;
 }
-
-/* ✅ Popup modal */
+/*Popup modal */
 .add-modal-overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(0,0,0,0.6);
+  background-color: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -303,7 +591,8 @@ table {
   width: 100%;
   border-collapse: collapse;
 }
-th, td {
+th,
+td {
   padding: 10px;
   border: 1px solid #ddd;
   text-align: center;
@@ -340,6 +629,12 @@ th {
   background: #f0f0f0;
 }
 @keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.9); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }

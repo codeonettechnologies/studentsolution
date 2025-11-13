@@ -25,7 +25,6 @@ export default function Login() {
       console.log("Login Response:", data);
 
       if (data.message === "Login successful!") {
-        // Save user info in localStorage
         localStorage.setItem("user", JSON.stringify(data.user));
 
         // localStorage.setItem("userId", data.user.id);
@@ -34,15 +33,13 @@ export default function Login() {
         // localStorage.setItem("userType", data.user.type);
         // localStorage.setItem("userCollege", data.user.college);
         // localStorage.setItem("userCity", data.user.city);
-        
+
         alert("Login Successful!");
         console.log(data.user);
-
-        // Redirect based on role
         if (data.user.role === "Admin") {
-          navigate("/admindashboard"); // Admin goes to Admin Dashboard
+          navigate("/admindashboard");
         } else {
-          navigate("/dashboard"); // Regular users go to normal Dashboard
+          navigate("/dashboard");
         }
       } else {
         alert(data.message || "Invalid credentials!");

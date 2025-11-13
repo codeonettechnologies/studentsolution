@@ -1,6 +1,6 @@
 const connectDB = require("../../config/database");
 const db = connectDB();
-
+const database = connectDB().promise();
 exports.createTiffinAsk = async (req, res) => {
   try {
     const { content, user_id } = req.body;

@@ -41,13 +41,28 @@ export default function Myorder() {
         <div className="orders-list">
           {orders.map((order) => (
             <div key={order.id} className="order-card">
-              <p><strong>Order ID:</strong> {order.id}</p>
-              <p><strong>Product Name:</strong>{order.name}</p>
-              <p><strong>Total Price:</strong> ₹{order.total_price}</p>
-              <p><strong>Address:</strong> {order.address}</p>
-              <p><strong>Payment Mode:</strong> {order.payment_mode}</p>
-              <p><strong>Mobile:</strong> {order.user_mobile}</p>
-              <p><strong>Status:</strong> {order.status}</p>
+              <p>
+                <strong>Order ID:</strong> {order.id}
+              </p>
+              <p>
+                <strong>Product Name:</strong>
+                {order.name}
+              </p>
+              <p>
+                <strong>Total Price:</strong> ₹{order.total_price}
+              </p>
+              <p>
+                <strong>Address:</strong> {order.address}
+              </p>
+              <p>
+                <strong>Payment Mode:</strong> {order.payment_mode}
+              </p>
+              <p>
+                <strong>Mobile:</strong> {order.user_mobile}
+              </p>
+              <p>
+                <strong>Status:</strong> {order.status}
+              </p>
               <p>
                 <strong>Order Date:</strong>{" "}
                 {new Date(order.created_at).toLocaleString()}

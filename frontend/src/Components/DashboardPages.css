@@ -16,9 +16,11 @@
   z-index: 300;
   display: flex;
   justify-content: center;
-  gap: 10px;
-  padding: 10px 0;
+  gap: 5px;
   background-color: #ffffff;
+  padding-bottom: 0px;
+  padding-top: 0px;
+  height: 60px;
   border-radius: 1px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   overflow: hidden;
@@ -291,7 +293,7 @@
 .profile-details {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 0px;
   font-size: 15px;
   color: #333;
   vertical-align: middle;
@@ -402,7 +404,6 @@
   height: 350px;
   object-fit: cover;
   border-radius: 10px;
-  /* object-fit: contain; */
 }
 .post-actions {
   display: flex;
@@ -674,7 +675,6 @@
   background: #f1f1f1;
   color: #d00;
 }
-
 /* ===== Likes List ===== */
 .like-user-item {
   border-bottom: 1px solid #eee;
@@ -967,16 +967,19 @@
   text-decoration: underline;
 }
 /*Learning popup file*/
+body.popup-open {
+  overflow: hidden;
+}
 .note-popup-overlay {
   position: fixed;
   inset: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.65);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999;
+  z-index: 9998;
 }
 .note-popup-content {
   background: #fff;
@@ -985,8 +988,10 @@
   width: 90%;
   max-width: 500px;
   position: relative;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
   animation: popupShow 0.3s ease;
+  box-sizing: border-box;
+  z-index: 9999;
 }
 .note-popup-close {
   position: absolute;
@@ -1001,6 +1006,8 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
 }
 .learning-form label {
   font-weight: 500;
@@ -1010,6 +1017,10 @@
   padding: 8px;
   border-radius: 6px;
   border: 1px solid #ccc;
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  max-width: 100%;
 }
 .note-submit-btn {
   background: #007bff;
@@ -1023,15 +1034,17 @@
 .note-submit-btn:hover {
   background: #0056b3;
 }
-@keyframes popupShow {
-  from {
-    opacity: 0;
-    transform: translateY(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.upload-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.upload-field {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 @media (max-width: 600px) {
   .note-popup-content {
@@ -1046,13 +1059,26 @@
     padding: 8px;
     font-size: 14px;
   }
+  .upload-row {
+    flex-direction: column;
+  }
+}
+@keyframes popupShow {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 /* Notes UI Section  Css*/
 .learning-ui {
   margin-top: 30px;
   padding: 25px;
   background: #fff;
-  border-radius: 12px;
+  border-radius: 5px;
   max-width: 700px;
   margin-left: auto;
   margin-right: auto;
@@ -1066,14 +1092,13 @@
 .note-card {
   position: relative;
   padding: 20px;
-  border-radius: 10px;
+  border-radius: 2px;
   background: #fafafa;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 .note-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
 }
 .note-user-name {
   position: absolute;
@@ -1098,22 +1123,19 @@
   display: inline-block;
   margin-bottom: 8px;
   padding: 8px 12px;
-  background: #f0f4ff;
   border-radius: 6px;
   font-weight: 500;
-  color: #4e73df;
   text-decoration: none;
   transition: background 0.2s ease, color 0.2s ease;
 }
 .image-link:hover {
-  background: #dce4ff;
-  color: #3752b4;
+  color: #007bff;
+  text-decoration: underline;
 }
 .pdf-preview {
   display: inline-block;
   margin-bottom: 8px;
   padding: 8px 12px;
-  background: #f1f1f1;
   border-radius: 6px;
   font-weight: 500;
   color: #333;
@@ -1122,8 +1144,8 @@
   transition: background 0.2s ease, color 0.2s ease;
 }
 .pdf-preview:hover {
-  background: #007bff;
-  color: #fff;
+  text-decoration: underline;
+  color: #007bff;
 }
 .item-three-dot-menu {
   position: absolute;
@@ -1142,7 +1164,7 @@
   background: #fff;
   border: 1px solid #ddd;
   border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   padding: 5px 0;
   z-index: 10;
 }
@@ -1193,8 +1215,8 @@
   padding: 20px;
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   color: #333;
 }
 .learning-details-page button {
@@ -1230,7 +1252,7 @@
   border-radius: 8px;
   object-fit: cover;
   margin-bottom: 15px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s ease;
 }
 .learning-details-page img:hover {
@@ -1241,7 +1263,7 @@
   height: 600px;
   border: 1px solid #ccc;
   border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
   margin-bottom: 20px;
 }
 @media (max-width: 768px) {

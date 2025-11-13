@@ -37,7 +37,7 @@ router.get("/searchPost", searchTiffinPosts);
 const {createTiffinAsk ,getAllTiffinAsks , getFoodAskByUserId , searchFoodAsk , deleteFood} = require("../controllers/tiffinAskController")
 router.post("/tiffinAsk", createTiffinAsk);
 router.get("/tiffinAskGet", getAllTiffinAsks);
-router.get('/foodGet/:userId', getFoodAskByUserId);
+router.get('/askGet/:userId', getFoodAskByUserId);
 router.get("/searchAsk", searchFoodAsk);
 router.delete("/foodAsk/:id" , deleteFood)
 

@@ -76,7 +76,7 @@ export default function Learning() {
   // ---------------- Search Notes ----------------
   const handleSearch = async (query) => {
     setSearchQuery(query);
-    if (!query) {
+    if (!query.trim() || query.trim().length < 3) {
       fetchNotes();
       return;
     }
@@ -140,7 +140,7 @@ export default function Learning() {
 
   const navigate = useNavigate();
   const openNoteDetails = (note) => {
-   navigate("/dashboard/learning-details", { state: { note } });
+    navigate("/dashboard/learning-details", { state: { note } });
   };
 
   return (
@@ -189,7 +189,7 @@ export default function Learning() {
             ) : notes.length > 0 ? (
               notes.map((note, index) => (
                 <div
-                key={note.id || index}
+                  key={note.id || index}
                   className="note-card"
                   onClick={() => openNoteDetails(note)}
                   style={{ cursor: "pointer" }}
@@ -199,7 +199,7 @@ export default function Learning() {
                       <FiMoreVertical
                         className="item-three-dot-icon"
                         onClick={(e) => {
-                          e.stopPropagation(); 
+                          e.stopPropagation();
                           setActiveMenu(activeMenu === index ? null : index);
                         }}
                       />
@@ -207,7 +207,7 @@ export default function Learning() {
                         <div className="item-menu-dropdown">
                           <button
                             onClick={(e) => {
-                              e.stopPropagation(); 
+                              e.stopPropagation();
                               handleDelete(note.id);
                             }}
                             className="delete-btnn"
