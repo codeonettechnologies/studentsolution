@@ -172,3 +172,146 @@ exports.deleteAd = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
+
+// city
+
+exports.addCity = async (req, res) => {
+  try {  
+    const {city } = req.body;
+     
+    if (!city) {
+      return res.status(400).json({ message: "city is required" });
+    }
+    const query = "INSERT INTO cities (city) VALUES (?)";
+
+    db.query(query, [city], (err, result) => {
+      if (err) {
+        console.error("Error adding city:", err);
+        return res.status(500).json({ message: "Database error" });
+      }
+      res.status(201).json({
+        message: "city added successfully",
+        id: result.insertId,
+      });
+    });
+  } catch (error) {
+    console.error("Server error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+exports.getCity = async (req, res) => {
+  try {
+    const query = "SELECT * FROM cities ORDER BY id DESC";
+
+    db.query(query, (err, results) => {
+      if (err) {
+        console.error("Error fetching colleges:", err);
+        return res.status(500).json({ message: "Database error" });
+      }
+      res.status(200).json(results);
+    });
+  } catch (error) {
+    console.error("Server error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+exports.deleteCity = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ message: "City ID is required" });
+    }
+
+    const query = "DELETE FROM cities WHERE id = ?";
+
+    db.query(query, [id], (err, result) => {
+      if (err) {
+        console.error("Error deleting city:", err);
+        return res.status(500).json({ message: "Database error" });
+      }
+
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: "city not found" });
+      }
+      res.status(200).json({ message: "city deleted successfully" });
+    });
+  } catch (error) {
+    console.error("Server error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+// profesion
+
+exports.addProfessions = async (req, res) => {
+  try {  
+    const {profession } = req.body;
+     
+    if (!profession) {
+      return res.status(400).json({ message: "profession is required" });
+    }
+    const query = "INSERT INTO professions (profession) VALUES (?)";
+
+    db.query(query, [profession], (err, result) => {
+      if (err) {
+        console.error("Error adding profession:", err);
+        return res.status(500).json({ message: "Database error" });
+      }
+      res.status(201).json({
+        message: "profession added successfully",
+        id: result.insertId,
+      });
+    });
+  } catch (error) {
+    console.error("Server error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+exports.getProfessions = async (req, res) => {
+  try {
+    const query = "SELECT * FROM professions ORDER BY id DESC";
+
+    db.query(query, (err, results) => {
+      if (err) {
+        console.error("Error fetching profession:", err);
+        return res.status(500).json({ message: "Database error" });
+      }
+      res.status(200).json(results);
+    });
+  } catch (error) {
+    console.error("Server error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+exports.deleteProfessions = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ message: "profession ID is required" });
+    }
+    const query = "DELETE FROM professions WHERE id = ?";
+
+    db.query(query, [id], (err, result) => {
+      if (err) {
+        console.error("Error deleting profession:", err);
+        return res.status(500).json({ message: "Database error" });
+      }
+
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: "profession not found" });
+      }
+      res.status(200).json({ message: "profession deleted successfully" });
+    });
+  } catch (error) {
+    console.error("Server error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};

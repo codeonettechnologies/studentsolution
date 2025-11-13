@@ -25,6 +25,7 @@ exports.register = async (req, res) => {
       });
     }
  
+    
     const [existingUser] = await new Promise((resolve, reject) => {
       db.query(
         "SELECT * FROM users WHERE email = ?",
@@ -86,6 +87,7 @@ exports.register = async (req, res) => {
     });
   }
 };
+
 exports.login = (req, res) => {
   const { email, password } = req.body;
  
@@ -135,3 +137,23 @@ exports.login = (req, res) => {
   });
 };
  
+exports.getAllUsers = async (req, res) => {
+  try {
+    const sql = "SELECT id, name, email, college, city, field, college_year, role, profile_image, mobile_number FROM users";
+
+    db.query(sql, (err, results) => {
+      if (err) {
+        console.error("Database error:", err);
+        return res.status(500).json({ message: "Database error" });
+      }
+
+      return res.status(200).json({
+        message: "Users fetched successfully!",
+        users: results,
+      });
+    });
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};

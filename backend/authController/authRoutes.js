@@ -1,6 +1,6 @@
 const express = require("express");
 const multer = require("multer");
-const { register , login } = require("./auth");
+const { register , login ,getAllUsers } = require("./auth");
  
 const router = express.Router();
  
@@ -16,5 +16,6 @@ const upload = multer({ storage });
 router.post("/register", upload.single("profile_image"), register);
  
 router.post("/login", login);
+router.get("/getAllUser" , getAllUsers)
  
 module.exports = router;
