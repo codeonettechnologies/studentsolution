@@ -11,6 +11,30 @@ export default function PostItem({ searchQuery, refreshTrigger }) {
   const [activeDropdownPost, setActiveDropdownPost] = useState(null);
   const [activeCommentDropdown, setActiveCommentDropdown] = useState(null);
 
+  // -------------------- Fetch Ads --------------------
+  const [ads, setAds] = useState([]);
+
+  useEffect(() => {
+    const fetchAds = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/admin/all");
+        const data = await res.json();
+
+        if (Array.isArray(data)) {
+          setAds(data);
+        } else if (data.success && Array.isArray(data.data)) {
+          setAds(data.data);
+        } else {
+          console.error("Invalid ads data:", data);
+        }
+      } catch (err) {
+        console.error("Error fetching ads:", err);
+      }
+    };
+
+    fetchAds();
+  }, []);
+
   const currentSection = localStorage.getItem("currentSection");
   const user = JSON.parse(localStorage.getItem("user"));
   const userId = user?.id;
@@ -28,7 +52,8 @@ export default function PostItem({ searchQuery, refreshTrigger }) {
 
       const res = await fetch(apiUrl);
       const data = await res.json();
-  
+   console.log(data , "data");
+   
       if (data.data) {
         const postsWithData = await Promise.all(
           data.data.map(async (p) => {
@@ -53,7 +78,7 @@ export default function PostItem({ searchQuery, refreshTrigger }) {
                 `http://localhost:5000/${currentSection}/getlike?${postIdParam}=${p.id}`
               );
               const likeData = await likeRes.json();
-              console.log("like", likeData)
+              console.log("like", likeData);
               likesCount = likeData.total_likes || 0;
               likedByUser = likeData.liked_users?.some(
                 (u) => u.user_id === userId
@@ -68,10 +93,10 @@ export default function PostItem({ searchQuery, refreshTrigger }) {
               name: p.user_name || "Unknown User",
               college: p.college || p.user_college || "",
               message: p.content,
-              image: p.image_url 
+              image: p.image_url
                 ? `http://localhost:5000/uploads/${currentSection}_posts/${p.image_url}`
                 : null,
-    
+
               profile_image: p.profile_image
                 ? `http://localhost:5000/uploads/${p.profile_image}`
                 : "default-profile.png",
@@ -202,7 +227,7 @@ export default function PostItem({ searchQuery, refreshTrigger }) {
       );
       const data = await res.json();
       if (res.ok && data.message.includes("Comment deleted")) {
-        await fetchPosts(); // refresh instantly
+        await fetchPosts();
       } else {
         alert("Failed to delete comment");
       }
@@ -282,105 +307,141 @@ export default function PostItem({ searchQuery, refreshTrigger }) {
 
   // -------------------- Search Posts --------------------
   useEffect(() => {
-  const fetchSearchResults = async () => {
-    if (!searchQuery.trim()) {
-      setPosts(originalPosts);
-      return;
-    }
-
-    try {
-      const res = await fetch(
-        `http://localhost:5000/${currentSection}/searchPost?query=${encodeURIComponent(searchQuery)}`
-      );
-      const data = await res.json();
-
-      if (data && Array.isArray(data)) {
-        const postsWithExtraData = await Promise.all(
-          data.map(async (p) => {
-            // Fetch comments
-            const commentsRes = await fetch(
-              `http://localhost:5000/${currentSection}/${p.id}/comments`
-            );
-            const commentsData = await commentsRes.json();
-            const postComments = (commentsData.data || []).map((c) => ({
-              id: c.id,
-              user_id: c.user_id,
-              user_name: c.user_name || "Unknown",
-              text: c.comment_text,
-            }));
-
-            // Fetch likes
-            const postIdParam = `${currentSection}_post_id`;
-            let likesCount = 0;
-            let likedByUser = false;
-            try {
-              const likeRes = await fetch(
-                `http://localhost:5000/${currentSection}/getlike?${postIdParam}=${p.id}`
-              );
-              const likeData = await likeRes.json();
-              likesCount = likeData.total_likes || 0;
-              likedByUser = likeData.liked_users?.some(
-                (u) => u.user_id === userId
-              );
-            } catch (error) {
-              console.warn("Like fetch failed for post:", p.id, error);
-            }
-
-            return {
-              id: p.id,
-              name: p.user_name || "Unknown User",
-              college: p.user_college_name || p.user_college || "",
-              message: p.content,
-              image: p.image_url
-                ? `http://localhost:5000/uploads/${currentSection}_posts/${p.image_url}`
-                : null,
-              profile_image: p.user_profile
-                ? `http://localhost:5000/uploads/${p.user_profile}`
-                : "default-profile.png",
-              comments: postComments,
-              likes: likesCount,
-              liked: likedByUser,
-              created_at: new Date(p.created_at).toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              }),
-            };
-          })
-        );
-
-        setPosts(postsWithExtraData);
+    const fetchSearchResults = async () => {
+      if (!searchQuery.trim() || searchQuery.trim().length < 3) {
+        setPosts(originalPosts);
+        return;
       }
-    } catch (err) {
-      console.error("Search error:", err);
-    }
-  };
 
-  fetchSearchResults();
-}, [searchQuery, currentSection, originalPosts]);
+      try {
+        const res = await fetch(
+          `http://localhost:5000/${currentSection}/searchPost?query=${encodeURIComponent(
+            searchQuery
+          )}`
+        );
+        const data = await res.json();
 
+        if (data && Array.isArray(data)) {
+          const postsWithExtraData = await Promise.all(
+            data.map(async (p) => {
+              // Fetch comments
+              const commentsRes = await fetch(
+                `http://localhost:5000/${currentSection}/${p.id}/comments`
+              );
+              const commentsData = await commentsRes.json();
+              const postComments = (commentsData.data || []).map((c) => ({
+                id: c.id,
+                user_id: c.user_id,
+                user_name: c.user_name || "Unknown",
+                text: c.comment_text,
+              }));
+
+              // Fetch likes
+              const postIdParam = `${currentSection}_post_id`;
+              let likesCount = 0;
+              let likedByUser = false;
+              try {
+                const likeRes = await fetch(
+                  `http://localhost:5000/${currentSection}/getlike?${postIdParam}=${p.id}`
+                );
+                const likeData = await likeRes.json();
+                likesCount = likeData.total_likes || 0;
+                likedByUser = likeData.liked_users?.some(
+                  (u) => u.user_id === userId
+                );
+              } catch (error) {
+                console.warn("Like fetch failed for post:", p.id, error);
+              }
+
+              return {
+                id: p.id,
+                name: p.user_name || "Unknown User",
+                college: p.user_college_name || p.user_college || "",
+                message: p.content,
+                image: p.image_url
+                  ? `http://localhost:5000/uploads/${currentSection}_posts/${p.image_url}`
+                  : null,
+                profile_image: p.user_profile
+                  ? `http://localhost:5000/uploads/${p.user_profile}`
+                  : "default-profile.png",
+                comments: postComments,
+                likes: likesCount,
+                liked: likedByUser,
+                created_at: new Date(p.created_at).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                }),
+              };
+            })
+          );
+
+          setPosts(postsWithExtraData);
+        }
+      } catch (err) {
+        console.error("Search error:", err);
+      }
+    };
+
+    fetchSearchResults();
+  }, [searchQuery, currentSection, originalPosts]);
 
   // -------------------- UI --------------------
   if (loading) return <p>Loading posts...</p>;
   if (posts.length === 0)
     return <p>No posts available in {currentSection} section.</p>;
 
-  return (
-  <div>
-    {posts.map((p) => (
+  //Helper to render ad (image or video)
+  const renderAd = (ad, index) => {
+    const imageUrl = ad.image
+      ? `http://localhost:5000/uploads/ads/${ad.image}`
+      : null;
+    const videoUrl = ad.video
+      ? `http://localhost:5000/uploads/ads/${ad.video}`
+      : null;
+
+    return (
+      <div className="ad-item-container" key={`ad-${index}`}>
+        {videoUrl ? (
+          <video
+            src={videoUrl}
+            controls
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="ad-banner"
+          />
+        ) : imageUrl ? (
+          <img src={imageUrl} alt={`Ad ${index}`} className="ad-banner" />
+        ) : (
+          <p>No Media</p>
+        )}
+      </div>
+    );
+  };
+
+  //  Combine posts + ads
+  const isMobile = window.innerWidth < 768;
+  const combinedFeed = [];
+  let adIndex = 0;
+
+  posts.forEach((p, i) => {
+    combinedFeed.push(
       <div key={p.id} className="profile-item" style={{ position: "relative" }}>
+        {/* ---------------- Post Header ---------------- */}
         <div className="profile-header">
           <img src={p.profile_image} alt={p.name} className="profile-logo" />
           <div className="profile-info">
+            <h3 className="profile-name">{p.name}</h3>
             <div className="profile-details">
-              <h3 className="profile-name">{p.name}</h3>
-              <span className="divider">|</span>
               <span className="coll-name">{p.college}</span>
               <span className="divider">|</span>
               <span className="created-date">{p.created_at}</span>
             </div>
           </div>
 
+          {/* Delete Button */}
           {isMyPostsPage && userId === p.user_id && (
             <div className="post-options">
               <button
@@ -408,6 +469,7 @@ export default function PostItem({ searchQuery, refreshTrigger }) {
           )}
         </div>
 
+        {/* ---------------- Post Content ---------------- */}
         <div className="inner-content">
           <p className="message-post">{p.message}</p>
           {p.image && (
@@ -417,6 +479,7 @@ export default function PostItem({ searchQuery, refreshTrigger }) {
           )}
         </div>
 
+        {/* ---------------- Post Actions ---------------- */}
         <div className="post-actions">
           <div className="like-section">
             <button
@@ -441,7 +504,7 @@ export default function PostItem({ searchQuery, refreshTrigger }) {
           <button className="share-btn">Share</button>
         </div>
 
-        {/* ---------------- Comment Modal (per post) ---------------- */}
+        {/* ---------------- Comment Modal ---------------- */}
         {activeCommentsPost?.id === p.id && (
           <div
             className="mmodal-overlay"
@@ -533,7 +596,7 @@ export default function PostItem({ searchQuery, refreshTrigger }) {
           </div>
         )}
 
-        {/* ---------------- Likes Modal (per post) ---------------- */}
+        {/* ---------------- Likes Modal ---------------- */}
         {activeLikesPost?.id === p.id && (
           <div
             className="mmodal-overlay"
@@ -572,7 +635,13 @@ export default function PostItem({ searchQuery, refreshTrigger }) {
           </div>
         )}
       </div>
-    ))}
-  </div>
-);
+    );
+
+    //Add ad after every 8th post (mobile only)
+    if (isMobile && (i + 1) % 8 === 0 && ads[adIndex]) {
+      combinedFeed.push(renderAd(ads[adIndex], adIndex));
+      adIndex = (adIndex + 1) % ads.length;
+    }
+  });
+  return <div>{combinedFeed}</div>;
 }

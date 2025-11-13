@@ -12,9 +12,14 @@ const {
 const upload = require("../../middlewares/upload");
 const router = express.Router();
 
+
 router.post("/add", addCollege);
 router.get("/getAll", getColleges);
-router.delete("/delete/:id", deleteCollege);
+router.delete("/deleteClg/:id", deleteCollege);
+
+router.post("/addCollege", addCollege);
+router.get("/getAllCollege", getColleges);
+
 // ✅ allow both image & video fields
 router.post(
   "/addAd",
@@ -30,7 +35,7 @@ router.put("/update/:id", upload.fields([
   { name: "image", maxCount: 1 },
   { name: "video", maxCount: 1 },
 ]), updateAd);
-router.delete("/delete/:id", deleteAd);
+router.delete("/deleteAds/:id", deleteAd);
 
 
 module.exports = router;

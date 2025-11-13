@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Modal from "./PopupModal";
 import PostForm from "./PostForm";
 import AskForm from "./AskForm";
@@ -17,6 +17,7 @@ export default function UsedItem() {
   const [askRefreshTrigger, setAskRefreshTrigger] = useState(0);
 
   const location = useLocation();
+  const navigate = useNavigate();
   const isMyPostsPage = location.pathname.includes("mypostask");
 
   const user = JSON.parse(localStorage.getItem("user"));
@@ -48,7 +49,6 @@ export default function UsedItem() {
         setUsedItems(normalizedData);
       } else {
         setUsedItems([]);
-        console.error("Failed to fetch used items:", data);
       }
     } catch (error) {
       console.error("Error fetching used items:", error);
@@ -60,46 +60,6 @@ export default function UsedItem() {
   useEffect(() => {
     fetchUsedItems();
   }, [isMyPostsPage]);
-
-  // ---------------- Search API Integration ----------------
-  const handleSearch = async (query) => {
-    setSearchQuery(query);
-    if (!query.trim()) {
-      fetchUsedItems();
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const res = await fetch(
-        `http://localhost:5000/useditem/searchPost?query=${encodeURIComponent(
-          query
-        )}`
-      );
-      const data = await res.json();
-
-      if (data.message === "Search results fetched successfully") {
-        const normalizedData = data.data.map((item) => ({
-          id: item.id,
-          title: item.title,
-          description: item.description,
-          price: item.price,
-          image_url: item.image_url,
-          user_name: item.name,
-          user_college: item.college,
-          user_year: item.year || "",
-        }));
-        setUsedItems(normalizedData);
-      } else {
-        setUsedItems([]);
-      }
-    } catch (err) {
-      console.error("Search error:", err);
-      setUsedItems([]);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // ---------------- Delete Post ----------------
   const handleDelete = async (postId) => {
@@ -121,6 +81,51 @@ export default function UsedItem() {
       console.error("Error deleting post:", error);
     }
   };
+
+  // ---------------- Fetch Search Results ----------------
+useEffect(() => {
+  const fetchSearchResults = async () => {
+    if (!searchQuery.trim() || searchQuery.trim().length < 3) {
+      fetchUsedItems();
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const res = await fetch(
+        `http://localhost:5000/useditem/searchPost?query=${encodeURIComponent(
+          searchQuery
+        )}`
+      );
+      const data = await res.json();
+
+      if (data?.data) {
+        const normalizedData = data.data.map((item) => ({
+          id: item.id,
+          title: item.title,
+          description: item.description,
+          price: item.price,
+          image_url: item.image_url,
+          user_name: item.user_name || user.name,
+          user_college: item.user_college || user.college || "",
+          user_year: item.user_year || user.year || "",
+        }));
+        setUsedItems(normalizedData);
+      } else {
+        setUsedItems([]);
+      }
+    } catch (error) {
+      console.error("Error searching used items:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Debounce search a bit for better UX
+  const timeoutId = setTimeout(fetchSearchResults, 300);
+  return () => clearTimeout(timeoutId);
+}, [searchQuery]);
+
 
   return (
     <div className="main-content-area">
@@ -147,9 +152,8 @@ export default function UsedItem() {
           placeholder={`Search ${tab === "post" ? "used items" : "asks"}...`}
           className="search-box-input"
           value={searchQuery}
-          onChange={(e) => handleSearch(e.target.value)}
+          onChange={(e) => setSearchQuery(e.target.value)}
         />
-
         {!isMyPostsPage && (
           <button
             className="create-post-button"
@@ -168,20 +172,29 @@ export default function UsedItem() {
               <p className="loading-text">Loading...</p>
             ) : usedItems.length > 0 ? (
               usedItems.map((item, index) => (
-                <div key={item.id} className="shop-card">
+                <div
+                  key={item.id}
+                  className="shop-card"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => navigate("/dashboard/useditemdetails", { state: { item } })} 
+                >
                   {/* 3-dot menu only on My Posts page */}
                   {isMyPostsPage && (
                     <div className="item-three-dot-menu">
                       <FiMoreVertical
-                        onClick={() =>
-                          setActiveMenu(activeMenu === index ? null : index)
-                        }
+                        onClick={(e) => {
+                          e.stopPropagation(); 
+                          setActiveMenu(activeMenu === index ? null : index);
+                        }}
                         className="item-three-dot-icon"
                       />
                       {activeMenu === index && (
                         <div className="item-menu-dropdown">
                           <button
-                            onClick={() => handleDelete(item.id)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(item.id);
+                            }}
                             className="delete-btnn"
                           >
                             <FiTrash2 /> Delete
@@ -202,15 +215,6 @@ export default function UsedItem() {
                     <h2 className="product-name">{item.title}</h2>
                     <p className="product-description">{item.description}</p>
                     <p className="product-price">₹{item.price}</p>
-
-                    <div className="useditem-user-info">
-                      <div>
-                        <p className="useditem-user-name">{item.user_name}</p>
-                        <p className="useditem-user-meta">
-                          {item.user_college} • {item.user_year}
-                        </p>
-                      </div>
-                    </div>
                   </div>
                 </div>
               ))

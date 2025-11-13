@@ -13,7 +13,7 @@ export default function AddProduct() {
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [products, setProducts] = useState([]);
-  const [menuOpen, setMenuOpen] = useState(null); // track which row’s menu is open
+  const [menuOpen, setMenuOpen] = useState(null);
   const cropperRef = useRef(null);
 
   // Fetch all products
@@ -97,12 +97,16 @@ export default function AddProduct() {
 
   // Delete product
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this product?")) return;
+    if (!window.confirm("Are you sure you want to delete this product?"))
+      return;
 
     try {
-      const res = await fetch(`http://localhost:5000/shopping/products/delete/${id}`, {
-        method: "DELETE",
-      });
+      const res = await fetch(
+        `http://localhost:5000/shopping/products/delete/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
       const data = await res.json();
 
       if (res.ok) {
@@ -125,7 +129,10 @@ export default function AddProduct() {
       {/* Popup Modal */}
       {showForm && (
         <div className="add-modal-overlay" onClick={() => setShowForm(false)}>
-          <div className="add-modal-content" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="add-modal-content"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button className="close-btn" onClick={() => setShowForm(false)}>
               ×
             </button>

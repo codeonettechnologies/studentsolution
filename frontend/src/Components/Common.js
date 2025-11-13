@@ -25,7 +25,6 @@ export default function CommonContent() {
 
   return (
     <div className="main-content-area">
-
       {/* Tabs */}
       <div className="tab-navigation">
         <button
@@ -58,17 +57,6 @@ export default function CommonContent() {
           <TiPlus />
         </button>
       </div>
-
-      {/* Tab Content */}
-      {/* {tab === "post" ? (
-  <div className="tab-content">
-    <PostItem searchQuery={searchQuery} refreshTrigger={postRefreshTrigger} />
-  </div>
-) : (
-  <div className="tab-content">
-    <Ask searchQuery={searchQuery} refreshTrigger={askRefreshTrigger} />
-  </div>
-)} */}
 
       {/* Tab Content with animation */}
       <div key={tab} className={`tab-content fade-slide`}>

@@ -11,6 +11,7 @@ export default function PostForm({ onCancel, onPostCreated }) {
   const user = JSON.parse(localStorage.getItem("user"));
   const userId = user?.id;
   const currentSection = localStorage.getItem("currentSection");
+  console.log(currentSection);
 
   // image preview
   useEffect(() => {
@@ -115,6 +116,7 @@ export default function PostForm({ onCancel, onPostCreated }) {
           <textarea
             placeholder="Enter description..."
             value={content}
+            rows="8"
             onChange={(e) => setContent(e.target.value)}
             className="post-textarea description-textarea"
           />
@@ -152,7 +154,10 @@ export default function PostForm({ onCancel, onPostCreated }) {
 
       <div className="postForm-options">
         {!file && (
-          <label htmlFor="file-upload" className="post-option-button photo-button">
+          <label
+            htmlFor="file-upload"
+            className="post-option-button photo-button"
+          >
             📸 Photo
           </label>
         )}

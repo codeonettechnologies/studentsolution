@@ -14,7 +14,7 @@ export default function Mypostask() {
   } else if (currentSection === "useditem") {
     return <UsedItem />;
   } else if (currentSection === "notes") {
-    return <Learning />
+    return <Learning />;
   } else {
     return <CommonContent />;
   }

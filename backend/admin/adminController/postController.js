@@ -2,15 +2,15 @@ const connectDB = require("../../config/database");
 const db = connectDB();
 
 exports.addCollege = async (req, res) => {
-  try {
-    const {college_name } = req.body;
-
-    if (!college_name) {
-      return res.status(400).json({ message: "College college_name is required" });
+  try {  
+    const {college } = req.body;
+     
+    if (!college) {
+      return res.status(400).json({ message: "College college is required" });
     }
-    const query = "INSERT INTO colleges (college_name) VALUES (?)";
+    const query = "INSERT INTO colleges (college) VALUES (?)";
 
-    db.query(query, [college_name], (err, result) => {
+    db.query(query, [college], (err, result) => {
       if (err) {
         console.error("Error adding college:", err);
         return res.status(500).json({ message: "Database error" });

@@ -18,10 +18,9 @@ export default function AskForm({ onCancel, onAskCreated }) {
     accommodation: "accommodation",
     entertainment: "EntertainmentAsk",
     useditem: "useditemAsk",
-    notes:"noteAsk"
+    notes: "noteAsk",
   };
 
-  // If section not found, fallback tjobAsko
   const askRoute = askEndpointMap[currentSection] || "general";
   const handleSubmit = async () => {
     if (!content.trim()) {
@@ -35,7 +34,6 @@ export default function AskForm({ onCancel, onAskCreated }) {
 
     setLoading(true);
     try {
-      //Dynamic endpoint according to section
       const apiUrl = `http://localhost:5000/${currentSection}/${askRoute}`;
       const res = await fetch(apiUrl, {
         method: "POST",
@@ -50,7 +48,7 @@ export default function AskForm({ onCancel, onAskCreated }) {
       console.log("AskForm API Response:", data);
 
       if (data.message?.includes("created")) {
-        alert(`✅ ${currentSection} ask created successfully!`);
+        alert(`${currentSection} ask created successfully!`);
         if (onAskCreated) onAskCreated(data);
         setContent("");
         onCancel();
@@ -70,16 +68,6 @@ export default function AskForm({ onCancel, onAskCreated }) {
       <h4 className="post-form-title">Create New Ask</h4>
 
       <div className="post-input-header">
-        {/* <img
-          src={
-            user?.profile_image
-              ? `http://localhost:5000/uploads/${user.profile_image}`
-              : "default-profile.png"
-          }
-          alt={user?.name || "user"}
-          className="current-user-profile-logo"
-        /> */}
-
         <textarea
           placeholder="What's your question?"
           className="post-textarea"

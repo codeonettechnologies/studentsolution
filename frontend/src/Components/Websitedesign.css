@@ -464,16 +464,7 @@ body {
   font-size: 14px;
   color: #555;
 }
-
 /* ===== Dashboard SideBar Layout ===== */
-/* .dash-wrapper {
-  display: flex;
-  min-height: 100vh;
-  width: 100%;
-  background-color: #f9f9f9;
-  font-family: "Poppins", sans-serif;
-  position: relative;
-}  */
   .nav-item {
   display: flex;
   align-items: center;
@@ -668,6 +659,26 @@ body {
     padding: 6px;
   }
 }
+
+/*add file css*/
+.ad-item-container {
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden; 
+  border-radius: 10px;
+  margin: 10px 0;
+}
+.ad-banner {
+  width: 100%;
+  height: auto;
+  max-height: 400px;
+  object-fit: cover; 
+  display: block;
+  border-radius: 10px;
+}
+.ads-container {
+  overflow-y: hidden;
+}
 /*Profile page css*/
 .profile-dropdown-container {
   position: relative;
@@ -695,7 +706,7 @@ body {
   right: 0;
   background: white;
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: 2px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
   display: flex;
   flex-direction: column;

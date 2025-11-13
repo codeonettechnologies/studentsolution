@@ -28,7 +28,7 @@ export default function Mycardproduct() {
       .finally(() => setLoading(false));
   }, []);
 
-  // 🟢 Open modal for specific item
+  // Open modal for specific item
   const handlePlaceOrderClick = (item) => {
     setSelectedItem(item);
     setShowModal(true);
@@ -52,7 +52,6 @@ export default function Mycardproduct() {
     }
 
     try {
-      // 🟢 Only send selected product
       const response = await fetch("http://localhost:5000/shopping/order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -61,7 +60,7 @@ export default function Mycardproduct() {
           name: user.name,
           mobile: user.mobile_number,
           address: orderData.address,
-          products: [selectedItem], // ✅ Only selected product
+          products: [selectedItem],
         }),
       });
 
@@ -70,8 +69,10 @@ export default function Mycardproduct() {
       if (response.ok) {
         alert(`${data.message}\nTotal: ₹${data.total_price}`);
 
-        // 🟢 Remove only the ordered item from UI
-        setCartItems(cartItems.filter((item) => item.id !== selectedItem.id));
+        // Remove only the ordered item from UI
+        setCartItems((prev) =>
+          prev.filter((item) => item.product_id !== selectedItem.product_id)
+        );
 
         setShowModal(false);
         setOrderData({ address: "" });
@@ -91,34 +92,47 @@ export default function Mycardproduct() {
     <div className="cart-container">
       <h1>My Products</h1>
 
-      <div className="cart-cards">
-        {cartItems.length > 0 ? (
-          cartItems.map((item) => (
-            <div key={item.id} className="cart-card">
-              <img
-                src={`http://localhost:5000/uploads/shopping_posts/${item.image_url}`}
-                alt={item.name}
-                className="cart-image"
-              />
-              <div className="cart-details">
-                <h2>{item.name}</h2>
-                <p>Price: ₹{item.price}</p>
-                <p>Quantity: {item.quantity}</p>
-                <button
-                  className="buy-btn"
-                  onClick={() => handlePlaceOrderClick(item)}
-                >
-                  Place Order
-                </button>
-              </div>
-            </div>
-          ))
-        ) : (
-          <p>No items in cart.</p>
-        )}
-      </div>
+      {cartItems.length > 0 ? (
+        <table className="cart-table">
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Product</th>
+              <th>Price</th>
+              <th>Quantity</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {cartItems.map((item) => (
+              <tr key={item.id}>
+                <td>
+                  <img
+                    src={`http://localhost:5000/uploads/shopping_posts/${item.product_image}`}
+                    alt={item.name}
+                    className="cart-image"
+                  />
+                </td>
+                <td>{item.name}</td>
+                <td>₹{item.product_price}</td>
+                <td>{item.quantity}</td>
+                <td>
+                  <button
+                    className="buy-btn"
+                    onClick={() => handlePlaceOrderClick(item)}
+                  >
+                    Place Order
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <p className="empty-cart">No items in cart.</p>
+      )}
 
-      {/* ✅ Modal */}
+      {/* Modal (same functionality) */}
       {showModal && selectedItem && (
         <div className="p-modal-overlay">
           <div className="p-modal">
@@ -134,7 +148,7 @@ export default function Mycardproduct() {
               </label>
               <label>
                 Product:
-                <input type="text" value={selectedItem.name} readOnly />
+                <input type="text" value={selectedItem.name} />
               </label>
               <label>
                 Quantity:

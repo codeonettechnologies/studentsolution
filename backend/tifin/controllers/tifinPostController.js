@@ -81,7 +81,14 @@ exports.getTiffinPostsByUserId = async (req, res) => {
 
   try {
     const [rows] = await database.execute(
-      "SELECT * FROM tiffin_post WHERE user_id = ?",
+      `SELECT 
+         tp.*, 
+         u.name AS user_name, 
+         u.profile_image, 
+         u.college
+       FROM tiffin_post tp
+       JOIN users u ON tp.user_id = u.id
+       WHERE tp.user_id = ?`,
       [userId]
     );
 

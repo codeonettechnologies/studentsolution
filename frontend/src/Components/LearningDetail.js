@@ -21,7 +21,7 @@ export default function LearningDetails() {
       style={{ maxWidth: 700, margin: "auto", padding: 20 }}
     >
       <button onClick={() => navigate(-1)} style={{ marginBottom: 20 }}>
-        Back
+        ←
       </button>
 
       <p style={{ fontSize: 14, color: "#888" }}>Author: {note.user_name}</p>
