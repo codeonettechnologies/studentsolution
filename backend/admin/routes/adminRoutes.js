@@ -6,21 +6,30 @@ const {
   addAd,
   getAds,
   updateAd,
-  deleteAd
+  deleteAd,
+  addCity,
+   getCity,
+   deleteCity,
+   addProfessions,
+   getProfessions,
+   deleteProfessions
 } = require("../adminController/postController");
 
 const upload = require("../../middlewares/upload");
 const router = express.Router();
 
-
-router.post("/add", addCollege);
-router.get("/getAll", getColleges);
-router.delete("/deleteClg/:id", deleteCollege);
+router.post("/addCity", addCity);
+router.get("/getAllCity", getCity);
+router.delete("/deleteCity/:id", deleteCity);
 
 router.post("/addCollege", addCollege);
 router.get("/getAllCollege", getColleges);
+router.delete("/deleteClg/:id", deleteCollege);
 
-// ✅ allow both image & video fields
+router.post("/addProfessions", addProfessions);
+router.get("/getAllProfessions", getProfessions);
+router.delete("/deleteProfessions/:id", deleteProfessions);
+
 router.post(
   "/addAd",
   upload.fields([
