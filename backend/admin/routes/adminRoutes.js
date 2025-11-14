@@ -18,13 +18,16 @@ const {
 const upload = require("../../middlewares/upload");
 const router = express.Router();
 
+
 router.post("/addCity", addCity);
 router.get("/getAllCity", getCity);
 router.delete("/deleteCity/:id", deleteCity);
 
+
+router.delete("/deleteClg/:id", deleteCollege);
 router.post("/addCollege", addCollege);
 router.get("/getAllCollege", getColleges);
-router.delete("/deleteClg/:id", deleteCollege);
+
 
 router.post("/addProfessions", addProfessions);
 router.get("/getAllProfessions", getProfessions);

@@ -127,7 +127,7 @@ exports.login = (req, res) => {
         email: user.email,
         college: user.college,
         city: user.city,
-        field: user.field,
+        profession: user.profession,
         college_year: user.college_year,
         role: user.role,
         profile_image: user.profile_image,
@@ -139,7 +139,7 @@ exports.login = (req, res) => {
  
 exports.getAllUsers = async (req, res) => {
   try {
-    const sql = "SELECT id, name, email, college, city, field, college_year, role, profile_image, mobile_number FROM users";
+    const sql = "SELECT id, name, email, college, city, profession, college_year, role, profile_image, mobile_number FROM users";
 
     db.query(sql, (err, results) => {
       if (err) {

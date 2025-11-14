@@ -6,13 +6,16 @@ import { IoPerson } from "react-icons/io5";
 const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
+
   const isDashboardRoute = location.pathname.startsWith("/dashboard");
+  const isAdminDashboardRoute = location.pathname.startsWith("/admindashboard");
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [user, setUser] = useState(null);
 
   const dropdownRef = useRef(null);
+
   const toggleMenu = () => setMenuOpen(!menuOpen);
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
@@ -34,9 +37,7 @@ const Header = () => {
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (storedUser) {
-      setUser(storedUser);
-    }
+    if (storedUser) setUser(storedUser);
   }, []);
 
   return (
@@ -53,15 +54,15 @@ const Header = () => {
       </div>
 
       <div className="header-right">
-        {/* Hamburger Menu */}
-        {!isDashboardRoute && (
+        {/* Hamburger Menu for non-dashboard pages */}
+        {!isDashboardRoute && !isAdminDashboardRoute && (
           <div className="hamburger" onClick={toggleMenu}>
             {menuOpen ? <FiX size={25} /> : <FiMenu size={25} />}
           </div>
         )}
 
-        {/* Nav Menu */}
-        {!isDashboardRoute && (
+        {/* Normal Navigation */}
+        {!isDashboardRoute && !isAdminDashboardRoute && (
           <nav className={`nav-menu ${menuOpen ? "open" : ""}`}>
             <Link to="/" onClick={() => setMenuOpen(false)}>
               Home
@@ -78,10 +79,10 @@ const Header = () => {
           </nav>
         )}
 
-        {/* Profile Icon / User Image Dropdown */}
-        {isDashboardRoute && (
+        {/* Profile for Dashboard and AdminDashboard */}
+        {(isDashboardRoute || isAdminDashboardRoute) && (
           <div className="profile-dropdown-container" ref={dropdownRef}>
-            {/*Show user image if logged in, else show icon */}
+            {/* User/Admin Profile Image or Icon */}
             {user && user.profile_image ? (
               <img
                 src={`http://localhost:5000/uploads/${user.profile_image}`}
@@ -97,26 +98,43 @@ const Header = () => {
               />
             )}
 
+            {/* Dropdown Menu */}
             {dropdownOpen && (
               <div className="profile-dropdown">
-                <Link
-                  to="/dashboard/profile"
-                  onClick={() => setDropdownOpen(false)}
-                >
-                  Profile
-                </Link>
-                <Link
-                  to="/dashboard/mypostask"
-                  onClick={() => setDropdownOpen(false)}
-                >
-                  Post / Ask
-                </Link>
-                <Link
-                  to="/dashboard/myorder"
-                  onClick={() => setDropdownOpen(false)}
-                >
-                  My Order
-                </Link>
+                {isDashboardRoute && (
+                  <>
+                    <Link
+                      to="/dashboard/profile"
+                      onClick={() => setDropdownOpen(false)}
+                    >
+                      Profile
+                    </Link>
+                    <Link
+                      to="/dashboard/mypostask"
+                      onClick={() => setDropdownOpen(false)}
+                    >
+                      Post / Ask
+                    </Link>
+                    <Link
+                      to="/dashboard/myorder"
+                      onClick={() => setDropdownOpen(false)}
+                    >
+                      My Order
+                    </Link>
+                  </>
+                )}
+
+                {isAdminDashboardRoute && (
+                  <>
+                    <Link
+                      to="/admindashboard/registeruser"
+                      onClick={() => setDropdownOpen(false)}
+                    >
+                      Admin Panel
+                    </Link>
+                  </>
+                )}
+
                 <button onClick={handleLogout}>Logout</button>
               </div>
             )}

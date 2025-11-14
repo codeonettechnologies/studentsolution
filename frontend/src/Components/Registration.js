@@ -9,47 +9,70 @@ export default function Register() {
   const [image, setImage] = useState(null);
   const [cropData, setCropData] = useState(null);
   const [colleges, setColleges] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [professions, setProfessions] = useState([]);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     mobile_number: "",
     password: "",
     college: "",
-    city: "Indore",
+    city: "",
     college_year: "1st Year",
     role: "Student",
-    profession: "Engineer",
+    profession: "",
   });
 
   const cropperRef = useRef(null);
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
-  //Fetch college list from backend
+  // Fetch colleges, cities, professions
   useEffect(() => {
     fetchColleges();
+    fetchCities();
+    fetchProfessions();
   }, []);
 
   const fetchColleges = async () => {
     try {
       const res = await axios.get("http://localhost:5000/admin/getAllCollege");
-      if (res.data && Array.isArray(res.data.colleges)) {
-        setColleges(res.data.colleges);
-      } else if (Array.isArray(res.data)) {
-        setColleges(res.data);
-      }
+      if (Array.isArray(res.data.colleges)) setColleges(res.data.colleges);
+      else if (Array.isArray(res.data)) setColleges(res.data);
     } catch (err) {
       console.error("Error fetching colleges:", err);
       alert("Failed to load colleges!");
     }
   };
 
-  //Handle input change
+  const fetchCities = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/admin/getAllCity");
+      if (Array.isArray(res.data)) setCities(res.data);
+    } catch (err) {
+      console.error("Error fetching cities:", err);
+      alert("Failed to load cities!");
+    }
+  };
+
+  const fetchProfessions = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:5000/admin/getAllProfessions"
+      );
+      if (Array.isArray(res.data)) setProfessions(res.data);
+    } catch (err) {
+      console.error("Error fetching professions:", err);
+      alert("Failed to load professions!");
+    }
+  };
+
+  // Handle input change
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  //Handle image select
+  // Handle image select
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -58,7 +81,7 @@ export default function Register() {
     }
   };
 
-  //Crop and make circular
+  // Crop and make circular
   const handleCrop = () => {
     if (cropperRef.current && cropperRef.current.cropper) {
       const croppedCanvas = cropperRef.current.cropper.getCroppedCanvas({
@@ -87,7 +110,7 @@ export default function Register() {
   const handleOpenFilePicker = () => fileInputRef.current.click();
   const handleReupload = () => setCropData(null);
 
-  //Submit form to backend
+  // Submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -114,7 +137,7 @@ export default function Register() {
       console.log("Register Response:", data);
 
       if (data.success) {
-        alert(" Registration Successful!");
+        alert("Registration Successful!");
         navigate("/");
       } else {
         alert(data.message || "Registration failed.");
@@ -129,6 +152,8 @@ export default function Register() {
     <div className="register-wrapper">
       <div className="register-frm">
         <h1>Create Account</h1>
+
+        {/* Image upload/crop */}
         <div className="upload-circle">
           {cropData ? (
             <div className="circle-preview">
@@ -151,11 +176,7 @@ export default function Register() {
                 cropBoxMovable={true}
                 movable={true}
                 zoomable={true}
-                style={{
-                  width: "300px",
-                  height: "300px",
-                  borderRadius: "10px",
-                }}
+                style={{ width: "300px", height: "300px", borderRadius: "10px" }}
               />
               <button className="crop-btn" onClick={handleCrop}>
                 Done
@@ -181,6 +202,7 @@ export default function Register() {
           )}
         </div>
 
+        {/* Registration Form */}
         <form onSubmit={handleSubmit}>
           <label>Name:</label>
           <input
@@ -239,10 +261,12 @@ export default function Register() {
 
           <label>City:</label>
           <select name="city" value={formData.city} onChange={handleChange}>
-            <option value="Indore">Indore</option>
-            <option value="Bhopal">Bhopal</option>
-            <option value="Ujjain">Ujjain</option>
-            <option value="Gwalior">Gwalior</option>
+            <option value="">Select City</option>
+            {cities.map((c, idx) => (
+              <option key={idx} value={c.city}>
+                {c.city}
+              </option>
+            ))}
           </select>
 
           <label>Year:</label>
@@ -263,11 +287,12 @@ export default function Register() {
             value={formData.profession}
             onChange={handleChange}
           >
-            <option value="Engineer">Engineer</option>
-            <option value="Doctor">Doctor</option>
-            <option value="Banker">Banker</option>
-            <option value="Pharmacist">Pharmacist</option>
-            <option value="Lawyer">Lawyer</option>
+            <option value="">Select Profession</option>
+            {professions.map((f, idx) => (
+              <option key={idx} value={f.profession}>
+                {f.profession}
+              </option>
+            ))}
           </select>
 
           <label>Role:</label>

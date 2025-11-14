@@ -75,7 +75,6 @@ export default function AddCollege() {
   return (
     <div className="college-container">
       <div className="college-header">
-        <h2>College List</h2>
         <button className="add-btn" onClick={() => setShowForm(true)}>
           + Add College
         </button>

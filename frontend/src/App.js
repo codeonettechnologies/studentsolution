@@ -12,6 +12,10 @@ import AdminDashbord from "./Components/AdminDashbord";
 import AddCollege from "./Components/adminAddCollege";
 import AddAds from "./Components/AddAds";
 import AddProduct from "./Components/AdminAddProduct";
+import RegisterUser from "./Components/Registeruser";
+import Visiters from "./Components/Visitor";
+import AddCity from "./Components/Addcity";
+import AddField from "./Components/Addfield";
 
 import Dashboard from "./Components/Dashboard";
 import CommonContent from "./Components/Common";
@@ -51,14 +55,19 @@ function App() {
             <Route path="entertainment" element={<Entertainment />} />
             <Route path="Accommodation" element={<Accomodation />} />
             <Route path="learning" element={<Learning />} />
-            <Route path="learning-details" element={<LearningDetails />}/>
-            <Route path="shopping-details" element={<ProductDetails />}/>
+            <Route path="learning-details" element={<LearningDetails />} />
+            <Route path="shopping-details" element={<ProductDetails />} />
             <Route path="shop" element={<ShopItem />} />
             <Route path="useditem" element={<UsedItem />} />
-            <Route path="useditemdetails" element={<UsedItemDetails />}/>
+            <Route path="useditemdetails" element={<UsedItemDetails />} />
           </Route>
 
           <Route path="/admindashboard/*" element={<AdminDashbord />}>
+            <Route index element={<RegisterUser />} />
+            <Route path="registeruser" element={<RegisterUser />} />
+            <Route path="visitor" element={<Visiters/>}/>
+            <Route path="addcity" element={<AddCity />} />
+            <Route path="addfield" element={<AddField />} />
             <Route path="addcollege" element={<AddCollege />} />
             <Route path="addads" element={<AddAds />} />
             <Route path="addproduct" element={<AddProduct />} />

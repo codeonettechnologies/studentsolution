@@ -97,15 +97,12 @@ export default function AddProduct() {
 
   // Delete product
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this product?"))
-      return;
+    if (!window.confirm("Are you sure you want to delete this product?")) return;
 
     try {
       const res = await fetch(
         `http://localhost:5000/shopping/products/delete/${id}`,
-        {
-          method: "DELETE",
-        }
+        { method: "DELETE" }
       );
       const data = await res.json();
 
@@ -123,16 +120,13 @@ export default function AddProduct() {
   return (
     <div className="admin-container">
       <button className="open-form-btn" onClick={() => setShowForm(true)}>
-        Add Product
+        + Add Product
       </button>
 
       {/* Popup Modal */}
       {showForm && (
         <div className="add-modal-overlay" onClick={() => setShowForm(false)}>
-          <div
-            className="add-modal-content"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="add-modal-content" onClick={(e) => e.stopPropagation()}>
             <button className="close-btn" onClick={() => setShowForm(false)}>
               ×
             </button>
@@ -193,61 +187,97 @@ export default function AddProduct() {
         </div>
       )}
 
-      {/* Products Table */}
+      {/* Products Table / Mobile Cards */}
       <div className="table-container">
         <h3>All Products</h3>
+
         {products.length > 0 ? (
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Image</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Price (₹)</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.map((p, index) => (
-                <tr key={p.id}>
-                  <td>{index + 1}</td>
-                  <td>
-                    <img
-                      src={`http://localhost:5000/uploads/shopping_posts/${p.image_url}`}
-                      alt={p.name}
-                      style={{
-                        width: "60px",
-                        height: "60px",
-                        borderRadius: "8px",
-                        objectFit: "cover",
-                      }}
-                    />
-                  </td>
-                  <td>{p.name}</td>
-                  <td>{p.description || "N/A"}</td>
-                  <td>₹{p.price}</td>
-                  <td className="action-cell">
-                    <div className="menu-container">
-                      <FaEllipsisV
-                        className="menu-icon"
-                        onClick={() =>
-                          setMenuOpen(menuOpen === p.id ? null : p.id)
-                        }
-                      />
-                      {menuOpen === p.id && (
-                        <div className="dropdown-menu">
-                          <button onClick={() => handleDelete(p.id)}>
-                            Delete
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </td>
+          <>
+            {/* Desktop Table */}
+            <table className="desktop-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Image</th>
+                  <th>Name</th>
+                  <th>Description</th>
+                  <th>Price (₹)</th>
+                  <th>Action</th>
                 </tr>
+              </thead>
+              <tbody>
+                {products.map((p, index) => (
+                  <tr key={p.id}>
+                    <td>{index + 1}</td>
+                    <td>
+                      <img
+                        src={`http://localhost:5000/uploads/shopping_posts/${p.image_url}`}
+                        alt={p.name}
+                        style={{
+                          width: "60px",
+                          height: "60px",
+                          borderRadius: "8px",
+                          objectFit: "cover",
+                        }}
+                      />
+                    </td>
+                    <td>{p.name}</td>
+                    <td>{p.description || "N/A"}</td>
+                    <td>₹{p.price}</td>
+                    <td className="action-cell">
+                      <div className="menu-container">
+                        <FaEllipsisV
+                          className="menu-icon"
+                          onClick={() =>
+                            setMenuOpen(menuOpen === p.id ? null : p.id)
+                          }
+                        />
+                        {menuOpen === p.id && (
+                          <div className="dropdown-menu">
+                            <button onClick={() => handleDelete(p.id)}>
+                              Delete
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            {/* Mobile View Cards */}
+            <div className="mobile-products">
+              {products.map((p) => (
+                <div className="product-card" key={p.id}>
+                  <img
+                    src={`http://localhost:5000/uploads/shopping_posts/${p.image_url}`}
+                    alt={p.name}
+                  />
+                  <div className="product-info">
+                    <h4>{p.name}</h4>
+                    <p>{p.description || "N/A"}</p>
+                    <span>₹{p.price}</span>
+                  </div>
+                  <div className="menu-container">
+                    <FaEllipsisV
+                      className="menu-icon"
+                      onClick={() =>
+                        setMenuOpen(menuOpen === p.id ? null : p.id)
+                      }
+                    />
+                    {menuOpen === p.id && (
+                      <div className="dropdown-menu">
+                        <button onClick={() => handleDelete(p.id)}>
+                          Delete
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
               ))}
-            </tbody>
-          </table>
+            </div>
+          </>
         ) : (
           <p>No products found.</p>
         )}
