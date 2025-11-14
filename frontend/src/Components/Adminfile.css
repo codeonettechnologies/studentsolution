@@ -4,17 +4,44 @@
   min-height: 92vh;
   background-color: #f5f6f7;
   font-family: "Segoe UI", Arial, sans-serif;
-  margin-top: 55px;
+  margin-top: 55px; 
+  position: relative;
+  overflow-x: hidden;
 }
-.admin-navbar-link {
+.admin-hamburger {
+  position: fixed;
+  top: 12px; 
+  left: 15px;
+  z-index: 5000 !important;
+  background: #007bff;
+  border: none;
+  color: #fff;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+.admin-hamburger:hover {
+  background: #0056b3;
+  transform: scale(1.05);
+}
+.admin-sidebar {
+  position: fixed;
+  top: 63px; 
+  left: -260px;
   width: 240px;
-  color: #333;
-  display: flex;
-  flex-direction: column;
+  height: 100vh;
+  background-color: #fff;
+  border-right: 1px solid #e0e0e0;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.08);
   padding: 25px 20px;
   box-sizing: border-box;
-  border-right: 1px solid #e0e0e0;
-  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.05);
+  transition: left 0.3s ease;
+  z-index: 2000;
+}
+.admin-sidebar.open {
+  left: 0;
 }
 .admin-title {
   font-size: 1.3rem;
@@ -23,8 +50,10 @@
   margin-bottom: 20px;
   border-bottom: 2px solid #ddd;
   padding-bottom: 8px;
+  text-align: center;
 }
 .admin-nav-btn {
+  display: block;
   color: #333;
   text-decoration: none;
   padding: 12px 14px;
@@ -32,7 +61,6 @@
   border-radius: 6px;
   font-weight: 500;
   transition: all 0.3s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 .admin-nav-btn:hover {
   background-color: #e9ecef;
@@ -41,34 +69,47 @@
 .admin-nav-btn.active {
   background-color: #dce4f7;
   font-weight: 600;
+  color: #0056b3;
 }
 .admin-dash-outlet {
   flex: 1;
   padding: 30px;
   background-color: #fafafa;
   box-sizing: border-box;
+  margin-left: 0;
+  transition: margin-left 0.3s ease;
+}
+.admin-dash-outlet.shifted {
+  margin-left: 240px;
 }
 @media screen and (max-width: 768px) {
-  .admin-wrap {
-    flex-direction: column;
+  .admin-sidebar {
+    width: 220px;
   }
-  .admin-navbar-link {
-    width: 100%;
-    flex-direction: row;
-    overflow-x: auto;
-    align-items: center;
-    border-right: none;
-    border-bottom: 1px solid #ddd;
-    box-shadow: none;
+  .admin-dash-outlet.shifted {
+    margin-left: 0; 
+  }
+  .admin-hamburger {
+    top: 10px;
+    left: 10px;
   }
   .admin-title {
-    margin: 0 15px 0 0;
-    border-bottom: none;
+    font-size: 1.2rem;
   }
   .admin-nav-btn {
-    margin-right: 10px;
-    margin-bottom: 0;
-    flex-shrink: 0;
+    font-size: 0.95rem;
+  }
+}
+@media screen and (min-width: 993px) {
+  .admin-sidebar {
+    left: 0 !important;
+    top:69px;
+  }
+  .admin-hamburger {
+    display: none;
+  }
+  .admin-dash-outlet {
+    margin-left: 240px;
   }
 }
 /*adminaddcollege file css*/
@@ -77,6 +118,7 @@
   font-family: "Poppins", "Segoe UI", Arial, sans-serif;
   background-color: #f8fafc;
   min-height: 100vh;
+  margin-top: 20px;
 }
 .college-header {
   display: flex;
@@ -300,12 +342,12 @@
   background-color: #f8fafc;
   min-height: 100vh;
   box-sizing: border-box;
+  margin-top: 20px;
 }
 .ads-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 25px;
 }
 .ads-header h2 {
   font-size: 1.6rem;
@@ -313,7 +355,7 @@
   color: #1e293b;
   letter-spacing: 0.5px;
 }
-.add-btn {
+.add-btn, .city-btn{
   background: linear-gradient(135deg, #2563eb, #1d4ed8);
   color: #fff;
   border: none;
@@ -325,7 +367,7 @@
   box-shadow: 0 3px 8px rgba(37, 99, 235, 0.3);
   transition: all 0.3s ease;
 }
-.add-btn:hover {
+.add-btn:hover, .city-btn:hover {
   background: linear-gradient(135deg, #1d4ed8, #1e40af);
   transform: translateY(-2px);
 }
@@ -522,18 +564,135 @@
 /*Add product file css*/
 .admin-container {
   padding: 20px;
-  font-family: Arial, sans-serif;
+  font-family: "Poppins", sans-serif;
+  background: #f9f9f9;
+  min-height: 100vh;
+  margin-top: 20px;
 }
 .open-form-btn {
   background-color: #007bff;
   color: white;
-  padding: 8px 15px;
+  padding: 10px 16px;
   border: none;
-  border-radius: 5px;
+  border-radius: 6px;
   cursor: pointer;
+  transition: 0.3s;
 }
 .open-form-btn:hover {
   background-color: #0056b3;
+}
+.table-container {
+  background: white;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+.table-container table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.table-container th,
+.table-container td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+.table-container th {
+  background: #f1f1f1;
+}
+.table-container img {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+.action-cell {
+  position: relative;
+}
+.menu-container {
+  position: relative;
+  display: inline-block;
+}
+.menu-icon {
+  cursor: pointer;
+}
+.dropdown-menu {
+  position: absolute;
+  top: 25px;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  z-index: 5;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+.dropdown-menu button {
+  background: none;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+}
+.dropdown-menu button:hover {
+  background: #f8f8f8;
+}
+.mobile-products {
+  display: none; 
+}
+.product-card {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 15px;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.product-card img {
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
+  object-fit: cover;
+  margin-right: 10px;
+}
+.product-info {
+  flex: 1;
+  margin-right: 10px;
+}
+.product-info h4 {
+  margin: 0;
+  font-size: 16px;
+}
+.product-info p {
+  font-size: 13px;
+  color: #666;
+}
+.product-info span {
+  font-weight: 600;
+}
+@media (max-width: 768px) {
+  .desktop-table {
+    display: none;
+  }
+  .mobile-products {
+    display: block;
+  }
+  .admin-container {
+    padding: 10px;
+  }
+  .add-modal-content {
+    width: 90%;
+  }
+}
+@media (min-width: 769px) {
+  .mobile-products {
+    display: none;
+  }
+  .desktop-table {
+    display: table;
+  }
 }
 /*Popup modal */
 .add-modal-overlay {
@@ -637,4 +796,16 @@ th {
     opacity: 1;
     transform: scale(1);
   }
+}
+/*RegisteredUser File Css */
+.register-user-container{
+  margin-top: 80px;
+}
+/*AddCity file css*/
+.city-container{
+  margin-top: 70px;
+}
+/*AddField file css*/
+.field-container{
+  margin-top: 70px;
 }

@@ -79,7 +79,6 @@ export default function AddAds() {
   return (
     <div className="ads-container">
       <div className="ads-header">
-        <h2>Advertisement List</h2>
         <button className="add-btn" onClick={() => setShowForm(true)}>
           + Add Ads
         </button>
