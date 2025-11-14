@@ -8,11 +8,11 @@ const {
   updateAd,
   deleteAd,
   addCity,
-   getCity,
-   deleteCity,
-   addProfessions,
-   getProfessions,
-   deleteProfessions
+  getCity,
+  deleteCity,
+  addProfessions,
+  getProfessions,
+  deleteProfessions,
 } = require("../adminController/postController");
 
 const upload = require("../../middlewares/upload");
@@ -43,11 +43,14 @@ router.post(
 );
 
 router.get("/all", getAds);
-router.put("/update/:id", upload.fields([
-  { name: "image", maxCount: 1 },
-  { name: "video", maxCount: 1 },
-]), updateAd);
+router.put(
+  "/update/:id",
+  upload.fields([
+    { name: "image", maxCount: 1 },
+    { name: "video", maxCount: 1 },
+  ]),
+  updateAd
+);
 router.delete("/deleteAds/:id", deleteAd);
-
 
 module.exports = router;
