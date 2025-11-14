@@ -2,9 +2,9 @@ const connectDB = require("../../config/database");
 const db = connectDB();
 
 exports.addCollege = async (req, res) => {
-  try {  
-    const {college } = req.body;
-     
+  try {
+    const { college } = req.body;
+
     if (!college) {
       return res.status(400).json({ message: "College college is required" });
     }
@@ -70,7 +70,6 @@ exports.deleteCollege = async (req, res) => {
   }
 };
 
-
 exports.addAd = (req, res) => {
   const image = req.files?.image ? req.files.image[0].filename : null;
   const video = req.files?.video ? req.files.video[0].filename : null;
@@ -85,10 +84,11 @@ exports.addAd = (req, res) => {
       console.error("Error inserting ad:", err);
       return res.status(500).json({ error: "Database error" });
     }
-    res.status(201).json({ message: "Ad added successfully", id: result.insertId });
+    res
+      .status(201)
+      .json({ message: "Ad added successfully", id: result.insertId });
   });
 };
-
 
 exports.getAds = async (req, res) => {
   try {
@@ -106,8 +106,6 @@ exports.getAds = async (req, res) => {
   }
 };
 
-
-
 exports.updateAd = async (req, res) => {
   try {
     const { id } = req.params;
@@ -118,11 +116,15 @@ exports.updateAd = async (req, res) => {
     }
 
     if (!image && !video) {
-      return res.status(400).json({ message: "Please provide image or video to update" });
+      return res
+        .status(400)
+        .json({ message: "Please provide image or video to update" });
     }
 
     if (image && video) {
-      return res.status(400).json({ message: "Only one field allowed: image OR video" });
+      return res
+        .status(400)
+        .json({ message: "Only one field allowed: image OR video" });
     }
 
     const query = "UPDATE ads SET image = ?, video = ? WHERE id = ?";
@@ -143,7 +145,6 @@ exports.updateAd = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
 
 exports.deleteAd = async (req, res) => {
   try {
@@ -173,14 +174,12 @@ exports.deleteAd = async (req, res) => {
   }
 };
 
-
-
 // city
 
 exports.addCity = async (req, res) => {
-  try {  
-    const {city } = req.body;
-     
+  try {
+    const { city } = req.body;
+
     if (!city) {
       return res.status(400).json({ message: "city is required" });
     }
@@ -249,9 +248,9 @@ exports.deleteCity = async (req, res) => {
 // profesion
 
 exports.addProfessions = async (req, res) => {
-  try {  
-    const {profession } = req.body;
-     
+  try {
+    const { profession } = req.body;
+
     if (!profession) {
       return res.status(400).json({ message: "profession is required" });
     }
@@ -315,3 +314,9 @@ exports.deleteProfessions = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
+
+
+
+
