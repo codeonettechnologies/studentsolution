@@ -5,6 +5,7 @@ import LearningPopup from "./NotesPopUp";
 import Modal from "./PopupModal";
 import AskForm from "./AskForm";
 import Ask from "./Ask";
+import Ads from "./Ads";
 import { TiPlus } from "react-icons/ti";
 import { FiTrash2, FiMoreVertical } from "react-icons/fi";
 
