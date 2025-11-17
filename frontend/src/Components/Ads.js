@@ -2,8 +2,37 @@ import React, { useEffect, useState } from "react";
 
 export default function Ads({ posts = [] }) {
   const [ads, setAds] = useState([]);
+  const [isMobile, setIsMobile] = useState(null);
+  const [isReady, setIsReady] = useState(false);
+  const [isWindowLoaded, setIsWindowLoaded] = useState(false);
 
-  //Fetch ads from API
+  // Wait for full window load (IMPORTANT)
+  useEffect(() => {
+    if (document.readyState === "complete") {
+      setIsWindowLoaded(true);
+    } else {
+      const onLoad = () => setIsWindowLoaded(true);
+      window.addEventListener("load", onLoad);
+      return () => window.removeEventListener("load", onLoad);
+    }
+  }, []);
+
+  // Detect screen size AFTER window loads
+  useEffect(() => {
+    if (!isWindowLoaded) return;
+
+    const checkScreen = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkScreen();
+    setIsReady(true);
+
+    window.addEventListener("resize", checkScreen);
+    return () => window.removeEventListener("resize", checkScreen);
+  }, [isWindowLoaded]);
+
+  // Fetch ads
   useEffect(() => {
     const fetchAds = async () => {
       try {
@@ -14,18 +43,14 @@ export default function Ads({ posts = [] }) {
           setAds(data);
         } else if (data.success && Array.isArray(data.data)) {
           setAds(data.data);
-        } else {
-          console.error("Invalid ads data:", data);
         }
       } catch (err) {
-        console.error("Error fetching ads:", err);
+        console.error(err);
       }
     };
-
     fetchAds();
   }, []);
 
-  // Helper: render single ad (image or video)
   const renderAd = (ad) => {
     const imageUrl = ad.image
       ? `http://localhost:5000/uploads/ads/${ad.image}`
@@ -47,32 +72,29 @@ export default function Ads({ posts = [] }) {
             className="ad-banner"
           />
         ) : imageUrl ? (
-          <img src={imageUrl} alt={`Ad ${ad.id}`} className="ad-banner" />
+          <img src={imageUrl} alt="ad" className="ad-banner" />
         ) : (
           <p>No Media</p>
         )}
+
+        <div className="ad-content">Advertisement</div>
       </div>
     );
   };
 
-  // Function to render ads between posts on mobile
   const renderWithAds = () => {
-    if (!posts || posts.length === 0) return null;
-
-    const elements = [];
-    const isMobile = window.innerWidth < 768;
+    const list = [];
     let adIndex = 0;
 
     for (let i = 0; i < posts.length; i++) {
-      elements.push(
+      list.push(
         <div key={`post-${i}`} className="post-item">
           {posts[i]}
         </div>
       );
 
-      //  Every 8th post → show ad (mobile only)
-      if (isMobile && (i + 1) % 8 === 0 && ads[adIndex]) {
-        elements.push(
+      if ((i + 1) % 8 === 0 && ads[adIndex]) {
+        list.push(
           <div key={`ad-${i}`} className="ad-wrapper">
             {renderAd(ads[adIndex])}
           </div>
@@ -81,21 +103,20 @@ export default function Ads({ posts = [] }) {
       }
     }
 
-    return elements;
+    return list;
   };
+
+  // Do not render until window loaded + screen detected
+  if (!isWindowLoaded || !isReady || isMobile === null) return null;
 
   return (
     <div className="ads-container">
-      {/* Desktop view — show all ads */}
-      {window.innerWidth >= 768 ? (
-        ads.length > 0 ? (
-          ads.map((ad) => renderAd(ad))
-        ) : (
-          <p>No ads available</p>
-        )
-      ) : (
-        // Mobile view — show ads after every 8th post
+      {isMobile ? (
         renderWithAds()
+      ) : ads.length > 0 ? (
+        ads.map((ad) => renderAd(ad))
+      ) : (
+        <p>No ads found</p>
       )}
     </div>
   );

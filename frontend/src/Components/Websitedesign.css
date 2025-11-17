@@ -567,8 +567,8 @@ body {
   width: 400px;
   border-left: 1px solid #eee;
   background: #fafafa;
-  margin-top: 5px;
-  overflow-y: auto;
+  margin-top: -35px;
+  /* overflow-y: auto; */
   padding: 15px;
 }
 .toggle-btn {
@@ -589,26 +589,11 @@ body {
 }
 .sidebar-overlay {
   position: fixed;
-  top: 80px;
   left: 0;
   width: 100%;
   height: calc(90vh - 80px);
   z-index: 999;
   transition: opacity 0.3s ease;
-}
-.ads-container {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin-top: 70px;
-}
-.ad-item img {
-  width: 100%;
-  border-radius: 10px;
-  transition: transform 0.3s ease;
-}
-.ad-item img:hover {
-  transform: scale(1.03);
 }
 @media (max-width: 992px) {
   .dash-sidebar {
@@ -659,26 +644,61 @@ body {
     padding: 6px;
   }
 }
-
 /*add file css*/
-.ad-item-container {
+.ads-container {
   width: 100%;
-  max-width: 100%;
-  overflow: hidden; 
-  border-radius: 10px;
-  margin: 10px 0;
+  height: 100%;
+  overflow-y: scroll;
+  padding-right: 4px;
+  scrollbar-width: none;        
+}
+.ads-container::-webkit-scrollbar {
+  width: 0px;                     
+  background: transparent;        
+}
+.ad-item-container {
+  position: relative;
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #e2e2e2;
+  border-radius: 2px;
+  padding: 0;
+  margin-bottom: 14px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  overflow: hidden;
 }
 .ad-banner {
   width: 100%;
-  height: auto;
-  max-height: 400px;
-  object-fit: cover; 
-  display: block;
-  border-radius: 10px;
+  height: 280px;
+  object-fit: cover;
+  border-bottom: 1px solid #e2e2e2;
 }
-.ads-container {
-  overflow-y: hidden;
+.ad-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  padding: 3px 6px;
+  font-size: 12px;
+  text-align: center;
+  backdrop-filter: blur(3px);
+  display: block !important;
+  z-index: 10;
 }
+@media (max-width: 768px) {
+  .ad-banner {
+    width: 100%;
+    height: auto;
+  }
+
+  .ad-item-container {
+    margin: 8px 0;
+  }
+}
+
+
 /*Profile page css*/
 .profile-dropdown-container {
   position: relative;

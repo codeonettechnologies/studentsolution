@@ -10,10 +10,9 @@ export default function PostItem({ searchQuery, refreshTrigger }) {
   const [likesUsers, setLikesUsers] = useState([]);
   const [activeDropdownPost, setActiveDropdownPost] = useState(null);
   const [activeCommentDropdown, setActiveCommentDropdown] = useState(null);
+   const [ads, setAds] = useState([]);
 
   // -------------------- Fetch Ads --------------------
-  const [ads, setAds] = useState([]);
-
   useEffect(() => {
     const fetchAds = async () => {
       try {
@@ -114,6 +113,7 @@ export default function PostItem({ searchQuery, refreshTrigger }) {
 
         setPosts(postsWithData);
         setOriginalPosts(postsWithData);
+
       }
     } catch (err) {
       console.error("Error fetching posts:", err);
@@ -643,5 +643,10 @@ export default function PostItem({ searchQuery, refreshTrigger }) {
       adIndex = (adIndex + 1) % ads.length;
     }
   });
-  return <div>{combinedFeed}</div>;
+  return (
+    <div>
+     {combinedFeed}
+    </div>
+  );
 }
+
