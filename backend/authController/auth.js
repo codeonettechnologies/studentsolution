@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const connectDB = require("../config/database");
 const db = connectDB();
- 
+
 exports.register = async (req, res) => {
   try {
     const {
@@ -16,7 +16,7 @@ exports.register = async (req, res) => {
       role,
       profession,
     } = req.body;
- 
+
     const profile_image = req.file ? req.file.filename : null;
     if (!name || !email || !mobile_number || !password) {
       return res.status(400).json({
@@ -24,8 +24,7 @@ exports.register = async (req, res) => {
         message: "All required fields must be filled",
       });
     }
- 
-    
+
     const [existingUser] = await new Promise((resolve, reject) => {
       db.query(
         "SELECT * FROM users WHERE email = ?",
@@ -36,23 +35,23 @@ exports.register = async (req, res) => {
         }
       );
     });
- 
+
     if (existingUser) {
       return res.status(400).json({
         success: false,
         message: "User already exists with this email",
       });
     }
- 
+
     const hashedPassword = await bcrypt.hash(password, 10);
- 
+
     await new Promise((resolve, reject) => {
       const sql = `
         INSERT INTO users
         (name, email, mobile_number, password, college, city, college_year, role, profession, profile_image)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
- 
+
       db.query(
         sql,
         [
@@ -73,7 +72,7 @@ exports.register = async (req, res) => {
         }
       );
     });
- 
+
     res.status(201).json({
       success: true,
       message: "User registered successfully!",
@@ -90,19 +89,19 @@ exports.register = async (req, res) => {
 
 exports.login = (req, res) => {
   const { email, password } = req.body;
- 
+
   const sql = "SELECT * FROM users WHERE email = ?";
- 
+
   db.query(sql, [email], (err, results) => {
     if (err) return res.status(500).json({ message: "Database error" });
     if (results.length === 0)
       return res.status(400).json({ message: "Invalid email or password" });
- 
+
     const user = results[0];
     const isMatch = bcrypt.compareSync(password, user.password);
     if (!isMatch)
       return res.status(400).json({ message: "Invalid email or password" });
- 
+
     const token = jwt.sign(
       { id: user.id, email: user.email },
       process.env.JWT_SECRET,
@@ -115,8 +114,7 @@ exports.login = (req, res) => {
       secure: process.env.NODE_ENV === "production",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
-   
- 
+
     res.status(200).json({
       message: "Login successful!",
       user: {
@@ -129,15 +127,16 @@ exports.login = (req, res) => {
         college_year: user.college_year,
         role: user.role,
         profile_image: user.profile_image,
-        mobile_number:user.mobile_number,
+        mobile_number: user.mobile_number,
       },
     });
   });
 };
- 
+
 exports.getAllUsers = async (req, res) => {
   try {
-    const sql = "SELECT id, name, email, college, city, profession, college_year, role, profile_image, mobile_number FROM users";
+    const sql =
+      "SELECT id, name, email, college, city, profession, college_year, role, profile_image, mobile_number FROM users";
 
     db.query(sql, (err, results) => {
       if (err) {
@@ -156,6 +155,24 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
+exports.viewProfile = (req, res) => {
+  const userId = req.params.id;
+
+  const sql =
+    "SELECT id, name, email, college, city, profession, college_year, role, profile_image, mobile_number FROM users WHERE id = ?";
+  db.query(sql, [userId], (err, results) => {
+    if (err) return res.status(500).json({ message: "Database error" });
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.status(200).json({
+      success: true,
+      user: results[0],
+    });
+  });
+};
 
 exports.logout = (req, res) => {
   res.clearCookie("token", {
@@ -163,8 +180,73 @@ exports.logout = (req, res) => {
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
   });
-  
+
   return res.status(200).json({
     message: "Logout successful!",
   });
+};
+
+const fs = require("fs");
+const path = require("path");
+
+exports.updateProfile = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const newImage = req.file ? req.file.filename : null;
+
+    if (!newImage) {
+      return res.status(400).json({
+        success: false,
+        message: "Please upload an image",
+      });
+    }
+
+    const [user] = await new Promise((resolve, reject) => {
+      db.query("SELECT * FROM users WHERE id = ?", [userId], (err, result) => {
+        if (err) reject(err);
+        else resolve(result);
+      });
+    });
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    if (user.profile_image) {
+      const oldImagePath = path.join(
+        __dirname,
+        "..",
+        "uploads",
+        user.profile_image
+      );
+      if (fs.existsSync(oldImagePath)) {
+        fs.unlinkSync(oldImagePath);
+      }
+    }
+    await new Promise((resolve, reject) => {
+      db.query(
+        "UPDATE users SET profile_image = ? WHERE id = ?",
+        [newImage, userId],
+        (err, result) => {
+          if (err) reject(err);
+          else resolve(result);
+        }
+      );
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Profile image updated successfully",
+      profile_image: newImage,
+    });
+  } catch (error) {
+    console.error("Update profile image error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message,
+    });
+  }
 };
