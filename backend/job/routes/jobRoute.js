@@ -11,6 +11,7 @@ const {
   toggle_like,
   get_like_status,
   searchJobs,
+  getUserJobPosts
 } = require("../controllers/jobController");
 
 const upload = require("../../middlewares/upload");
@@ -22,7 +23,7 @@ router.get("/post/get", get_all_job_posts);
 router.get("/postGet/:userId", getJobPostsByUserId);
 router.delete("/post/:id", delete_job_post);
 router.get("/searchPost", searchJobs);
-
+router.get("/userPost/:id", getUserJobPosts);
 //-------------like route----------------------------
 router.post("/like/unlike", toggle_like);
 router.get("/getlike", get_like_status);

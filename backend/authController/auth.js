@@ -174,6 +174,7 @@ exports.viewProfile = (req, res) => {
   });
 };
 
+
 exports.logout = (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
