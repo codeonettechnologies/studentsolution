@@ -324,108 +324,6 @@ exports.get_like_status = async (req, res) => {
   }
 };
 
-// job search controller
-// search by user name , content
-
-
-
-// exports.searchJobs = async (req, res) => {
-//   try {
-//     const { query } = req.query;
-
-//     if (!query) {
-//       return res.status(400).json({
-//         message: "Search query is required",
-//       });
-//     }
-
-//     const searchValue = `%${query}%`;
-
-//     // 1️⃣ Fetch main job posts + user info
-//     const sql = `
-//       SELECT 
-//         jp.*, 
-//         u.name AS post_user_name
-//       FROM job_post jp
-//       JOIN users u ON jp.user_id = u.id
-//       WHERE u.name LIKE ? OR jp.content LIKE ?
-//       ORDER BY jp.created_at DESC
-//     `;
-
-//     db.query(sql, [searchValue, searchValue], (err, posts) => {
-//       if (err) {
-//         console.error("Database Error:", err);
-//         return res.status(500).json({ message: "Database error" });
-//       }
-
-//       if (posts.length === 0) {
-//         return res.json([]);
-//       }
-
-//       const postIds = posts.map((p) => p.id);
-
-//       // 2️⃣ Fetch likes data (who liked each job post)
-//       const likesSql = `
-//         SELECT l.job_post_id, u.id AS user_id, u.name AS user_name
-//         FROM job_post_likes l
-//         JOIN users u ON l.user_id = u.id
-//         WHERE l.job_post_id IN (?)
-//       `;
-
-//       // 3️⃣ Fetch comments data (who commented and what)
-//       const commentsSql = `
-//         SELECT c.job_post_id, c.comment_text, u.id AS user_id, u.name AS user_name
-//         FROM job_post_comments c
-//         JOIN users u ON c.user_id = u.id
-//         WHERE c.job_post_id IN (?)
-//       `;
-
-//       db.query(likesSql, [postIds], (likeErr, likes) => {
-//         if (likeErr) {
-//           console.error("Likes Error:", likeErr);
-//           return res.status(500).json({ message: "Error fetching likes" });
-//         }
-
-//         db.query(commentsSql, [postIds], (commentErr, comments) => {
-//           if (commentErr) {
-//             console.error("Comments Error:", commentErr);
-//             return res.status(500).json({ message: "Error fetching comments" });
-//           }
-
-//           // 4️⃣ Combine all data into one response
-//           const result = posts.map((post) => {
-//             const postLikes = likes.filter((l) => l.job_post_id === post.id);
-//             const postComments = comments.filter(
-//               (c) => c.job_post_id === post.id
-//             );
-
-//             return {
-//               ...post,
-//               likes_count: postLikes.length,
-//               comments_count: postComments.length,
-//               likes: postLikes.map((l) => ({
-//                 user_id: l.user_id,
-//                 name: l.user_name,
-//               })),
-//               comments: postComments.map((c) => ({
-//                 user_id: c.user_id,
-//                 name: c.user_name,
-//                 comment: c.comment_text,
-//               })),
-//             };
-//           });
-
-//           res.json(result);
-//         });
-//       });
-//     });
-//   } catch (error) {
-//     console.error("Server Error:", error);
-//     res.status(500).json({ message: "Internal server error" });
-//   }
-// };
-
-
 exports.searchJobs = async (req, res) => {
   try {
     const { query } = req.query;
@@ -535,4 +433,29 @@ exports.searchJobs = async (req, res) => {
     console.error("Server Error:", error);
     res.status(500).json({ message: "Internal server error" });
   }
+};
+
+
+
+exports.getUserJobPosts = (req, res) => {
+  const userId = req.params.id; 
+  const sql =  `SELECT
+        jp.*,
+        u.name AS user_name,
+        u.profile_image AS profile_image,
+        u.college AS user_college,
+        u.college_year AS user_year
+      FROM job_post jp
+      JOIN users u ON jp.user_id = u.id
+      ORDER BY jp.id DESC
+    `;
+
+  db.query(sql, [userId], (err, results) => {
+    if (err) return res.status(500).json({ message: "Database error" });
+
+    res.status(200).json({
+      message: "User job posts fetched",
+      posts: results,
+    });
+  });
 };
