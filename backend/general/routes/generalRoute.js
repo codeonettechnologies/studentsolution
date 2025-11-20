@@ -11,6 +11,7 @@ const {
   toggle_like,
   get_like_status,
   searchgenerals,
+  getUserGeneralPosts,
 } = require("../controllers/postController");
 const upload = require("../../middlewares/upload")
 
@@ -27,7 +28,7 @@ router.get("/getlike", get_like_status);
 router.post("/comment", add_comment);
 router.get("/:id/comments", get_comments);
 router.delete("/comment/:id", delete_comment);
-
+router.get("/viewUserProfile/:id", getUserGeneralPosts);
 //------------------General ask routes -------------------------------------
 const {
   createGeneralAsk,
