@@ -17,7 +17,7 @@ export default function UsedItemDetails() {
   return (
     <div className="details-page">
       <button className="back-btn" onClick={() => navigate(-1)}>
-        ←
+        ← Back
       </button>
 
       <div className="details-container">
@@ -38,6 +38,9 @@ export default function UsedItemDetails() {
             <p className="user-name">{item.user_name}</p>
             <p className="user-meta">
               {item.user_college} • {item.user_year}
+            </p>
+             <p className="user-name">
+               {item.number}
             </p>
           </div>
         </div>

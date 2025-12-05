@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
+import toast from "react-hot-toast";
 import { FaEllipsisV } from "react-icons/fa";
 
 export default function AddProduct() {
@@ -56,7 +57,7 @@ export default function AddProduct() {
   // Add product API
   const handleAdd = async () => {
     if (!name || !description || !price || !croppedImage) {
-      alert("Please fill all fields and crop an image!");
+      toast("Please fill all fields and crop an image!");
       return;
     }
 
@@ -75,7 +76,7 @@ export default function AddProduct() {
       const data = await res.json();
 
       if (res.ok) {
-        alert(data.message || "Product added successfully!");
+        toast.success(data.message || "Product added successfully!");
         setName("");
         setDescription("");
         setPrice("");
@@ -85,11 +86,11 @@ export default function AddProduct() {
         setShowForm(false);
         fetchProducts();
       } else {
-        alert("Error: " + (data.message || "Failed to add product"));
+        toast.error("Error: " + (data.message || "Failed to add product"));
       }
     } catch (error) {
       console.error("Error adding product:", error);
-      alert("Something went wrong!");
+      toast("Something went wrong!");
     } finally {
       setLoading(false);
     }
@@ -107,10 +108,10 @@ export default function AddProduct() {
       const data = await res.json();
 
       if (res.ok) {
-        alert(data.message || "Product deleted!");
+        toast.success(data.message || "Product deleted!");
         setProducts(products.filter((p) => p.id !== id));
       } else {
-        alert("Error deleting product!");
+        toast.error("Error deleting product!");
       }
     } catch (error) {
       console.error("Delete error:", error);

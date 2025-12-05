@@ -438,29 +438,31 @@ exports.searchJobs = async (req, res) => {
 
 //------------------get user job post --------------------
 
-
 exports.getUserJobPosts = (req, res) => {
   const userId = req.params.id;
+ 
+  // Step 1: Get USER DETAILS
   const userSql = `SELECT * FROM users WHERE id = ?`;
-
+ 
   db.query(userSql, [userId], (userErr, userResult) => {
     if (userErr) {
       console.log("User Fetch Error:", userErr);
       return res.status(500).json({ message: "Database error" });
     }
-
+ 
     if (userResult.length === 0) {
-      return res.status(404).json({
-        message: "User not found",
-      });
+      return res.status(404).json({ message: "User not found" });
     }
+ 
     const user = userResult[0];
+ 
+    // Step 2: Get USER JOB POSTS + Likes + Comments
     const postSql = `
       SELECT
           jp.*,
-          u.name AS user_name,
-          u.profile_image AS user_profile,
-          u.college AS user_college,
+          u.name AS name,
+          u.profile_image AS profile_image,
+          u.college AS college,
           u.college_year AS user_year,
  
           -- Total Likes
@@ -512,15 +514,17 @@ exports.getUserJobPosts = (req, res) => {
       WHERE jp.user_id = ?
       ORDER BY jp.id DESC
     `;
+ 
     db.query(postSql, [userId], (postErr, postResults) => {
       if (postErr) {
         console.log("Post Fetch Error:", postErr);
         return res.status(500).json({ message: "Database error" });
       }
+ 
       res.status(200).json({
         message: "User + Job posts fetched successfully",
-        user: user, // <-- FULL USER OBJECT
-        posts: postResults,
+        user: user,      // <-- FULL USER OBJECT
+        posts: postResults
       });
     });
   });

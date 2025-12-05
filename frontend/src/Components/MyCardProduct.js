@@ -1,24 +1,22 @@
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 export default function Mycardproduct() {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [orderData, setOrderData] = useState({ address: "" });
-  const [selectedItem, setSelectedItem] = useState(null);
   const [user, setUser] = useState(null);
 
   useEffect(() => {
     const loggedInUser = JSON.parse(localStorage.getItem("user"));
     if (!loggedInUser || !loggedInUser.id) {
-      console.error("User not logged in");
       setLoading(false);
       return;
     }
 
     setUser(loggedInUser);
 
-    // Fetch cart items dynamically
     fetch(`http://localhost:5000/shopping/cart/${loggedInUser.id}`)
       .then((res) => res.json())
       .then((data) => {
@@ -28,10 +26,19 @@ export default function Mycardproduct() {
       .finally(() => setLoading(false));
   }, []);
 
-  // Open modal for specific item
-  const handlePlaceOrderClick = (item) => {
-    setSelectedItem(item);
+  // Open modal
+  const openOrderModal = () => {
+    if (cartItems.length === 0) {
+      toast("Cart is empty!");
+      return;
+    }
     setShowModal(true);
+  };
+
+  // Remove a single item
+  const removeItem = (product_id) => {
+    setCartItems((prev) => prev.filter((i) => i.product_id !== product_id));
+    toast("Item removed!");
   };
 
   const handleInputChange = (e) => {
@@ -42,12 +49,7 @@ export default function Mycardproduct() {
     e.preventDefault();
 
     if (!orderData.address.trim()) {
-      alert("Please enter your address.");
-      return;
-    }
-
-    if (!user.mobile_number) {
-      alert("Mobile number missing in user data!");
+      toast("Please enter your address.");
       return;
     }
 
@@ -60,29 +62,25 @@ export default function Mycardproduct() {
           name: user.name,
           mobile: user.mobile_number,
           address: orderData.address,
-          products: [selectedItem],
+          products: cartItems, 
         }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        alert(`${data.message}\nTotal: ₹${data.total_price}`);
+        toast(`${data.message}\nTotal: ₹${data.total_price}`);
 
-        // Remove only the ordered item from UI
-        setCartItems((prev) =>
-          prev.filter((item) => item.product_id !== selectedItem.product_id)
-        );
+        // Clear the cart from UI
+        setCartItems([]);
 
         setShowModal(false);
         setOrderData({ address: "" });
-        setSelectedItem(null);
       } else {
-        alert(`Error: ${data.message || "Order failed."}`);
+        toast.error(data.message || "Order failed.");
       }
     } catch (err) {
-      console.error("Error placing order:", err);
-      alert("Something went wrong while placing your order.");
+      toast("Error placing order.");
     }
   };
 
@@ -92,15 +90,21 @@ export default function Mycardproduct() {
     <div className="cart-container">
       <h1>My Products</h1>
 
+      {/* ONE PLACE ORDER BUTTON AT TOP */}
+      {cartItems.length > 0 && (
+        <button className="buy-btn" onClick={openOrderModal}>
+          Place Order
+        </button>
+      )}
+
       {cartItems.length > 0 ? (
         <table className="cart-table">
           <thead>
             <tr>
               <th>Image</th>
-              <th>Product</th>
               <th>Price</th>
               <th>Quantity</th>
-              <th>Action</th>
+              <th>Action</th> 
             </tr>
           </thead>
           <tbody>
@@ -113,15 +117,14 @@ export default function Mycardproduct() {
                     className="cart-image"
                   />
                 </td>
-                <td>{item.name}</td>
                 <td>₹{item.product_price}</td>
                 <td>{item.quantity}</td>
                 <td>
                   <button
-                    className="buy-btn"
-                    onClick={() => handlePlaceOrderClick(item)}
+                    className="remove-btn"
+                    onClick={() => removeItem(item.product_id)}
                   >
-                    Place Order
+                    Remove
                   </button>
                 </td>
               </tr>
@@ -132,8 +135,8 @@ export default function Mycardproduct() {
         <p className="empty-cart">No items in cart.</p>
       )}
 
-      {/* Modal (same functionality) */}
-      {showModal && selectedItem && (
+      {/* Modal */}
+      {showModal && (
         <div className="p-modal-overlay">
           <div className="p-modal">
             <h2>Place Your Order</h2>
@@ -144,15 +147,7 @@ export default function Mycardproduct() {
               </label>
               <label>
                 Mobile:
-                <input type="text" value={user.mobile_number || ""} readOnly />
-              </label>
-              <label>
-                Product:
-                <input type="text" value={selectedItem.name} />
-              </label>
-              <label>
-                Quantity:
-                <input type="number" value={selectedItem.quantity} readOnly />
+                <input type="text" value={user.mobile_number} readOnly />
               </label>
               <label>
                 Address:
@@ -165,6 +160,12 @@ export default function Mycardproduct() {
                   required
                 />
               </label>
+
+              <label className="cod-box">
+                <input type="checkbox" checked readOnly />
+                COD Only
+              </label>
+
               <div style={{ marginTop: "15px" }}>
                 <button type="submit" className="buy-btn">
                   Submit Order

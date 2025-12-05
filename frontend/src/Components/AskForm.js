@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 
 export default function AskForm({ onCancel, onAskCreated }) {
   const [content, setContent] = useState("");
@@ -24,11 +25,11 @@ export default function AskForm({ onCancel, onAskCreated }) {
   const askRoute = askEndpointMap[currentSection] || "general";
   const handleSubmit = async () => {
     if (!content.trim()) {
-      alert("Please enter a question or content.");
+      toast("Please enter a question or content.");
       return;
     }
     if (!userId) {
-      alert("User not logged in. Please log in first.");
+      toast("User not logged in. Please log in first.");
       return;
     }
 
@@ -48,16 +49,16 @@ export default function AskForm({ onCancel, onAskCreated }) {
       console.log("AskForm API Response:", data);
 
       if (data.message?.includes("created")) {
-        alert(`${currentSection} ask created successfully!`);
+        toast.success(`${currentSection} ask created successfully!`);
         if (onAskCreated) onAskCreated(data);
         setContent("");
         onCancel();
       } else {
-        alert("Failed to create ask. Please try again.");
+        toast.error("Failed to create ask. Please try again.");
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("Something went wrong. Check console for details.");
+      toast("Something went wrong. Check console for details.");
     } finally {
       setLoading(false);
     }

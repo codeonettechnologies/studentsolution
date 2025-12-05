@@ -9,7 +9,6 @@ export default function AdminDashboard() {
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
-  // Handle screen resize
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 992);
@@ -21,34 +20,40 @@ export default function AdminDashboard() {
   const navLinks = [
     { to: "/admindashboard/registeruser", label: "Registered Users" },
     { to: "/admindashboard/visitor", label: "Website Visitors" },
-    { to: "/admindashboard/addcity", label: "Add City" },
-    { to: "/admindashboard/addcollege", label: "Add College" },
-    { to: "/admindashboard/addfield", label: "Add Profession" },
-    { to: "/admindashboard/addads", label: "Add Ads" },
-    { to: "/admindashboard/addproduct", label: "Add Shopping Product" },
+    { to: "/admindashboard/addcity", label: "Cities" },
+    { to: "/admindashboard/addcollege", label: "Colleges" },
+    { to: "/admindashboard/addfield", label: "Professions" },
+    { to: "/admindashboard/addads", label: "Ads" },
+    { to: "/admindashboard/addproduct", label: "Shopping Product" },
   ];
+
+  // Active logic including default "/admindashboard"
+  const isActive = (path) => {
+    return (
+      location.pathname === path ||
+      (location.pathname === "/admindashboard" &&
+        path === "/admindashboard/registeruser")
+    );
+  };
 
   return (
     <div className="admin-wrap">
-           {isMobile && (
+      {isMobile && (
         <button className="admin-hamburger" onClick={toggleMenu}>
           {menuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
         </button>
       )}
 
       <div
-        className={`admin-sidebar ${
-          menuOpen || !isMobile ? "open" : ""
-        }`}
+        className={`admin-sidebar ${menuOpen || !isMobile ? "open" : ""}`}
       >
         <h2 className="admin-title">Admin Panel</h2>
+
         {navLinks.map((link) => (
           <Link
             key={link.to}
             to={link.to}
-            className={`admin-nav-btn ${
-              location.pathname === link.to ? "active" : ""
-            }`}
+            className={`admin-nav-btn ${isActive(link.to) ? "active" : ""}`}
             onClick={() => isMobile && setMenuOpen(false)}
           >
             {link.label}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FiMoreVertical } from "react-icons/fi";
+import toast from "react-hot-toast";
 import axios from "axios";
 
 export default function AddField() {
@@ -15,7 +16,7 @@ export default function AddField() {
       setFields(res.data || []);
     } catch (err) {
       console.error("Error fetching professions:", err);
-      alert("Failed to load professions.");
+      toast.error("Failed to load professions.");
     }
   };
 
@@ -26,17 +27,17 @@ export default function AddField() {
   // Add new profession
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!profession.trim()) return alert("Please enter a profession!");
+    if (!profession.trim()) return toast("Please enter a profession!");
 
     try {
       await axios.post("http://localhost:5000/admin/addProfessions", { profession });
-      alert("Profession added successfully!");
+      toast.success("Profession added successfully!");
       setProfession("");
       setShowForm(false);
       fetchFields(); // refresh list
     } catch (err) {
       console.error("Error adding profession:", err);
-      alert("Failed to add profession!");
+      toast.error("Failed to add profession!");
     }
   };
 
@@ -46,11 +47,11 @@ export default function AddField() {
 
     try {
       await axios.delete(`http://localhost:5000/admin/deleteProfessions/${id}`);
-      alert("Profession deleted successfully!");
+      toast.success("Profession deleted successfully!");
       fetchFields(); // refresh list
     } catch (err) {
       console.error("Error deleting profession:", err);
-      alert("Failed to delete profession!");
+      toast.error("Failed to delete profession!");
     }
     setOpenMenuId(null);
   };

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 export default function ShopItem() {
@@ -55,7 +56,7 @@ export default function ShopItem() {
     e.stopPropagation();
     const user = JSON.parse(localStorage.getItem("user"));
     if (!user?.id) {
-      alert("Please login first!");
+      toast("Please login first!");
       return;
     }
 
@@ -69,10 +70,10 @@ export default function ShopItem() {
       }),
     })
       .then((res) => res.json())
-      .then((data) => alert(data.message || "Product added to cart!"))
+      .then((data) => toast.success(data.message || "Product added to cart!"))
       .catch((err) => {
         console.error("Error adding to cart:", err);
-        alert("Failed to add product to cart.");
+        toast.error("Failed to add product to cart.");
       });
   };
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FiMoreVertical } from "react-icons/fi";
+import toast from "react-hot-toast";
 import axios from "axios";
 
 export default function AddCollege() {
@@ -22,13 +23,13 @@ export default function AddCollege() {
       }
     } catch (error) {
       console.error("Error fetching colleges:", error);
-      alert("Failed to load colleges.");
+      toast.error("Failed to load colleges.");
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!college.trim()) return alert("Please enter a college name!");
+    if (!college.trim()) return toast("Please enter a college name!");
 
     try {
       const res = await axios.post("http://localhost:5000/admin/addCollege", {
@@ -39,16 +40,16 @@ export default function AddCollege() {
         res.status < 300 &&
         (res.data.success || res.data.message)
       ) {
-        alert(res.data.message || "College added successfully!");
+        toast.success(res.data.message || "College added successfully!");
         setCollegeName("");
         setShowForm(false);
         fetchColleges();
       } else {
-        alert("Failed to add college. Please try again.");
+        toast.error("Failed to add college. Please try again.");
       }
     } catch (error) {
       console.error("Error adding college:", error);
-      alert("Server error. Please try again later.");
+      toast("Server error. Please try again later.");
     }
   };
 
@@ -61,12 +62,12 @@ export default function AddCollege() {
         `http://localhost:5000/admin/deleteClg/${id}`
       );
       if (res.status >= 200 && res.status < 300) {
-        alert(res.data.message || "College deleted successfully!");
+        toast.success(res.data.message || "College deleted successfully!");
         setColleges(colleges.filter((c) => c.id !== id));
       }
     } catch (error) {
       console.error("Error deleting college:", error);
-      alert("Failed to delete college.");
+      toast.error("Failed to delete college.");
     }
 
     setOpenMenuId(null);

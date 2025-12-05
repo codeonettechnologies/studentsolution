@@ -8,6 +8,7 @@ import Ask from "./Ask";
 import Ads from "./Ads";
 import { TiPlus } from "react-icons/ti";
 import { FiTrash2, FiMoreVertical } from "react-icons/fi";
+import toast from "react-hot-toast";
 
 export default function Learning() {
   const [tab, setTab] = useState("post");
@@ -130,9 +131,9 @@ export default function Learning() {
 
       if (data.success) {
         setNotes((prev) => prev.filter((n) => n.id !== noteId));
-        alert("Note deleted successfully!");
+        toast.success("Note deleted successfully!");
       } else {
-        alert("Failed to delete note!");
+        toast.error("Failed to delete note!");
       }
     } catch (error) {
       console.error("Error deleting note:", error);
@@ -220,17 +221,17 @@ export default function Learning() {
                     </div>
                   )}
 
-                  <p className="note-user-name">{note.user_name}</p>
+                  <p className="note-user-name">Author:{note.user_name}</p>
                   <h4>{note.topic}</h4>
                   <p className="note-details">{note.details}</p>
 
                   {note.image_url && (
                     <div className="pdf-preview">
-                      View Image: {note.image_url}
+                     {note.image_url}
                     </div>
                   )}
                   {note.pdf && (
-                    <div className="pdf-preview">View PDF: {note.pdf}</div>
+                    <div className="pdf-preview">{note.pdf}</div>
                   )}
                 </div>
               ))

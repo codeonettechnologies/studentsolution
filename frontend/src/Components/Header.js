@@ -1,31 +1,52 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef, useContext } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FiMenu, FiX } from "react-icons/fi";
 import { IoPerson } from "react-icons/io5";
+import toast from "react-hot-toast";
+import { UserContext } from "./userContext";
 
 const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
+
+  const { user, setUser } = useContext(UserContext);
+  console.log("user", user);
 
   const isDashboardRoute = location.pathname.startsWith("/dashboard");
   const isAdminDashboardRoute = location.pathname.startsWith("/admindashboard");
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [user, setUser] = useState(null);
 
   const dropdownRef = useRef(null);
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    setUser(null);
-    navigate("/");
+  const handleLogout = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/logOut", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setUser(null);
+        navigate("/");
+        toast.success(data.message || "Logout successful");
+      } else {
+        toast.error(data.message || "Logout failed");
+      }
+    } catch (error) {
+      toast.error("Server error while logging out");
+      console.error("Logout Error:", error);
+    }
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setDropdownOpen(false);
@@ -33,11 +54,6 @@ const Header = () => {
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (storedUser) setUser(storedUser);
   }, []);
 
   return (
@@ -79,13 +95,14 @@ const Header = () => {
           </nav>
         )}
 
-        {/* Profile for Dashboard and AdminDashboard */}
+        {/* Profile Dropdown */}
         {(isDashboardRoute || isAdminDashboardRoute) && (
           <div className="profile-dropdown-container" ref={dropdownRef}>
-            {/* User/Admin Profile Image or Icon */}
+            {/* Profile Image or Icon */}
             {user && user.profile_image ? (
               <img
-                src={`http://localhost:5000/uploads/${user.profile_image}`}
+                key={user.profile_image} // React re-render
+                src={`http://localhost:5000/uploads/${user.profile_image}?t=${user.profile_image}`} // cache-busting
                 alt="User"
                 className="profile-img"
                 onClick={toggleDropdown}
@@ -119,20 +136,18 @@ const Header = () => {
                       to="/dashboard/myorder"
                       onClick={() => setDropdownOpen(false)}
                     >
-                      My Order
+                      My Orders
                     </Link>
                   </>
                 )}
 
                 {isAdminDashboardRoute && (
-                  <>
-                    <Link
-                      to="/admindashboard/registeruser"
-                      onClick={() => setDropdownOpen(false)}
-                    >
-                      Admin Panel
-                    </Link>
-                  </>
+                  <Link
+                    to="/admindashboard/registeruser"
+                    onClick={() => setDropdownOpen(false)}
+                  >
+                    Admin Panel
+                  </Link>
                 )}
 
                 <button onClick={handleLogout}>Logout</button>

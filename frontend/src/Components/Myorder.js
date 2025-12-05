@@ -45,10 +45,6 @@ export default function Myorder() {
                 <strong>Order ID:</strong> {order.id}
               </p>
               <p>
-                <strong>Product Name:</strong>
-                {order.name}
-              </p>
-              <p>
                 <strong>Total Price:</strong> ₹{order.total_price}
               </p>
               <p>

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 
 export default function PostForm({ onCancel, onPostCreated }) {
   const [content, setContent] = useState("");
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
+  const [number , setNumber] = useState("");
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -24,16 +26,16 @@ export default function PostForm({ onCancel, onPostCreated }) {
   const handleSubmit = async () => {
     if (currentSection === "useditem") {
       if (!title.trim() || !content.trim() || !price.trim()) {
-        alert("Please enter title, price and description.");
+        toast("Please enter title, price and description.");
         return;
       }
     } else if (!content.trim() && !file) {
-      alert("Please write something or upload an image.");
+      toast("Please write something or upload an image.");
       return;
     }
 
     if (!userId) {
-      alert("User not logged in. Please log in first.");
+      toast.error("User not logged in. Please log in first.");
       return;
     }
 
@@ -110,6 +112,13 @@ export default function PostForm({ onCancel, onPostCreated }) {
             value={price}
             placeholder="Enter price..."
             onChange={(e) => setPrice(e.target.value)}
+            className="post-input title-input"
+          />
+           <input
+            type="number"
+            value={number}
+            placeholder="Enter mobile number..."
+            onChange={(e) => setNumber(e.target.value)}
             className="post-input title-input"
           />
 
