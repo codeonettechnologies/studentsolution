@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FiMoreVertical } from "react-icons/fi";
+import toast from "react-hot-toast";
 import axios from "axios";
 
 export default function AddCity() {
@@ -26,17 +27,17 @@ export default function AddCity() {
   // Add new city
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!city.trim()) return alert("Please enter a city name!");
+    if (!city.trim()) return toast("Please enter a city name!");
 
     try {
       await axios.post("http://localhost:5000/admin/addCity", { city });
-      alert("City added successfully!");
+      toast.success("City added successfully!");
       setCity("");
       setShowForm(false);
       fetchCities(); // refresh list
     } catch (err) {
       console.error("Error adding city:", err);
-      alert("Failed to add city!");
+      toast.error("Failed to add city!");
     }
   };
 
@@ -46,11 +47,11 @@ export default function AddCity() {
 
     try {
       await axios.delete(`http://localhost:5000/admin/deleteCity/${id}`);
-      alert("City deleted successfully!");
+      toast.success("City deleted successfully!");
       fetchCities(); // refresh list
     } catch (err) {
       console.error("Error deleting city:", err);
-      alert("Failed to delete city!");
+      toast.error("Failed to delete city!");
     }
 
     setOpenMenuId(null);

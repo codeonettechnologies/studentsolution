@@ -43,6 +43,7 @@ router.post(
 );
 
 router.get("/all", getAds);
+
 router.put(
   "/update/:id",
   upload.fields([

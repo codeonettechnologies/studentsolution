@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import toast from "react-hot-toast";
 
-export default function PostItem({ searchQuery, refreshTrigger }) {
+export default function PostItem({
+  searchQuery,
+  refreshTrigger,
+  setSelectedUser,
+  setFilterUserId,
+  filterUserId,
+}) {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [originalPosts, setOriginalPosts] = useState([]);
@@ -10,7 +17,7 @@ export default function PostItem({ searchQuery, refreshTrigger }) {
   const [likesUsers, setLikesUsers] = useState([]);
   const [activeDropdownPost, setActiveDropdownPost] = useState(null);
   const [activeCommentDropdown, setActiveCommentDropdown] = useState(null);
-   const [ads, setAds] = useState([]);
+  const [ads, setAds] = useState([]);
 
   // -------------------- Fetch Ads --------------------
   useEffect(() => {
@@ -51,8 +58,8 @@ export default function PostItem({ searchQuery, refreshTrigger }) {
 
       const res = await fetch(apiUrl);
       const data = await res.json();
-   console.log(data , "data");
-   
+      console.log(data, "data");
+
       if (data.data) {
         const postsWithData = await Promise.all(
           data.data.map(async (p) => {
@@ -113,7 +120,6 @@ export default function PostItem({ searchQuery, refreshTrigger }) {
 
         setPosts(postsWithData);
         setOriginalPosts(postsWithData);
-
       }
     } catch (err) {
       console.error("Error fetching posts:", err);
@@ -229,7 +235,7 @@ export default function PostItem({ searchQuery, refreshTrigger }) {
       if (res.ok && data.message.includes("Comment deleted")) {
         await fetchPosts();
       } else {
-        alert("Failed to delete comment");
+        toast.error("Failed to delete comment");
       }
     } catch (error) {
       console.error("Error deleting comment:", error);
@@ -297,11 +303,11 @@ export default function PostItem({ searchQuery, refreshTrigger }) {
           prevOriginal.filter((p) => p.id !== postId)
         );
       } else {
-        alert(data.message || "Failed to delete the post.");
+        toast.error(data.message || "Failed to delete the post.");
       }
     } catch (error) {
       console.error("Delete post error:", error);
-      alert("Something went wrong!");
+      toast("Something went wrong!");
     }
   };
 
@@ -386,6 +392,54 @@ export default function PostItem({ searchQuery, refreshTrigger }) {
     fetchSearchResults();
   }, [searchQuery, currentSection, originalPosts]);
 
+  const fetchUserPosts = async (userId) => {
+    setLoading(true);
+    try {
+      const res = await fetch(`http://localhost:5000/${currentSection}/userPost/${userId}`);
+      const data = await res.json();
+
+      if (data.posts) {
+        const userPosts = data.posts.map((p) => ({
+          id: p.id,
+          user_id: p.user_id,
+          name: p.user?.name || p.name || "Unknown User",
+          college: p.user?.college || p.college || "",
+          message: p.content,
+          image: p.image_url
+            ? `http://localhost:5000/uploads/job_posts/${p.image_url}`
+            : null,
+          profile_image: p.user?.profile_image
+            ? `http://localhost:5000/uploads/${p.user?.profile_image}`
+            : p.profile_image
+            ? `http://localhost:5000/uploads/${p.profile_image}`
+            : "default-profile.png",
+          likes: p.total_likes || 0,
+          liked: p.liked_users?.some((u) => u.user_id === userId) || false,
+          comments: (p.comments_data || []).map((c) => ({
+            id: c.comment_id,
+            user_id: c.user_id,
+            user_name: c.name,
+            text: c.comment_text,
+            profile_image: c.profile_image,
+          })),
+          created_at: new Date(p.created_at).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          }),
+        }));
+
+        setPosts(userPosts);
+        setSelectedUser(data.user);
+        setFilterUserId(userId);
+      }
+    } catch (err) {
+      console.error("Error fetching user posts:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // -------------------- UI --------------------
   if (loading) return <p>Loading posts...</p>;
   if (posts.length === 0)
@@ -431,8 +485,18 @@ export default function PostItem({ searchQuery, refreshTrigger }) {
       <div key={p.id} className="profile-item" style={{ position: "relative" }}>
         {/* ---------------- Post Header ---------------- */}
         <div className="profile-header">
-          <img src={p.profile_image} alt={p.name} className="profile-logo" />
-          <div className="profile-info">
+          <img
+            src={p.profile_image}
+            alt={p.name}
+            className="profile-logo"
+            style={{ cursor: "pointer" }}
+            onClick={() => fetchUserPosts(p.user_id)}
+          />
+          <div
+            className="profile-info"
+            style={{ cursor: "pointer" }}
+            onClick={() => fetchUserPosts(p.user_id)}
+          >
             <h3 className="profile-name">{p.name}</h3>
             <div className="profile-details">
               <span className="coll-name">{p.college}</span>
@@ -645,8 +709,22 @@ export default function PostItem({ searchQuery, refreshTrigger }) {
   });
   return (
     <div>
-     {combinedFeed}
+      {/* Back to All Posts button */}
+      {filterUserId && (
+        <div className="back-to-all" style={{ marginBottom: "20px" }}>
+          <button
+            onClick={() => {
+              setPosts(originalPosts);
+              setFilterUserId(null);
+              setSelectedUser(null);
+            }}
+          >
+            ← Back to All Posts
+          </button>
+        </div>
+      )}
+      {/* Feed (posts + ads) */}
+      {combinedFeed}
     </div>
   );
 }
-

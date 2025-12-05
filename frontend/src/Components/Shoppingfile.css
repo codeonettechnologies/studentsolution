@@ -147,13 +147,17 @@
 .back-btn {
   background: none;
   border: none;
-  font-size: 16px;
+  font-size: 20px;
   color: #007bff;
   cursor: pointer;
   margin-bottom: 20px;
   display: inline-flex;
   align-items: center;
   gap: 5px;
+}
+.back-btn:hover {
+  color: #0056b3;
+  transform: translateY(-1px);
 }
 .details-container {
   display: flex;
@@ -476,6 +480,7 @@
   font-size: 14px;
   font-weight: 500;
   transition: all 0.3s ease;
+  margin-bottom: 20px;
 }
 .buy-btn:hover {
   background: #0056b3;
@@ -572,7 +577,6 @@
   outline: none;
   color: #333;
 }
-
 .shop-search-input:focus {
   border-color: #007bff;
   box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
@@ -615,6 +619,35 @@
     justify-content: center;
     font-size: 16px;
   }
+}
+.remove-btn {
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.3s ease;
+}
+.remove-btn:hover {
+  background-color: #b02a37;
+}
+.remove-btn:active {
+  transform: scale(0.96);
+}
+.cod-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  font-size: 14px;
+  color: #333;
+}
+.cod-box input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
 }
 /*place order modal popup css*/
 .p-modal-overlay {

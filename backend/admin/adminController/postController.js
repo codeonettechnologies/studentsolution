@@ -106,31 +106,53 @@ exports.getAds = async (req, res) => {
   }
 };
 
+
+
 exports.updateAd = async (req, res) => {
   try {
     const { id } = req.params;
-    const { image, video } = req.body;
 
-    if (!id) {
-      return res.status(400).json({ message: "Ad ID is required" });
+    console.log("FILES:", req.files);
+    console.log("BODY:", req.body);
+
+    let image = null;
+    let video = null;
+
+    // Check uploaded files
+    if (req.files?.image) {
+      image = req.files.image[0].filename; // or path
     }
 
+    if (req.files?.video) {
+      video = req.files.video[0].filename; // or path
+    }
+
+    // If neither provided
     if (!image && !video) {
-      return res
-        .status(400)
-        .json({ message: "Please provide image or video to update" });
+      return res.status(400).json({
+        message: "Provide at least image or video to update",
+      });
     }
 
-    if (image && video) {
-      return res
-        .status(400)
-        .json({ message: "Only one field allowed: image OR video" });
+    let fields = [];
+    let values = [];
+
+    if (image) {
+      fields.push("image = ?");
+      values.push(image);
     }
 
-    const query = "UPDATE ads SET image = ?, video = ? WHERE id = ?";
-    db.query(query, [image || null, video || null, id], (err, result) => {
+    if (video) {
+      fields.push("video = ?");
+      values.push(video);
+    }
+
+    const query = `UPDATE ads SET ${fields.join(", ")} WHERE id = ?`;
+    values.push(id);
+
+    db.query(query, values, (err, result) => {
       if (err) {
-        console.error("Error updating ad:", err);
+        console.error("DB Error:", err);
         return res.status(500).json({ message: "Database error" });
       }
 
@@ -138,13 +160,18 @@ exports.updateAd = async (req, res) => {
         return res.status(404).json({ message: "Ad not found" });
       }
 
-      res.status(200).json({ message: "Ad updated successfully" });
+      res.json({ message: "Ad updated successfully" });
     });
+
   } catch (error) {
-    console.error("Server error:", error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error("Server Error:", error);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
+
+
 
 exports.deleteAd = async (req, res) => {
   try {

@@ -1,4 +1,5 @@
 import React from "react";
+import toast from "react-hot-toast";
 import { useLocation, useNavigate } from "react-router-dom";
 
 export default function ProductDetails() {
@@ -18,7 +19,7 @@ export default function ProductDetails() {
   return (
     <div className="product-details">
       <button className="back-btn" onClick={() => navigate(-1)}>
-        ←
+        ← Back
       </button>
       <div className="details-container">
         <div className="image-section">
@@ -35,7 +36,7 @@ export default function ProductDetails() {
           </p>
           <button
             className="buy-btn"
-            onClick={() => alert("Added to cart (demo)")}
+            onClick={() => toast.success("Added to cart (demo)")}
           >
             Add to Cart
           </button>

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 export default function LearningPopup({ isOpen, onClose }) {
   useEffect(() => {
@@ -38,7 +39,7 @@ export default function LearningPopup({ isOpen, onClose }) {
 
   const handleSubmit = async (e) => {
     if (!userId) {
-      alert("User not logged in. Please log in first.");
+      toast.error("User not logged in. Please log in first.");
       return;
     }
     e.preventDefault();
@@ -60,15 +61,15 @@ export default function LearningPopup({ isOpen, onClose }) {
       const result = await res.json();
 
       if (res.ok && result.message) {
-        alert(" " + result.message);
+        toast.success(" " + result.message);
         setFormData({ topic: "", details: "", image: null, pdf: null });
         onClose();
       } else {
-        alert("Failed to upload note");
+        toast.error("Failed to upload note");
       }
     } catch (error) {
       console.error("Error uploading note:", error);
-      alert("Something went wrong! Please try again.");
+      toast("Something went wrong! Please try again.");
     } finally {
       setLoading(false);
     }

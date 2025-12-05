@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import PostItem from "./Post";
 import Ask from "./Ask";
 import PostForm from "./PostForm";
@@ -13,18 +13,49 @@ export default function CommonContent() {
   const [postRefreshTrigger, setPostRefreshTrigger] = useState(0);
   const [askRefreshTrigger, setAskRefreshTrigger] = useState(0);
 
-  const handlePostCreated = (newPostData) => {
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [filterUserId, setFilterUserId] = useState(null);
+
+  const handlePostCreated = () => {
     setPostRefreshTrigger((prev) => prev + 1);
     setOpenModal(false);
   };
 
-  const handleAskCreated = (newAskData) => {
+  const handleAskCreated = () => {
     setAskRefreshTrigger((prev) => prev + 1);
     setOpenModal(false);
   };
 
   return (
     <div className="main-content-area">
+      {/* Selected User Info */}
+      {selectedUser && (
+        <div className="user-card">
+          <div className="user-card-avatar">
+            <img
+              src={`http://localhost:5000/uploads/${selectedUser.profile_image}`}
+              alt={selectedUser.name}
+            />
+          </div>
+          <div className="user-card-info">
+            <h3>{selectedUser.name}</h3>
+            <p>
+              <strong>Email:</strong> {selectedUser.email}
+            </p>
+            <p>
+              <strong>College:</strong> {selectedUser.college} (
+              {selectedUser.college_year})
+            </p>
+            <p>
+              <strong>Profession:</strong> {selectedUser.profession}
+            </p>
+            <p>
+              <strong>City:</strong> {selectedUser.city}
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Tabs */}
       <div className="tab-navigation">
         <button
@@ -58,15 +89,24 @@ export default function CommonContent() {
         </button>
       </div>
 
-      {/* Tab Content with animation */}
+      {/* Tab Content */}
       <div key={tab} className={`tab-content fade-slide`}>
         {tab === "post" ? (
           <PostItem
             searchQuery={searchQuery}
             refreshTrigger={postRefreshTrigger}
+            setSelectedUser={setSelectedUser}
+            setFilterUserId={setFilterUserId}
+            filterUserId={filterUserId}
           />
         ) : (
-          <Ask searchQuery={searchQuery} refreshTrigger={askRefreshTrigger} />
+          <Ask
+            searchQuery={searchQuery}
+            refreshTrigger={askRefreshTrigger}
+            setSelectedUser={setSelectedUser}
+            setFilterUserId={setFilterUserId}
+            filterUserId={filterUserId}
+          />
         )}
       </div>
 

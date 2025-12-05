@@ -561,6 +561,28 @@
     width: 100%;
   }
 }
+.menu-icon {
+  font-size: 22px;
+  cursor: pointer;
+}
+.action-menu {
+  position: absolute;
+  right: 10px;
+  background: white;
+  border: 1px solid #ddd;
+  width: 120px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  padding: 5px 0;
+  z-index: 10;
+}
+.action-menu-item {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+.action-menu-item:hover {
+  background: #f3f3f3;
+}
 /*Add product file css*/
 .admin-container {
   padding: 20px;
@@ -572,11 +594,12 @@
 .open-form-btn {
   background-color: #007bff;
   color: white;
-  padding: 10px 16px;
+  padding:10px 16px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
   transition: 0.3s;
+  margin-bottom: -20px;
 }
 .open-form-btn:hover {
   background-color: #0056b3;

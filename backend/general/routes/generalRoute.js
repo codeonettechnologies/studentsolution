@@ -28,7 +28,7 @@ router.get("/getlike", get_like_status);
 router.post("/comment", add_comment);
 router.get("/:id/comments", get_comments);
 router.delete("/comment/:id", delete_comment);
-router.get("/viewUserProfile/:id", getUserGeneralPosts);
+router.get("/userPost/:id", getUserGeneralPosts);
 //------------------General ask routes -------------------------------------
 const {
   createGeneralAsk,

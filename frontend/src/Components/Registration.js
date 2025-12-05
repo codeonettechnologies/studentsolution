@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaPen } from "react-icons/fa";
 import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
+import toast from "react-hot-toast";
 import axios from "axios";
 
 export default function Register() {
@@ -41,7 +42,7 @@ export default function Register() {
       else if (Array.isArray(res.data)) setColleges(res.data);
     } catch (err) {
       console.error("Error fetching colleges:", err);
-      alert("Failed to load colleges!");
+      toast.error("Failed to load colleges!");
     }
   };
 
@@ -51,7 +52,7 @@ export default function Register() {
       if (Array.isArray(res.data)) setCities(res.data);
     } catch (err) {
       console.error("Error fetching cities:", err);
-      alert("Failed to load cities!");
+      toast.error("Failed to load cities!");
     }
   };
 
@@ -63,7 +64,7 @@ export default function Register() {
       if (Array.isArray(res.data)) setProfessions(res.data);
     } catch (err) {
       console.error("Error fetching professions:", err);
-      alert("Failed to load professions!");
+      toast.error("Failed to load professions!");
     }
   };
 
@@ -115,7 +116,7 @@ export default function Register() {
     e.preventDefault();
 
     if (!formData.name || !formData.email || !formData.password) {
-      alert("Please fill all required fields!");
+      toast("Please fill all required fields!");
       return;
     }
 
@@ -137,14 +138,14 @@ export default function Register() {
       console.log("Register Response:", data);
 
       if (data.success) {
-        alert("Registration Successful!");
+        toast.success("Registration Successful!");
         navigate("/");
       } else {
-        alert(data.message || "Registration failed.");
+        toast.error(data.message || "Registration failed.");
       }
     } catch (err) {
       console.error("Error:", err);
-      alert("Something went wrong. Check console.");
+      toast("Something went wrong. Check console.");
     }
   };
 

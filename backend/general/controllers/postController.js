@@ -458,10 +458,10 @@ exports.getUserGeneralPosts = (req, res) => {
     const postSql = `
       SELECT
           jp.*,
-          u.name AS user_name,
-          u.profile_image AS user_profile,
-          u.college AS user_college,
-          u.college_year AS user_year,
+          u.name AS name,
+          u.profile_image AS profile_image,
+          u.college AS college,
+          u.college_year AS college_year,
  
           -- Total Likes
           (

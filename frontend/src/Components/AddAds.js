@@ -1,13 +1,22 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { FiMoreVertical } from "react-icons/fi";
+import toast from "react-hot-toast";
 
 export default function AddAds() {
   const [ads, setAds] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({ image: "", video: "" });
+
+  const [showUpdateForm, setShowUpdateForm] = useState(false);
+  const [updateData, setUpdateData] = useState({ image: "", video: "" });
+
+  const [selectedAd, setSelectedAd] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(null);
+
   const [loading, setLoading] = useState(false);
 
-  // Fetch all ads from backend on mount
+  // Fetch ads
   useEffect(() => {
     fetchAds();
   }, []);
@@ -18,7 +27,6 @@ export default function AddAds() {
       setAds(res.data);
     } catch (err) {
       console.error("Error fetching ads:", err);
-      alert("Failed to load ads.");
     }
   };
 
@@ -26,13 +34,16 @@ export default function AddAds() {
     const { name, files } = e.target;
     setFormData({ ...formData, [name]: files[0] });
   };
-  // Add Ad (image/video upload)
+
+  const handleUpdateChange = (e) => {
+    const { name, files } = e.target;
+    setUpdateData({ ...updateData, [name]: files[0] });
+  };
+
+  // Add new ad
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.image && !formData.video) {
-      alert("Please upload an image or a video!");
-      return;
-    }
+    if (!formData.image && !formData.video) return toast("Upload image or video");
 
     const data = new FormData();
     if (formData.image) data.append("image", formData.image);
@@ -40,49 +51,74 @@ export default function AddAds() {
 
     try {
       setLoading(true);
-      await axios.post("http://localhost:5000/admin/addAd", data, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      alert("Ad added successfully!");
+      await axios.post("http://localhost:5000/admin/addAd", data);
+      toast.success("Ad Added!");
       setShowForm(false);
       setFormData({ image: "", video: "" });
       fetchAds();
     } catch (err) {
-      console.error("Error adding ad:", err);
-      alert("Failed to add ad!");
+      toast.error("Failed to Add Ad");
     } finally {
       setLoading(false);
     }
   };
 
-  // Delete Ad from backend + update UI
+  // Delete
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this ad?")) return;
+    if (!window.confirm("Confirm delete?")) return;
 
     try {
-      const res = await axios.delete(
-        `http://localhost:5000/admin/deleteAds/${id}`
+      await axios.delete(`http://localhost:5000/admin/deleteAds/${id}`);
+      toast.success("Ad Deleted!");
+      setAds(ads.filter((a) => a.id !== id));
+    } catch (err) {
+      toast.error("Failed to delete");
+    }
+  };
+
+  // Open update popup
+  const openUpdateForm = (ad) => {
+    setSelectedAd(ad);
+    setShowUpdateForm(true);
+    setMenuOpen(null);
+  };
+
+  // Update ad
+  const handleUpdateSubmit = async (e) => {
+    e.preventDefault();
+
+    const data = new FormData();
+    if (updateData.image) data.append("image", updateData.image);
+    if (updateData.video) data.append("video", updateData.video);
+
+    try {
+      setLoading(true);
+
+      await axios.put(
+        `http://localhost:5000/admin/update/${selectedAd.id}`,
+        data
       );
 
-      if (res.status >= 200 && res.status < 300) {
-        alert(res.data.message || "Ad deleted successfully!");
-        setAds(ads.filter((ad) => ad.id !== id));
-      } else {
-        alert("Failed to delete ad.");
-      }
+      toast.success("Ad Updated!");
+      setShowUpdateForm(false);
+      setUpdateData({ image: "", video: "" });
+      fetchAds();
     } catch (err) {
-      console.error("Error deleting ad:", err);
-      alert("Server error. Could not delete ad.");
+      toast.error("Failed to update");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="ads-container">
+
       <div className="ads-header">
-        <button className="add-btn" onClick={() => setShowForm(true)}>
+        <button className="add-btn" onClick={() => setShowForm(true)}  style={{ marginBottom: 20 }}>
           + Add Ads
         </button>
       </div>
+
       <table className="ads-table">
         <thead>
           <tr>
@@ -91,6 +127,7 @@ export default function AddAds() {
             <th>Action</th>
           </tr>
         </thead>
+
         <tbody>
           {ads.length > 0 ? (
             ads.map((ad) => (
@@ -106,6 +143,7 @@ export default function AddAds() {
                     "No Image"
                   )}
                 </td>
+
                 <td>
                   {ad.video ? (
                     <video
@@ -118,13 +156,31 @@ export default function AddAds() {
                     "No Video"
                   )}
                 </td>
-                <td>
-                  <button
-                    className="delete-btn"
-                    onClick={() => handleDelete(ad.id)}
-                  >
-                    Delete
-                  </button>
+
+                <td style={{ position: "relative" }}>
+                  <FiMoreVertical
+                    className="menu-icon"
+                    onClick={() =>
+                      setMenuOpen(menuOpen === ad.id ? null : ad.id)
+                    }
+                  />
+
+                  {menuOpen === ad.id && (
+                    <div className="action-menu">
+                      <p
+                        className="action-menu-item"
+                        onClick={() => openUpdateForm(ad)}
+                      >
+                        Update
+                      </p>
+                      <p
+                        className="action-menu-item"
+                        onClick={() => handleDelete(ad.id)}
+                      >
+                        Delete
+                      </p>
+                    </div>
+                  )}
                 </td>
               </tr>
             ))
@@ -138,6 +194,7 @@ export default function AddAds() {
         </tbody>
       </table>
 
+      {/* ADD AD POPUP */}
       {showForm && (
         <div className="ads-popup">
           <div className="ads-card">
@@ -148,32 +205,16 @@ export default function AddAds() {
 
               <div className="ads-group">
                 <label>Upload Image:</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  name="image"
-                  onChange={handleChange}
-                  className="ads-input"
-                />
+                <input type="file" name="image" onChange={handleChange} className="ads-input" />
               </div>
 
               <div className="ads-group">
                 <label>Upload Video:</label>
-                <input
-                  type="file"
-                  accept="video/*"
-                  name="video"
-                  onChange={handleChange}
-                  className="ads-input"
-                />
+                <input type="file" name="video" onChange={handleChange} className="ads-input" />
               </div>
 
               <div className="ads-buttons">
-                <button
-                  type="submit"
-                  className="ads-submit-btn"
-                  disabled={loading}
-                >
+                <button type="submit" className="ads-submit-btn">
                   Submit
                 </button>
                 <button
@@ -188,6 +229,43 @@ export default function AddAds() {
           </div>
         </div>
       )}
+
+      {/* UPDATE POPUP */}
+      {showUpdateForm && (
+        <div className="ads-popup">
+          <div className="ads-card">
+            <form onSubmit={handleUpdateSubmit}>
+              <h2 className="ads-title">
+                {loading ? "Updating..." : "Update Advertisement"}
+              </h2>
+
+              <div className="ads-group">
+                <label>Update Image:</label>
+                <input type="file" name="image" onChange={handleUpdateChange} className="ads-input" />
+              </div>
+
+              <div className="ads-group">
+                <label>Update Video:</label>
+                <input type="file" name="video" onChange={handleUpdateChange} className="ads-input" />
+              </div>
+
+              <div className="ads-buttons">
+                <button type="submit" className="ads-submit-btn">
+                  Update
+                </button>
+                <button
+                  type="button"
+                  className="ads-cancel-btn"
+                  onClick={() => setShowUpdateForm(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import Modal from "./PopupModal";
 import PostForm from "./PostForm";
 import AskForm from "./AskForm";
@@ -73,9 +74,9 @@ export default function UsedItem() {
 
       if (data.message === "Used item post deleted successfully") {
         setUsedItems((prev) => prev.filter((item) => item.id !== postId));
-        alert("Post deleted successfully!");
+        toast.success("Post deleted successfully!");
       } else {
-        alert("Failed to delete post!");
+        toast.error("Failed to delete post!");
       }
     } catch (error) {
       console.error("Error deleting post:", error);

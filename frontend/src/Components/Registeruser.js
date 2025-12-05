@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 export default function RegisterUser() {
   const [users, setUsers] = useState([]);
@@ -13,7 +14,7 @@ export default function RegisterUser() {
       }
     } catch (err) {
       console.error("Error fetching users:", err);
-      alert("Failed to fetch users!");
+      toast.error("Failed to fetch users!");
     }
   };
 
