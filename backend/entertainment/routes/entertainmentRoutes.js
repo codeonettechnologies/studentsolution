@@ -11,7 +11,8 @@ const {
   get_comments,
   delete_comment,
   toggle_like,
-  get_like_status
+  get_like_status,
+  getUserEntertainmentPosts
 } = require("../controllers/entertainmentPostController");
 
 const upload = require("../../middlewares/upload");
@@ -21,7 +22,7 @@ router.post("/post/create", upload.single("image"), entertainmentPost);
 router.get("/post/get", getall_entertainment_posts);
 router.get("/postGet/:userId", getentertainmentPosts_byUserId);
 router.delete("/post/:id", delete_entertainmentPosts);
-
+router.get("/userPost/:id", getUserEntertainmentPosts);
 //--------------------- Entertainment search -----------------------------------------
  
 router.get("/searchPost", searchEntertainments);

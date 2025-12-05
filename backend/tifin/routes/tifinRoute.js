@@ -12,7 +12,8 @@ const {
   delete_comment, 
   toggle_like,
   get_like_status,
-  searchTiffinPosts
+  searchTiffinPosts,
+  getUserFoodPosts
 } = require("../../tifin/controllers/tifinPostController");
 
 //-----------------tiffin router-------------------------------------------------
@@ -20,7 +21,7 @@ router.post("/post/create", upload.single("image"), tiffin_post);
 router.get("/post/get", get_all_tiffin_posts);
 router.get("/postGet/:userId", getTiffinPostsByUserId);
 router.delete("/post/:id", delete_tiffin_post);
-
+router.get("/userPost/:id", getUserFoodPosts);
 //-------------------comments route -----------------
  
 router.post("/comment", post_comment);
