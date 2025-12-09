@@ -40,13 +40,18 @@ router.get("/:id/comments", get_comments);
 router.delete("/comment/:id", delete_comment);
 
 //------------------Entertainment ask routes ------------------------------------- 
-const {createEntertainmentAsk ,getAllEntertainmentAsks , getEntertainmentAsktsByUserId, delete_ask, searchAskentertainment} = require("../controllers/entertainmentAskController")
+const {createEntertainmentAsk ,getAllEntertainmentAsks , 
+  getEntertainmentAsktsByUserId,
+   delete_ask,
+    searchAskentertainment
+  ,getUserEntertainmentAsk
+  } = require("../controllers/entertainmentAskController")
 router.post("/EntertainmentAsk", createEntertainmentAsk);
 router.get("/EntertainmentAskGet", getAllEntertainmentAsks);
 router.get('/askGet/:userId', getEntertainmentAsktsByUserId);
 router.delete("/ask/:id", delete_ask);
 router.get("/searchAsk", searchAskentertainment);
-
+router.get("/userAsk/:id", getUserEntertainmentAsk);
 
 //------------- Entertainment reply route-----------------------------------------------------
 const {createReply ,getRepliesByAskId, delete_reply} = require("../controllers/entertainmentReplyController")

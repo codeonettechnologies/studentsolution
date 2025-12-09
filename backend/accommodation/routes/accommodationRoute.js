@@ -40,13 +40,14 @@ const {
   getAccommodationAsktsByUserId,
   searchAskAccommodations,
   delete_ask,
+  getUserAccommodationAsk
 } = require("../controllers/aksController");
 router.post("/accommodation", createAccommodationAsk);
 router.get("/accommodationAskGet", getAllAccommodationAsks);
 router.get("/askGet/:userId", getAccommodationAsktsByUserId);
 router.delete("/ask/:id", delete_ask);
 router.get("/searchAsk", searchAskAccommodations);
-
+router.get("/userAsk/:id", getUserAccommodationAsk);
 //-------------  reply route-----------------------------------------------------------------
 const {
   createReply,

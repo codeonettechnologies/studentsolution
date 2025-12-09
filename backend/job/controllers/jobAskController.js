@@ -179,15 +179,12 @@ exports.getUserJobAsk = (req, res) => {
       console.log("User Fetch Error:", userErr);
       return res.status(500).json({ message: "Database error" });
     }
-
     if (userResult.length === 0) {
       return res.status(404).json({
         message: "User not found",
       });
     }
-
-    
-    const { password, ...user } = userResult[0];  
+    const { password,mobile_number, ...user } = userResult[0];  
     const postSql = `
       SELECT
         ja.*,
