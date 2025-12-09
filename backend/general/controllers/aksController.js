@@ -237,7 +237,7 @@ exports.getUserGeneralAsk = (req, res) => {
             WHERE c.general_post_id = jp.id
           ) AS comments_data
  
-      FROM general_post jp
+      FROM general_ask jp
       JOIN users u ON jp.user_id = u.id
       WHERE jp.user_id = ?
       ORDER BY jp.id DESC
