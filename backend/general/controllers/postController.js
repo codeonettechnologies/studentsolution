@@ -518,7 +518,7 @@ exports.getUserGeneralPosts = (req, res) => {
         return res.status(500).json({ message: "Database error" });
       }
       res.status(200).json({
-        message: "User + Job posts fetched successfully",
+        message: "User + general posts fetched successfully",
         user: user, // <-- FULL USER OBJECT
         posts: postResults,
       });

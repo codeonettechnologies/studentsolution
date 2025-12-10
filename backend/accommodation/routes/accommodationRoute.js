@@ -12,6 +12,7 @@ const {
     toggle_like,
     get_like_status,
     searchAccommodation
+    ,getUserAccommodationPosts
 } = require("../controllers/postController")
 const upload = require("../../middlewares/upload")
 
@@ -19,6 +20,7 @@ router.post('/post/create',  upload.single('image'), accommodation_post);
 router.get('/post/get', get_all_accommodation_posts);
 router.get('/postGet/:userId', getaccommodationPostsByUserId);
 router.delete("/post/:id", delete_accommodation_post);
+router.get("/userPost/:id", getUserAccommodationPosts);
 
 // --------------- comments routes-------------------------------------------------------------------------
 

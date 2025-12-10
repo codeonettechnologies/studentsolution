@@ -11,6 +11,7 @@ const {
   deleteComment,
   toggle_like,
   get_like_status,
+  getUserCoachingPosts
 } = require("./controllers/coachingControllers");
 
 const upload = require("../../middlewares/upload");
@@ -21,7 +22,7 @@ router.post("/post/create", upload.single("image"), createPost);
 router.get("/post/get", getPost);
 router.get('/postGet/:userId', getCoachingPostsByUserId);
 router.delete("/post/:id", deletePost);
-
+router.get("/userPost/:id", getUserCoachingPosts);
 //--------------------- job search -----------------------------------------
  
 router.get("/searchPost", searchCoachings);
