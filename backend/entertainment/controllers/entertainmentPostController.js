@@ -396,10 +396,10 @@ exports.getUserEntertainmentPosts = (req, res) => {
     const postSql = `
       SELECT
           jp.*,
-          u.name AS user_name,
-          u.profile_image AS user_profile,
-          u.college AS user_college,
-          u.college_year AS user_year,
+          u.name AS name,
+          u.profile_image AS profile_image,
+          u.college AS college,
+          u.college_year AS college_year,
  
           -- Total Likes
           (
@@ -411,7 +411,7 @@ exports.getUserEntertainmentPosts = (req, res) => {
           -- Total Comments
           (
             SELECT COUNT(*)
-            FROM entertainment_post_comments jc
+            FROM entertainment_post_comment jc
             WHERE jc. entertainment_post_id = jp.id
           ) AS total_comments,
  
@@ -440,7 +440,7 @@ exports.getUserEntertainmentPosts = (req, res) => {
                 'profile_image', cu.profile_image
               )
             )
-            FROM  entertainment_post_comments c
+            FROM  entertainment_post_comment c
             JOIN users cu ON c.user_id = cu.id
             WHERE c. entertainment_post_id = jp.id
           ) AS comments_data

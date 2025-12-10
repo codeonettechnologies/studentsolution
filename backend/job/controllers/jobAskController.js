@@ -172,6 +172,7 @@ exports.delete_ask = async (req , res)=>{
 
 exports.getUserJobAsk = (req, res) => {
   const userId = req.params.id;
+  
   const userSql = `SELECT * FROM users WHERE id = ?`;
 
   db.query(userSql, [userId], (userErr, userResult) => {
@@ -204,6 +205,7 @@ exports.getUserJobAsk = (req, res) => {
                     'reply_created_at', jr.created_at
                 )
             )
+
             FROM job_reply jr
             JOIN users ur ON jr.user_id = ur.id
             WHERE jr.ask_reply_id = ja.id
@@ -212,6 +214,7 @@ exports.getUserJobAsk = (req, res) => {
       JOIN users u ON ja.user_id = u.id
       WHERE ja.user_id = ?
       ORDER BY ja.id DESC;
+
     `;
 
     db.query(postSql, [userId], (postErr, postResults) => {

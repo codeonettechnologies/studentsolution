@@ -392,11 +392,13 @@ export default function PostItem({
     fetchSearchResults();
   }, [searchQuery, currentSection, originalPosts]);
 
+  //show somepost api fetch
   const fetchUserPosts = async (userId) => {
     setLoading(true);
     try {
       const res = await fetch(`http://localhost:5000/${currentSection}/userPost/${userId}`);
       const data = await res.json();
+      console.log(data)
 
       if (data.posts) {
         const userPosts = data.posts.map((p) => ({
@@ -405,8 +407,8 @@ export default function PostItem({
           name: p.user?.name || p.name || "Unknown User",
           college: p.user?.college || p.college || "",
           message: p.content,
-          image: p.image_url
-            ? `http://localhost:5000/uploads/job_posts/${p.image_url}`
+          image: p.image_url 
+            ? `http://localhost:5000/uploads/${currentSection}_posts/${p.image_url}`
             : null,
           profile_image: p.user?.profile_image
             ? `http://localhost:5000/uploads/${p.user?.profile_image}`

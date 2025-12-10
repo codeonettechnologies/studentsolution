@@ -70,16 +70,16 @@ export default function Dashboard() {
                 section: "entertainment",
               },
               {
-                to: "/dashboard/learning",
-                label: "Learning",
-                icon: <IoBookSharp />,
-                section: "notes",
-              },
-              {
                 to: "/dashboard/accommodation",
                 label: "Accommodation",
                 icon: <GiFamilyHouse />,
                 section: "accommodation",
+              },
+              {
+                to: "/dashboard/learning",
+                label: "Learning",
+                icon: <IoBookSharp />,
+                section: "notes",
               },
               {
                    to: "/dashboard/shop",

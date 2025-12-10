@@ -465,23 +465,23 @@ exports.getUserFoodPosts = (req, res) => {
     const postSql = `
       SELECT
           jp.*,
-          u.name AS user_name,
-          u.profile_image AS user_profile,
-          u.college AS user_college,
+          u.name AS name,
+          u.profile_image AS profile_image,
+          u.college AS college,
           u.college_year AS user_year,
  
           -- Total Likes
           (
             SELECT COUNT(*)
-            FROM tifin_post_likes jl
-            WHERE jl. tifin_post_id = jp.id AND jl.like = 1
+            FROM tiffin_post_likes jl
+            WHERE jl. tiffin_post_id = jp.id AND jl.like = 1
           ) AS total_likes,
  
           -- Total Comments
           (
             SELECT COUNT(*)
-            FROM tifin_post_comment jc
-            WHERE jc. tifin_post_id = jp.id
+            FROM tiffin_post_comment jc
+            WHERE jc. tiffin_post_id = jp.id
           ) AS total_comments,
  
           -- Liked Users JSON
@@ -493,9 +493,9 @@ exports.getUserFoodPosts = (req, res) => {
                 'profile_image', lu.profile_image
               )
             )
-            FROM  tifin_post_likes jl
+            FROM  tiffin_post_likes jl
             JOIN users lu ON jl.user_id = lu.id
-            WHERE jl. tifin_post_id = jp.id AND jl.like = 1
+            WHERE jl. tiffin_post_id = jp.id AND jl.like = 1
           ) AS liked_users,
  
           -- Comments JSON
@@ -509,12 +509,12 @@ exports.getUserFoodPosts = (req, res) => {
                 'profile_image', cu.profile_image
               )
             )
-            FROM  tifin_post_comment c
+            FROM  tiffin_post_comment c
             JOIN users cu ON c.user_id = cu.id
-            WHERE c. tifin_post_id = jp.id
+            WHERE c. tiffin_post_id = jp.id
           ) AS comments_data
  
-      FROM  entertainment_post jp
+      FROM  tiffin_post jp
       JOIN users u ON jp.user_id = u.id
       WHERE jp.user_id = ?
       ORDER BY jp.id DESC
@@ -525,10 +525,12 @@ exports.getUserFoodPosts = (req, res) => {
         return res.status(500).json({ message: "Database error" });
       }
       res.status(200).json({
-        message: "User + Job posts fetched successfully",
+        message: "User + food posts fetched successfully",
         user: user, 
         posts: postResults,
       });
     });
   });
 };
+
+
