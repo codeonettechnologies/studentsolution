@@ -173,3 +173,61 @@ exports.deleteFood = async (req, res) => {
     });
   }
 };
+
+
+
+
+exports.getUserFoodAsk = (req, res) => {
+  const userId = req.params.id;
+  const userSql = `SELECT * FROM users WHERE id = ?`;
+
+  db.query(userSql, [userId], (userErr, userResult) => {
+    if (userErr) {
+      console.log("User Fetch Error:", userErr);
+      return res.status(500).json({ message: "Database error" });
+    }
+    if (userResult.length === 0) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+    const { password,mobile_number, ...user } = userResult[0];  
+    const postSql = `
+      SELECT
+        ja.*,
+        u.name AS name,
+        u.profile_image AS profile,
+        (
+            SELECT JSON_ARRAYAGG(
+                JSON_OBJECT(
+                    'reply_id', jr.id,
+                    'reply_content', jr.content,
+                    'reply_user_id', ur.id,
+                    'reply_user_name', ur.name,
+                    'reply_user_image', ur.profile_image,
+                    'reply_created_at', jr.created_at
+                )
+            )
+            FROM tiffin_reply jr
+            JOIN users ur ON jr.user_id = ur.id
+            WHERE jr.ask_reply_id = ja.id
+        ) AS replies
+      FROM tiffin_ask ja
+      JOIN users u ON ja.user_id = u.id
+      WHERE ja.user_id = ?
+      ORDER BY ja.id DESC;
+    `;
+
+    db.query(postSql, [userId], (postErr, postResults) => {
+      if (postErr) {
+        console.log("Post Fetch Error:", postErr);
+        return res.status(500).json({ message: "Database error" });
+      }
+      res.status(200).json({
+        message: "Food Ask fetched successfully",
+        user: user,
+        posts: postResults,
+      });
+    });
+  });
+};

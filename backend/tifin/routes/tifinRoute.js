@@ -35,12 +35,13 @@ router.get("/getlike", get_like_status);
 router.get("/searchPost", searchTiffinPosts);
 
 //------------------job ask routes ------------------------------------- 
-const {createTiffinAsk ,getAllTiffinAsks , getFoodAskByUserId , searchFoodAsk , deleteFood} = require("../controllers/tiffinAskController")
+const {createTiffinAsk ,getAllTiffinAsks , getFoodAskByUserId , searchFoodAsk , deleteFood , getUserFoodAsk} = require("../controllers/tiffinAskController")
 router.post("/tiffinAsk", createTiffinAsk);
 router.get("/tiffinAskGet", getAllTiffinAsks);
 router.get('/askGet/:userId', getFoodAskByUserId);
 router.get("/searchAsk", searchFoodAsk);
 router.delete("/foodAsk/:id" , deleteFood)
+router.get("/userAsk/:id", getUserFoodAsk);
 
 const {createReply ,getRepliesByAskId , delete_reply} = require("../controllers/tiffinReplyController")
 router.post("/tiffinReply" , createReply)

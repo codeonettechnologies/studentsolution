@@ -178,77 +178,45 @@ exports.getUserGeneralAsk = (req, res) => {
       console.log("User Fetch Error:", userErr);
       return res.status(500).json({ message: "Database error" });
     }
-
     if (userResult.length === 0) {
       return res.status(404).json({
         message: "User not found",
       });
     }
-    const user = userResult[0];
+    const { password,mobile_number, ...user } = userResult[0];  
     const postSql = `
       SELECT
-          jp.*,
-          u.name AS user_name,
-          u.profile_image AS user_profile,
-          u.college AS user_college,
-          u.college_year AS user_year,
- 
-          -- Total Likes
-          (
-            SELECT COUNT(*)
-            FROM general_post_likes jl
-            WHERE jl.general_post_id = jp.id AND jl.like = 1
-          ) AS total_likes,
- 
-          -- Total Comments
-          (
-            SELECT COUNT(*)
-            FROM general_post_comments jc
-            WHERE jc.general_post_id = jp.id
-          ) AS total_comments,
- 
-          -- Liked Users JSON
-          (
+        ja.*,
+        u.name AS name,
+        u.profile_image AS profile,
+        (
             SELECT JSON_ARRAYAGG(
-              JSON_OBJECT(
-                'user_id', lu.id,
-                'name', lu.name,
-                'profile_image', lu.profile_image
-              )
+                JSON_OBJECT(
+                    'reply_id', jr.id,
+                    'reply_content', jr.content,
+                    'reply_user_id', ur.id,
+                    'reply_user_name', ur.name,
+                    'reply_user_image', ur.profile_image,
+                    'reply_created_at', jr.created_at
+                )
             )
-            FROM general_post_likes jl
-            JOIN users lu ON jl.user_id = lu.id
-            WHERE jl.general_post_id = jp.id AND jl.like = 1
-          ) AS liked_users,
- 
-          -- Comments JSON
-          (
-            SELECT JSON_ARRAYAGG(
-              JSON_OBJECT(
-                'comment_id', c.id,
-                'comment_text', c.comment_text,
-                'user_id', cu.id,
-                'name', cu.name,
-                'profile_image', cu.profile_image
-              )
-            )
-            FROM general_post_comments c
-            JOIN users cu ON c.user_id = cu.id
-            WHERE c.general_post_id = jp.id
-          ) AS comments_data
- 
-      FROM general_ask jp
-      JOIN users u ON jp.user_id = u.id
-      WHERE jp.user_id = ?
-      ORDER BY jp.id DESC
+            FROM general_reply jr
+            JOIN users ur ON jr.user_id = ur.id
+            WHERE jr.ask_reply_id = ja.id
+        ) AS replies
+      FROM general_ask ja
+      JOIN users u ON ja.user_id = u.id
+      WHERE ja.user_id = ?
+      ORDER BY ja.id DESC;
     `;
+
     db.query(postSql, [userId], (postErr, postResults) => {
       if (postErr) {
         console.log("Post Fetch Error:", postErr);
         return res.status(500).json({ message: "Database error" });
       }
       res.status(200).json({
-        message: "User + general posts fetched successfully",
+        message: "General Ask fetched successfully",
         user: user,
         posts: postResults,
       });

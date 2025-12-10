@@ -39,13 +39,13 @@ router.delete("/comment/:id", deleteComment);
 
 
 // coaching Ask 
-const {createCoachingAsk ,getAllCoachingAsks , getCoachingAsktsByUserId, searchAskcoachings, delete_ask} = require("./controllers/coachingAskController")
+const {createCoachingAsk ,getAllCoachingAsks , getCoachingAsktsByUserId, searchAskcoachings, delete_ask ,getUserCoachingAsk} = require("./controllers/coachingAskController")
 router.post("/caochingAsk", createCoachingAsk);
 router.get("/coachingAskGet", getAllCoachingAsks);
 router.get('/askGet/:userId', getCoachingAsktsByUserId);
 router.delete("/ask/:id", delete_ask);
 router.get("/searchAsk", searchAskcoachings);
-
+router.get('/askGet/:id', getUserCoachingAsk);
 
 const {createReply ,getRepliesByAskId, delete_reply} = require("./controllers/coachingReplyController")
 router.post("/CoachingReply" , createReply)
